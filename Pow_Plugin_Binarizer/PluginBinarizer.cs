@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace PathOfWuxia
 {
-    [BepInPlugin("binarizer.plugin.pow.function_sets", "功能合集 by Binarizer", "1.2")]
+    [BepInPlugin("binarizer.plugin.pow.function_sets", "功能合集 by Binarizer，修改 by 寻宇", "1.2.1")]
     public class PluginBinarizer : BaseUnityPlugin
     {
         void RegisterHook(IHook hook)
@@ -35,6 +35,10 @@ namespace PathOfWuxia
             RegisterHook(new HookTeamManage());
             RegisterHook(new HookInitiactiveBattle());
             RegisterHook(new HookDuelPractice());
+            //add by 寻宇
+            RegisterHook(new HookFavExp());
+            RegisterHook(new HookSave());
+            RegisterHook(new HookMove());
         }
 
         void Start()
