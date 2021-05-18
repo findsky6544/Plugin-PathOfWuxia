@@ -23,7 +23,7 @@ namespace PathOfWuxia
 
         public void OnRegister(BaseUnityPlugin plugin)
         {
-            moveSpeed = plugin.Config.Bind("游戏设定", "移动速度", 1, "修改玩家在大地图的移动速度。如果太快可能会穿模");
+            moveSpeed = plugin.Config.Bind("游戏设定", "移动速度", 1, "修改玩家在大地图的移动速度 如果太快可能会穿模");
         }
 
         public void OnUpdate()

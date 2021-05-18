@@ -29,7 +29,7 @@ namespace PathOfWuxia
         public void OnRegister(BaseUnityPlugin plugin)
         {
             saveCount = plugin.Config.Bind("游戏设定", "存档数量", 20, "扩充存档数量");
-			remindBlankSaveCount = plugin.Config.Bind("游戏设定", "是否提示剩余空白存档数量", false, "在剩余空白存档数量不足10个时弹窗提示");
+			remindBlankSaveCount = plugin.Config.Bind("游戏设定", "是否提示剩余空白存档数量", false, "在剩余空白存档数量不足5个时弹窗提示");
 		}
 
         public void OnUpdate()

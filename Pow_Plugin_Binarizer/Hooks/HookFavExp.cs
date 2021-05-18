@@ -25,7 +25,7 @@ namespace PathOfWuxia
 
         public void OnRegister(BaseUnityPlugin plugin)
         {
-            showFavExp = plugin.Config.Bind("游戏设定", "显示好友好感度与礼物好感度", false, "在好友界面显示当前好感度/总需好感度，在送礼界面显示礼物可提高的好感度");
+            showFavExp = plugin.Config.Bind("游戏设定", "显示好友好感度与礼物好感度", false, "在好友界面显示当前好感度/总需好感度 在送礼界面显示礼物可提高的好感度");
         }
 
         public void OnUpdate()
@@ -63,41 +63,52 @@ namespace PathOfWuxia
         }
 
         //显示礼物好感度
-        [HarmonyPostfix, HarmonyPatch(typeof(CtrlFormInventory), "UpdateIntroduction")]
-        public static void UpdateIntroductionPatch_showFavExp(ref CtrlFormInventory __instance)
+        [HarmonyPrefix, HarmonyPatch(typeof(CtrlFormInventory), "UpdateIntroduction", new Type[] { typeof(int)})]
+        public static bool UpdateIntroductionPatch_showFavExp(ref CtrlFormInventory __instance,ref int index)
         {
             List < PropsInfo > sort = Traverse.Create(__instance).Field("sort").GetValue<List<PropsInfo>>();
-            int propsIndex = Traverse.Create(__instance).Field("propsIndex").GetValue<int>();
             CharacterMapping mapping = Traverse.Create(__instance).Field("mapping").GetValue<CharacterMapping>();
 
+            if (sort.Count <= 0 || index >= sort.Count)
+            {
+                Debug.LogError(string.Format("Inventory 的 Scroll 給出的Index出現問題, Index: {0}", index));
+                return true;
+            }
 
-            Props item = sort[propsIndex].Item;
+            Props item = sort[index].Item;
 
             if (showFavExp.Value && item.PropsEffect != null)
             {
+                string effectDescriptionStr = "";
                 for (int i = 0; i < item.PropsEffect.Count; i++)
                 {
                     PropsEffect propsEffect = item.PropsEffect[i];
                     if (propsEffect is PropsFavorable)
                     {
+                        //如果在送礼界面打开，就直接显示能加多少好感；否则显示每个角色能加多少好感
                         PropsFavorable propsFavorable = propsEffect as PropsFavorable;
-                        if (mapping != null && mapping.InfoId != null && !mapping.InfoId.Equals(string.Empty) && propsFavorable.Npcid == mapping.InfoId)
+                        if (mapping != null && mapping.InfoId != null && !mapping.InfoId.Equals(string.Empty))
                         {
-                            string effectDescriptionStr = "";
-                            if(item.PropsEffectDescription != null && !item.PropsEffectDescription.Equals(string.Empty))
+                            if (propsFavorable.Npcid == mapping.InfoId)
                             {
-                                effectDescriptionStr = item.PropsEffectDescription + ",";
+                                effectDescriptionStr += "好感+" + propsFavorable.Value + "，";
                             }
-                            effectDescriptionStr += "好感+" + propsFavorable.Value;
-
-                            UIFormInventory view = Traverse.Create(__instance).Field("view").GetValue<UIFormInventory>();
-                            WGPropsIntroduction propsIntroduction = Traverse.Create(view).Field("propsIntroduction").GetValue<WGPropsIntroduction>();
-                            WGText effectDescription = Traverse.Create(propsIntroduction).Field("effectDescription").GetValue<WGText>();
-                            effectDescription.Text = effectDescriptionStr;
+                        }
+                        else
+                        {
+                            CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(propsFavorable.Npcid);
+                            effectDescriptionStr += characterExterior.SurName + characterExterior.Name + "好感+" + propsFavorable.Value + "，";
                         }
                     }
                 }
+                if(effectDescriptionStr.Length != 0)
+                {
+                    effectDescriptionStr = effectDescriptionStr.Substring(0, effectDescriptionStr.Length - 1);
+                    item.PropsEffectDescription = effectDescriptionStr;
+                }
+
             }
+            return true;
         }
     }
 }
