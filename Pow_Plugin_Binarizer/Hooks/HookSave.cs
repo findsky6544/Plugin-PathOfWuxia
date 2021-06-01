@@ -13,6 +13,7 @@ using Heluo.Flow;
 using Heluo;
 using Heluo.UI;
 using Heluo.FSM.Main;
+using UnityEngine.UI;
 
 namespace PathOfWuxia
 {
@@ -20,6 +21,7 @@ namespace PathOfWuxia
     {
         private static ConfigEntry<int> saveCount;
 		private static ConfigEntry<bool> remindBlankSaveCount;
+		private static ConfigEntry<bool> jumpToLatestSave;
 
 		public IEnumerable<Type> GetRegisterTypes()
         {
@@ -29,7 +31,8 @@ namespace PathOfWuxia
         public void OnRegister(BaseUnityPlugin plugin)
         {
             saveCount = plugin.Config.Bind("游戏设定", "存档数量", 20, "扩充存档数量");
-			remindBlankSaveCount = plugin.Config.Bind("游戏设定", "是否提示剩余空白存档数量", false, "在剩余空白存档数量不足5个时弹窗提示");
+			remindBlankSaveCount = plugin.Config.Bind("游戏设定", "自动存档剩余数量提示", false, "在自动存档剩余空白存档数量不足5个时弹窗提示");
+			jumpToLatestSave = plugin.Config.Bind("游戏设定", "自动跳转到最新存档位置", false, "在存档数量太多的时候会有点作用");
 		}
 
         public void OnUpdate()
@@ -64,6 +67,7 @@ namespace PathOfWuxia
 
 		//提示空白存档剩余数量
 		//覆盖原逻辑，基本都是原代码
+		//这里是场景中触发的自动存档
 		[HarmonyPrefix, HarmonyPatch(typeof(SaveAction), "AutoSave")]
 		public static bool AutoSavePatch_changeSaveCount(ref SaveAction __instance)
 		{
@@ -99,6 +103,7 @@ namespace PathOfWuxia
 			return false;
 		}
 
+		//这里是切换日期的自动存档
 		[HarmonyPrefix, HarmonyPatch(typeof(InGame), "AutoSave")]
 		public static bool AutoSavePatch2_changeSaveCount(ref InGame __instance)
 		{
@@ -131,6 +136,48 @@ namespace PathOfWuxia
 				Game.UI.OpenMessageWindow(text, null, true);
 			}
 			return false;
+		}
+
+		[HarmonyPostfix, HarmonyPatch(typeof(CtrlSaveLoad), "UpdateSaveLoad")]
+		public static void UpdateSaveLoadPatch_jumpToLatestSave(ref CtrlSaveLoad __instance,ref int __state)
+		{
+            if (jumpToLatestSave.Value)
+			{
+				int categoryIndex = Traverse.Create(__instance).Field("categoryIndex").GetValue<int>();
+				List<PathOfWuxiaSaveHeader> saves;
+				if (categoryIndex == 0)
+				{
+					saves = Traverse.Create(__instance).Field("saves").GetValue<List<PathOfWuxiaSaveHeader>>();
+				}
+				else
+				{
+					saves = Traverse.Create(__instance).Field("autosaves").GetValue<List<PathOfWuxiaSaveHeader>>();
+				}
+
+				int num = -1;
+				DateTime saveTime = new DateTime(100L);
+
+				for (int i = 0; i < saves.Count; i++)
+				{
+					PathOfWuxiaSaveHeader pathOfWuxiaSaveHeader = saves[i];
+					if (!pathOfWuxiaSaveHeader.HasData)
+					{
+						num = i;
+						break;
+					}
+					if (DateTime.Compare(pathOfWuxiaSaveHeader.SaveTime, saveTime) > 0)
+					{
+						num = ((i + 1 > saveCount.Value - 1) ? 0 : (i + 1));
+						saveTime = pathOfWuxiaSaveHeader.SaveTime;
+					}
+				}
+
+				UISaveLoad view = Traverse.Create(__instance).Field("view").GetValue<UISaveLoad>();
+				WGTabScroll saveload = Traverse.Create(view).Field("saveload").GetValue<WGTabScroll>();
+				WGInfiniteScroll loopScroll = Traverse.Create(saveload).Field("loopScroll").GetValue<WGInfiniteScroll>();
+				ScrollRect scrollRect = Traverse.Create(loopScroll).Field("scrollRect").GetValue<ScrollRect>();
+				scrollRect.verticalScrollbar.value = ((float)(saveCount.Value - num + 1))/saveCount.Value;
+			}
 		}
 	}
 }

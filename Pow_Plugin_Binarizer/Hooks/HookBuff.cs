@@ -24,7 +24,7 @@ namespace PathOfWuxia
 
         public void OnRegister(BaseUnityPlugin plugin)
         {
-            showHideBuff = plugin.Config.Bind("游戏设定", "显示隐藏buff", false, "显示隐藏buff（图标暂时显示为特质buff图标） 最好配合mod：fixedBuff使用");
+            showHideBuff = plugin.Config.Bind("界面改进", "显示隐藏buff", false, "显示隐藏buff（图标暂时显示为特质buff图标） 最好配合mod：fixedBuff使用");
         }
 
         public void OnUpdate()

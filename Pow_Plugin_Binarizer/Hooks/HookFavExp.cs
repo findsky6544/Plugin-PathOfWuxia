@@ -25,7 +25,7 @@ namespace PathOfWuxia
 
         public void OnRegister(BaseUnityPlugin plugin)
         {
-            showFavExp = plugin.Config.Bind("游戏设定", "显示好友好感度与礼物好感度", false, "在好友界面显示当前好感度/总需好感度 在送礼界面显示礼物可提高的好感度");
+            showFavExp = plugin.Config.Bind("界面改进", "显示好友好感度与礼物好感度", false, "在好友界面显示当前好感度/总需好感度 在送礼和商店界面显示礼物可提高的好感度");
         }
 
         public void OnUpdate()
@@ -62,53 +62,22 @@ namespace PathOfWuxia
             expText.gameObject.SetActive(showFavExp.Value);
         }
 
-        //显示礼物好感度
-        [HarmonyPrefix, HarmonyPatch(typeof(CtrlFormInventory), "UpdateIntroduction", new Type[] { typeof(int)})]
-        public static bool UpdateIntroductionPatch_showFavExp(ref CtrlFormInventory __instance,ref int index)
+        //在送礼界面显示礼物好感度
+        [HarmonyPostfix, HarmonyPatch(typeof(Props), "PropsEffectDescription", MethodType.Getter)]
+        public static void ShowRelationship_Props(Props __instance, ref string __result)
         {
-            List < PropsInfo > sort = Traverse.Create(__instance).Field("sort").GetValue<List<PropsInfo>>();
-            CharacterMapping mapping = Traverse.Create(__instance).Field("mapping").GetValue<CharacterMapping>();
-
-            if (sort.Count <= 0 || index >= sort.Count)
+            if (!showFavExp.Value || __instance.PropsType != PropsType.Present)
+                return;
+            List<string> strFav = new List<string>();
+            foreach (var propsEffect in __instance.PropsEffect)
             {
-                Debug.LogError(string.Format("Inventory 的 Scroll 給出的Index出現問題, Index: {0}", index));
-                return true;
-            }
-
-            Props item = sort[index].Item;
-
-            if (showFavExp.Value && item.PropsEffect != null)
-            {
-                string effectDescriptionStr = "";
-                for (int i = 0; i < item.PropsEffect.Count; i++)
+                if (propsEffect is PropsFavorable pf)
                 {
-                    PropsEffect propsEffect = item.PropsEffect[i];
-                    if (propsEffect is PropsFavorable)
-                    {
-                        //如果在送礼界面打开，就直接显示能加多少好感；否则显示每个角色能加多少好感
-                        PropsFavorable propsFavorable = propsEffect as PropsFavorable;
-                        if (mapping != null && mapping.InfoId != null && !mapping.InfoId.Equals(string.Empty))
-                        {
-                            if (propsFavorable.Npcid == mapping.InfoId)
-                            {
-                                effectDescriptionStr += "好感+" + propsFavorable.Value + "，";
-                            }
-                        }
-                        else
-                        {
-                            CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(propsFavorable.Npcid);
-                            effectDescriptionStr += characterExterior.SurName + characterExterior.Name + "好感+" + propsFavorable.Value + "，";
-                        }
-                    }
+                    strFav.Add( string.Format("{0}{1}+{2}", Game.GameData.Exterior[pf.Npcid].FullName(), Game.Data.Get<StringTable>("General_Favorability").Text, pf.Value));
                 }
-                if(effectDescriptionStr.Length != 0)
-                {
-                    effectDescriptionStr = effectDescriptionStr.Substring(0, effectDescriptionStr.Length - 1);
-                    item.PropsEffectDescription = effectDescriptionStr;
-                }
-
             }
-            return true;
+            __result += string.Join("，", strFav);
         }
+
     }
 }

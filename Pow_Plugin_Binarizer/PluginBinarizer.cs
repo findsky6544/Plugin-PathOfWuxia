@@ -39,6 +39,8 @@ namespace PathOfWuxia
             RegisterHook(new HookFavExp());
             RegisterHook(new HookSave());
             RegisterHook(new HookMove());
+            RegisterHook(new HookBuff());
+            RegisterHook(new HookPropsFilterAndSort());
         }
 
         void Start()
