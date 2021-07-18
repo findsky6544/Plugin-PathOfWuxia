@@ -62,7 +62,7 @@ namespace PathOfWuxia
             expText.gameObject.SetActive(showFavExp.Value);
         }
 
-        //在送礼界面显示礼物好感度
+        //在送礼和商店界面显示礼物好感度
         [HarmonyPostfix, HarmonyPatch(typeof(Props), "PropsEffectDescription", MethodType.Getter)]
         public static void ShowRelationship_Props(Props __instance, ref string __result)
         {
