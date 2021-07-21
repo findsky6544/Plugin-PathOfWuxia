@@ -90,7 +90,7 @@ namespace PathOfWuxia
         {
             if(giftSortMode.Value != SortMode.None)
             {
-                //反正物品总共也没多少，开销应该不大，用插排就完事了
+                //反正物品总共也没多少，开销应该不大，选择排序就完事了
                 //先按分类排序
                 if(giftSortMode.Value == SortMode.maxToMinByType || giftSortMode.Value == SortMode.minToMaxByType)
                 {
@@ -123,7 +123,7 @@ namespace PathOfWuxia
         {
             if (giftSortMode.Value != SortMode.None)
             {
-                //反正物品总共也没多少，开销应该不大，用插排就完事了
+                //反正物品总共也没多少，开销应该不大，用选择排序就完事了
 
                 //在按大小排序
                 for (int i = 0; i < sort.Count; i++)
@@ -218,7 +218,7 @@ namespace PathOfWuxia
         {
             if (equipSortMode.Value != SortMode.None)
             {
-                //反正物品总共也没多少，开销应该不大，用插排就完事了
+                //反正物品总共也没多少，开销应该不大，用选择排序就完事了
                 //先按分类排序
                 if (equipSortMode.Value == SortMode.maxToMinByType || equipSortMode.Value == SortMode.minToMaxByType)
                 {
@@ -251,7 +251,7 @@ namespace PathOfWuxia
         {
             if (equipSortMode.Value != SortMode.None)
             {
-                //反正物品总共也没多少，开销应该不大，用插排就完事了
+                //反正物品总共也没多少，开销应该不大，用选择排序就完事了
 
                 //在按攻击力大小排序
                 for (int i = 0; i < sort.Count; i++)
