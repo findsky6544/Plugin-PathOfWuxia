@@ -50,6 +50,7 @@ namespace PathOfWuxia
 		}
 
 		//修改存档数量，分页展示
+		//覆盖原逻辑
 		[HarmonyPrefix, HarmonyPatch(typeof(SteamPlatform), "ListSaveHeaderFile", new Type[] { typeof(GameSaveType) })]
 		public static bool ListSaveHeaderFilePatch_changeSaveCount(ref SteamPlatform __instance, ref GameSaveType Type, ref List<PathOfWuxiaSaveHeader> __result)
 		{
@@ -242,6 +243,7 @@ namespace PathOfWuxia
 		[HarmonyPostfix, HarmonyPatch(typeof(UISaveLoad), "Show")]
 		public static void showPatch_pagination(ref UISaveLoad __instance)
 		{
+			//创建主挂载对象，这个对象是不会删除的
 			GameObject obj;
 			WGTabScroll saveload = Traverse.Create(__instance).Field("saveload").GetValue<WGTabScroll>();
 			var trans = saveload.transform.Find("pageBar");
@@ -317,6 +319,7 @@ namespace PathOfWuxia
 			middleBar.transform.SetParent(pageBar.transform, false);
 
 			totalPage = (int)Math.Ceiling((float)saveCount.Value / countPerPage.Value);
+			//仅展示第1页，最后1页，当前页的±3页，其余省略为…
 			for (int i = 1; i <= totalPage; i++)
 			{
 				if (i != 1 && i < currentPage - 3)
@@ -330,7 +333,7 @@ namespace PathOfWuxia
 				page.AddComponent<Button>().onClick.AddListener(() => pageClick(pageBar, controller, int.Parse(page.GetComponent<Text>().text)));
 				if (i == currentPage)
 				{
-					page.GetComponentInChildren<Text>().color = Color.red;
+					page.GetComponentInChildren<Text>().color = Color.red;//当前页标红
 				}
 				page.transform.SetParent(middleBar.transform,false);
 
@@ -439,7 +442,7 @@ namespace PathOfWuxia
 			{
 				trueSaveIndex += (currentPage - 1) * countPerPage.Value;
 			}
-
+			//存档
 			if (__instance.isSave)
 			{
 				string filename = string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "save");
@@ -451,6 +454,7 @@ namespace PathOfWuxia
 			Game.UI.HideTeamMemeberUI();
 			Game.UI.Open<UILoading>();
 			int categoryIndex = Traverse.Create(__instance).Field("categoryIndex").GetValue<int>();
+			//读档
 			if (categoryIndex == 0)
 			{
 				List<PathOfWuxiaSaveHeader> saves = Traverse.Create(__instance).Field("saves").GetValue<List<PathOfWuxiaSaveHeader>>();
@@ -462,6 +466,7 @@ namespace PathOfWuxia
 				view.Hide();
 				return false;
 			}
+			//读自动存档
 			else
 			{
 				List<PathOfWuxiaSaveHeader> autosaves = Traverse.Create(__instance).Field("autosaves").GetValue<List<PathOfWuxiaSaveHeader>>();
