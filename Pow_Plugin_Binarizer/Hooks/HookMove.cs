@@ -25,14 +25,18 @@ namespace PathOfWuxia
         public void OnRegister(BaseUnityPlugin plugin)
         {
             moveSpeed = plugin.Config.Bind("游戏设定", "移动速度", 2.6f, "修改玩家在大地图的移动速度 如果太快可能会穿模"); 
-			moveSpeed.SettingChanged += (o, e) =>
-			{
-				if (moveSpeed.Value > 0f)
-					Game.EntityManager.GetComponent<PlayerStateMachine>(GameConfig.Player).forwardRate = moveSpeed.Value;
-			};
 		}
 
-        public void OnUpdate()
+
+        //修改移动速度
+        [HarmonyPrefix, HarmonyPatch(typeof(Move), "FixedUpdate")]
+        public static bool FixedUpdatePatch_changeMoveSpeed(ref Move __instance)
+        {
+            Traverse.Create(__instance).Field("forwardRate").SetValue(moveSpeed.Value);
+            return true;
+        }
+
+            public void OnUpdate()
         {
 
         }

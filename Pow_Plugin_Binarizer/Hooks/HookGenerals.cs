@@ -12,6 +12,8 @@ using Heluo.Battle;
 using Heluo.Components;
 using Heluo.Controller;
 using Heluo.Utility;
+using Heluo.FSM.Main;
+using Heluo.UI;
 
 namespace PathOfWuxia
 {
@@ -41,6 +43,8 @@ namespace PathOfWuxia
         static ConfigEntry<bool> cameraFree;
         static ConfigEntry<bool> cameraFree_Battle;
 
+        public static bool customTimeScale = false;
+
         public IEnumerable<Type> GetRegisterTypes()
         {
             return new Type[] { GetType() };
@@ -64,7 +68,16 @@ namespace PathOfWuxia
         {
             if (Input.GetKeyDown(speedKey.Value))
             {
-                Time.timeScale = Time.timeScale == 1.0f ? Math.Max(0.1f, speedValue.Value) : 1.0f;
+                if(customTimeScale)
+                {
+                    Time.timeScale /= speedValue.Value;
+                    customTimeScale = false;
+                }
+                else
+                {
+                    Time.timeScale *= speedValue.Value;
+                    customTimeScale = true;
+                }
             }
 
             if (Input.GetKeyDown(changeAnim.Value) && Game.BattleStateMachine != null)
@@ -100,6 +113,32 @@ namespace PathOfWuxia
             if (Game.GameData.GameLevel != difficulty.Value)
                 difficulty.Value = Game.GameData.GameLevel;
         }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(InCinematic), "OnDisable")]
+        public static void InCinematic_OnDisablePatch_changeTimeScale(ref InCinematic __instance)
+        {
+            Time.timeScale *= speedValue.Value;
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(UIElective), "SetIsViewMode")]
+        public static void UIElective_SetIsViewModePatch_changeTimeScale(ref UIElective __instance)
+        {
+            Time.timeScale *= speedValue.Value;
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(UIFastMovie), "OnClick")]
+        public static void UIFastMovie_OnClickPatch_changeTimeScale(ref UIFastMovie __instance)
+        {
+            Time.timeScale *= speedValue.Value;
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(UIFastMovie), "ResetAll")]
+        public static void UIFastMovie_ResetAllPatch_changeTimeScale(ref UIFastMovie __instance)
+        {
+            Time.timeScale *= speedValue.Value;
+        }
+
+
 
         static void OnGameLevelChange(object o, EventArgs e)
         {
