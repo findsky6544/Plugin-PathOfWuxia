@@ -13,6 +13,7 @@ using Heluo.FSM;
 using Heluo.FSM.Battle;
 using UnityEngine;
 using UnityEngine.UI;
+using Heluo.Global;
 
 namespace PathOfWuxia
 {
@@ -102,20 +103,20 @@ namespace PathOfWuxia
                 {
                     Game.MusicPlayer.Current_Volume = 1f;
                 });
-
-                WGAbilityInfo abilityInfo = attr_list.abilityInfo;
-                abilityInfo.gameObject.SetActive(false);//隐藏无用的buff提示
             }
         }
 
-        //隐藏无用的buff提示
+        //不在战斗中则隐藏无用的buff效果提示
         [HarmonyPostfix, HarmonyPatch(typeof(UIAttributeList), "OnElementHover")]
         public static void OnElementHoverPatch_nonbattleChangeElement(ref UIAttributeList __instance)
         {
             Heluo.Logger.LogError("OnElementHoverPatch_nonbattleChangeElement start");
 
-            WGAbilityInfo abilityInfo = __instance.abilityInfo;
-            abilityInfo.gameObject.SetActive(false);
+            if(!GameGlobal.IsInBattle)
+            {
+                WGAbilityInfo abilityInfo = __instance.abilityInfo;
+                abilityInfo.gameObject.SetActive(false);
+            }
             Heluo.Logger.LogError("OnElementHoverPatch_nonbattleChangeElement end");
         }
 

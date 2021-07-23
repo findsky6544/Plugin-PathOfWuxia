@@ -43,7 +43,7 @@ namespace PathOfWuxia
         static ConfigEntry<bool> cameraFree;
         static ConfigEntry<bool> cameraFree_Battle;
 
-        public static bool customTimeScale = false;
+        public static float customTimeScale = 1f;
 
         public IEnumerable<Type> GetRegisterTypes()
         {
@@ -68,15 +68,15 @@ namespace PathOfWuxia
         {
             if (Input.GetKeyDown(speedKey.Value))
             {
-                if(customTimeScale)
+                if(customTimeScale == 1f)
                 {
-                    Time.timeScale /= speedValue.Value;
-                    customTimeScale = false;
+                    customTimeScale = Math.Max(0.1f, speedValue.Value);
+                    Time.timeScale *= customTimeScale;
                 }
                 else
                 {
-                    Time.timeScale *= speedValue.Value;
-                    customTimeScale = true;
+                    Time.timeScale /= customTimeScale;
+                    customTimeScale = 1f;
                 }
             }
 
@@ -117,25 +117,25 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(InCinematic), "OnDisable")]
         public static void InCinematic_OnDisablePatch_changeTimeScale(ref InCinematic __instance)
         {
-            Time.timeScale *= speedValue.Value;
+                Time.timeScale *= customTimeScale;
         }
 
         [HarmonyPostfix, HarmonyPatch(typeof(UIElective), "SetIsViewMode")]
         public static void UIElective_SetIsViewModePatch_changeTimeScale(ref UIElective __instance)
         {
-            Time.timeScale *= speedValue.Value;
+                Time.timeScale *= customTimeScale;
         }
 
         [HarmonyPostfix, HarmonyPatch(typeof(UIFastMovie), "OnClick")]
         public static void UIFastMovie_OnClickPatch_changeTimeScale(ref UIFastMovie __instance)
         {
-            Time.timeScale *= speedValue.Value;
+                Time.timeScale *= customTimeScale;
         }
 
         [HarmonyPostfix, HarmonyPatch(typeof(UIFastMovie), "ResetAll")]
         public static void UIFastMovie_ResetAllPatch_changeTimeScale(ref UIFastMovie __instance)
         {
-            Time.timeScale *= speedValue.Value;
+                Time.timeScale *= customTimeScale;
         }
 
 

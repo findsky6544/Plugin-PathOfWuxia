@@ -481,6 +481,7 @@ namespace PathOfWuxia
 				view.HideBlur();
 				Game.SaveAsync(filename, new Action(__instance.OnSaveFinish));
 				view.ShowBlur();
+				Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination end");
 				return false;
 			}
 			Game.UI.HideTeamMemeberUI();
@@ -496,6 +497,7 @@ namespace PathOfWuxia
 				}
 				Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "save"), null);
 				view.Hide();
+				Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination end");
 				return false;
 			}
 			//读自动存档
@@ -508,9 +510,9 @@ namespace PathOfWuxia
 				}
 				Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "autosave"), null);
 				view.Hide();
+				Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination end");
 				return false;
 			}
-			Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination end");
 		}
 
 		//存档分页-修复开启分页时首页的继续游戏按钮消失问题

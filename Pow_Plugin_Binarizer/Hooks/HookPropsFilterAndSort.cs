@@ -47,11 +47,12 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(CtrlGiftInvertoryWindow), "SetSortInventory", new Type[] { typeof(InventoryWindowInfo) })]
         public static bool GiftInvertoryPatch_propsFilterAndSort(ref CtrlGiftInvertoryWindow __instance, ref InventoryWindowInfo inventoryWindowInfo)
         {
-            List<PropsInfo> sort = inventoryWindowInfo.Sort;
-            CharacterMapping mapping = inventoryWindowInfo.Mapping;
 
             if (giftFilter.Value)
             {
+                List<PropsInfo> sort = inventoryWindowInfo.Sort;
+                CharacterMapping mapping = inventoryWindowInfo.Mapping;
+
                 List<PropsInfo> canAddExpGiftlist = new List<PropsInfo>();
                 for (int index = 0; index < sort.Count; index++)
                 {
@@ -80,9 +81,10 @@ namespace PathOfWuxia
                 sort.Clear();
                 sort.AddRange(canAddExpGiftlist.ToArray());
                 canAddExpGiftlist.Clear();
+
+                GiftSortByCategory(sort, mapping.Id);
+                GiftSortByNumber(sort, mapping.Id);
             }
-            GiftSortByCategory(sort, mapping.Id);
-            GiftSortByNumber(sort, mapping.Id);
             return true;
         }
 
