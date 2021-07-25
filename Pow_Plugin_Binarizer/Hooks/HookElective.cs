@@ -54,27 +54,29 @@ namespace PathOfWuxia
 
 			onCompletedFinal = _onCompleted;
 			Heluo.Logger.LogError("onCompleted:" + onCompletedFinal);
+			ElectiveManager electiveManager = __instance;
 
 			UIElective uielective = Game.UI.Open<UIElective>();
 
 			//提交选课后调用的继续对话
 			uielective.SetContinuationTalk(delegate
 			{
-				createContinuationTalk(0);
+				List<string> electiveIdList = electiveManager.Id.Split('_').ToList();
+				createContinuationTalk(electiveIdList, 0);
 			});
 		}
 
 		public static UpdaterManager.Updater updater = Game.Updater.Frame;
 		//这两段是模仿Scheduler写的，主要应该是updater.RunOnce，让对话按顺序依次执行，否则会卡死
 		//选了哪几门课，就会有哪些老师出来讲两句
-		public static void createContinuationTalk(int index)
+		public static void createContinuationTalk(List<string> electiveIdList, int index)
 		{
 			TalkAction talkAction = new TalkAction();
-			talkAction.talkId = selectElectiveInfos[index].Elective.Id.Replace("ec", "t") + "00_000";
-			Heluo.Logger.LogError(selectElectiveInfos[index].Elective.Name + selectElectiveInfos[index].Elective.Remark);
-			if (index < selectElectiveInfos.Count - 1)
+			talkAction.talkId = electiveIdList[index].Replace("ec", "t") + "00_000";
+			Heluo.Logger.LogError("electiveId:" + electiveIdList[index]);
+			if (index < electiveIdList.Count - 1)
 			{
-				talkAction.onCompleted = (Action)Delegate.Combine(talkAction.onCompleted, (Action)delegate { updater.RunOnce(delegate { createContinuationTalk(index + 1); }); });
+				talkAction.onCompleted = (Action)Delegate.Combine(talkAction.onCompleted, (Action)delegate { updater.RunOnce(delegate { createContinuationTalk(electiveIdList, index + 1); }); });
 
 			}
 			else
@@ -227,11 +229,12 @@ namespace PathOfWuxia
 		[HarmonyPrefix, HarmonyPatch(typeof(CtrlElective), "ConfirmElective")]
 		public static bool ConfirmElectivePatch_multiCourseSelect(ref CtrlElective __instance)
 		{
-			//先排个序
-			ElectiveInfosSort();
 
 			if (multiCourseSelect.Value)
 			{
+				//先排个序
+				ElectiveInfosSort();
+
 				string ids = "";
 				for (int i = 0; i < selectElectiveInfos.Count; i++)
 				{
