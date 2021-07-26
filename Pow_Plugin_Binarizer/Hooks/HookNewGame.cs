@@ -170,22 +170,18 @@ namespace PathOfWuxia
                     playerExteriorData.Protrait/* = exterior.Protrait*/ = newGamePortraitOverride.Value.IsNullOrEmpty() ? characterExterior.Protrait : newGamePortraitOverride.Value;
                 }
             }
-            Heluo.Logger.LogError("看一下模型是啥："+ playerExteriorData.Model);
 
         }
-        [HarmonyPostfix, HarmonyPatch(typeof(CtrlRegistration), "InitialRewards")]
-        public static void StartPatch_SetPlayerModel()
+        //EnterGame之后会直接开始游戏，创建playerEntity，之后再执行InitialRewards。在InitialRewards后再替换模型就晚了一些
+        [HarmonyPrefix, HarmonyPatch(typeof(UIRegistration), "EnterGame")]
+        public static bool StartPatch_SetPlayerModel()
         {
             ReplacePlayerExteriorData();
+            return true;
         }
         [HarmonyPostfix, HarmonyPatch(typeof(ChangeCharacterProtraitAndModel), "GetValue")]
         public static void StartPatch_SetPlayerModel2(ChangeCharacterProtraitAndModel __instance, bool __result)
         {
-            Heluo.Logger.LogError("StartPatch_SetPlayerModel2进来没有");
-
-            Heluo.Logger.LogError("id:"+ __instance.id);
-            Heluo.Logger.LogError("isChangeModel:" + __instance.isChangeModel);
-            Heluo.Logger.LogError("model:" + __instance.model);
             if (__instance.id == GameConfig.Player)
             {
                 ReplacePlayerExteriorData();
@@ -198,12 +194,6 @@ namespace PathOfWuxia
             {
                 ReplacePlayerExteriorData();
             }
-        }
-        [HarmonyPrefix, HarmonyPatch(typeof(PlayerTemplate), "BuildEntity")]
-        public static bool BuildEntityPatch_SetPlayerModel4()
-        {
-            ReplacePlayerExteriorData();
-            return true;
         }
 
         // 5 防止人物模型动作出现问题
