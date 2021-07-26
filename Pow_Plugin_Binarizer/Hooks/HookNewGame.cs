@@ -11,6 +11,7 @@ using Heluo.Data;
 using Heluo.Flow;
 using Heluo.Utility;
 using System.Reflection.Emit;
+using Heluo.Features;
 
 namespace PathOfWuxia
 {
@@ -161,14 +162,16 @@ namespace PathOfWuxia
                 CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGameExteriorId.Value);
                 if (characterExterior != null)
                 {
-                    CharacterExterior exterior = Game.Data.Get<CharacterExterior>(playerExteriorData.Id);
-                    playerExteriorData.Id = exterior.Id = characterExterior.Id;
-                    playerExteriorData.Model = exterior.Model = characterExterior.Model;
-                    playerExteriorData.Gender = exterior.Gender = characterExterior.Gender;
-                    playerExteriorData.Size = exterior.Size = characterExterior.Size;
-                    playerExteriorData.Protrait = exterior.Protrait = newGamePortraitOverride.Value.IsNullOrEmpty() ? characterExterior.Protrait : newGamePortraitOverride.Value;
+                    //CharacterExterior exterior = Game.Data.Get<CharacterExterior>(playerExteriorData.Id);
+                    playerExteriorData.Id/* = exterior.Id*/ = characterExterior.Id;
+                    playerExteriorData.Model/* = exterior.Model*/ = characterExterior.Model;
+                    playerExteriorData.Gender/* = exterior.Gender*/ = characterExterior.Gender;
+                    playerExteriorData.Size/* = exterior.Size*/ = characterExterior.Size;
+                    playerExteriorData.Protrait/* = exterior.Protrait*/ = newGamePortraitOverride.Value.IsNullOrEmpty() ? characterExterior.Protrait : newGamePortraitOverride.Value;
                 }
             }
+            Heluo.Logger.LogError("看一下模型是啥："+ playerExteriorData.Model);
+
         }
         [HarmonyPostfix, HarmonyPatch(typeof(CtrlRegistration), "InitialRewards")]
         public static void StartPatch_SetPlayerModel()
@@ -178,7 +181,12 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(ChangeCharacterProtraitAndModel), "GetValue")]
         public static void StartPatch_SetPlayerModel2(ChangeCharacterProtraitAndModel __instance, bool __result)
         {
-            if (__instance.id == GameConfig.Player && __result)
+            Heluo.Logger.LogError("StartPatch_SetPlayerModel2进来没有");
+
+            Heluo.Logger.LogError("id:"+ __instance.id);
+            Heluo.Logger.LogError("isChangeModel:" + __instance.isChangeModel);
+            Heluo.Logger.LogError("model:" + __instance.model);
+            if (__instance.id == GameConfig.Player)
             {
                 ReplacePlayerExteriorData();
             }
@@ -190,6 +198,12 @@ namespace PathOfWuxia
             {
                 ReplacePlayerExteriorData();
             }
+        }
+        [HarmonyPrefix, HarmonyPatch(typeof(PlayerTemplate), "BuildEntity")]
+        public static bool BuildEntityPatch_SetPlayerModel4()
+        {
+            ReplacePlayerExteriorData();
+            return true;
         }
 
         // 5 防止人物模型动作出现问题
