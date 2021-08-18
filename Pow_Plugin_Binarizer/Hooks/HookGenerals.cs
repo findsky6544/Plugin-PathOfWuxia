@@ -259,7 +259,7 @@ namespace PathOfWuxia
                     var param = Traverse.Create(__instance).Field("param").GetValue<GameCamera>();
                     param.x += dx * param.HorizontalSpeed;
                     param.y -= dy * param.VerticalSpeed;
-                    param.yMinLimit = 0;
+                    param.yMinLimit = -90;
                     param.yMaxLimit = 90;
                     param.y = Traverse.Create(__instance).Method("ClampAngle", new object[] { param.y, param.yMinLimit, param.yMaxLimit }).GetValue<float>();
                 }

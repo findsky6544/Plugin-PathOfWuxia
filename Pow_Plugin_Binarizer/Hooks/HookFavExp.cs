@@ -69,6 +69,10 @@ namespace PathOfWuxia
             if (!showFavExp.Value || __instance.PropsType != PropsType.Present)
                 return;
             List<string> strFav = new List<string>();
+            if (__instance.PropsEffect == null)
+            {
+                return;
+            }
             foreach (var propsEffect in __instance.PropsEffect)
             {
                 if (propsEffect is PropsFavorable pf)
