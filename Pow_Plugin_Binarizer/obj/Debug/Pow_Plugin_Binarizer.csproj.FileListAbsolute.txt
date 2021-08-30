@@ -1,0 +1,10 @@
+G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll.config
+G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll
+G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.pdb
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_Binarizer.csproj.CoreCompileInputs.cache
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.dll
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.pdb
+F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll.config
+F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll
+F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.pdb
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_Binarizer.csproj.AssemblyReference.cache

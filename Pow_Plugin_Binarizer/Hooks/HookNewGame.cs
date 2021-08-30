@@ -157,9 +157,9 @@ namespace PathOfWuxia
         public static void ReplacePlayerExteriorData()
         {
             CharacterExteriorData playerExteriorData = Game.GameData.Exterior[GameConfig.Player];
-            if (playerExteriorData != null && newGameExteriorId.Value != string.Empty)
+            if (playerExteriorData != null && newGameExteriorId.Value.Trim() != string.Empty)
             {
-                CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGameExteriorId.Value);
+                CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGameExteriorId.Value.Trim());
                 if (characterExterior != null)
                 {
                     //CharacterExterior exterior = Game.Data.Get<CharacterExterior>(playerExteriorData.Id);
@@ -167,10 +167,14 @@ namespace PathOfWuxia
                     playerExteriorData.Model/* = exterior.Model*/ = characterExterior.Model;
                     playerExteriorData.Gender/* = exterior.Gender*/ = characterExterior.Gender;
                     playerExteriorData.Size/* = exterior.Size*/ = characterExterior.Size;
-                    playerExteriorData.Protrait/* = exterior.Protrait*/ = newGamePortraitOverride.Value.IsNullOrEmpty() ? characterExterior.Protrait : newGamePortraitOverride.Value;
+                    playerExteriorData.Protrait/* = exterior.Protrait*/ =  characterExterior.Protrait;
                 }
             }
-
+            if (!newGamePortraitOverride.Value.Trim().IsNullOrEmpty())
+            {
+                CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGamePortraitOverride.Value.Trim());
+                playerExteriorData.Protrait/* = exterior.Protrait*/ = characterExterior.Protrait;
+            }
         }
         //EnterGame之后会直接开始游戏，创建playerEntity，之后再执行InitialRewards。在InitialRewards后再替换模型就晚了一些
         [HarmonyPrefix, HarmonyPatch(typeof(UIRegistration), "EnterGame")]
