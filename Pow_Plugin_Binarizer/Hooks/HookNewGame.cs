@@ -156,24 +156,28 @@ namespace PathOfWuxia
         // 4 头像模型替换
         public static void ReplacePlayerExteriorData()
         {
-            CharacterExteriorData playerExteriorData = Game.GameData.Exterior[GameConfig.Player];
-            if (playerExteriorData != null && newGameExteriorId.Value.Trim() != string.Empty)
+            string[] characters = new string[] { GameConfig.Player , "in0196", "in0197", "in0101", "in0115" };
+            for(int i = 0;i < characters.Length; i++)
             {
-                CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGameExteriorId.Value.Trim());
-                if (characterExterior != null)
+                CharacterExteriorData playerExteriorData = Game.GameData.Exterior[characters[i]];
+                if (playerExteriorData != null && newGameExteriorId.Value.Trim() != string.Empty)
                 {
-                    //CharacterExterior exterior = Game.Data.Get<CharacterExterior>(playerExteriorData.Id);
-                    playerExteriorData.Id/* = exterior.Id*/ = characterExterior.Id;
-                    playerExteriorData.Model/* = exterior.Model*/ = characterExterior.Model;
-                    playerExteriorData.Gender/* = exterior.Gender*/ = characterExterior.Gender;
-                    playerExteriorData.Size/* = exterior.Size*/ = characterExterior.Size;
-                    playerExteriorData.Protrait/* = exterior.Protrait*/ =  characterExterior.Protrait;
+                    CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGameExteriorId.Value.Trim());
+                    if (characterExterior != null)
+                    {
+                        //CharacterExterior exterior = Game.Data.Get<CharacterExterior>(playerExteriorData.Id);
+                        playerExteriorData.Id/* = exterior.Id*/ = characterExterior.Id;
+                        playerExteriorData.Model/* = exterior.Model*/ = characterExterior.Model;
+                        playerExteriorData.Gender/* = exterior.Gender*/ = characterExterior.Gender;
+                        playerExteriorData.Size/* = exterior.Size*/ = characterExterior.Size;
+                        playerExteriorData.Protrait/* = exterior.Protrait*/ = characterExterior.Protrait;
+                    }
                 }
-            }
-            if (!newGamePortraitOverride.Value.Trim().IsNullOrEmpty())
-            {
-                CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGamePortraitOverride.Value.Trim());
-                playerExteriorData.Protrait/* = exterior.Protrait*/ = characterExterior.Protrait;
+                if (!newGamePortraitOverride.Value.Trim().IsNullOrEmpty())
+                {
+                    CharacterExterior characterExterior = Game.Data.Get<CharacterExterior>(newGamePortraitOverride.Value.Trim());
+                    playerExteriorData.Protrait/* = exterior.Protrait*/ = characterExterior.Protrait;
+                }
             }
         }
         //EnterGame之后会直接开始游戏，创建playerEntity，之后再执行InitialRewards。在InitialRewards后再替换模型就晚了一些
