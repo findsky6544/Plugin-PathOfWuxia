@@ -74,8 +74,8 @@ namespace PathOfWuxia
                 characterInfoData = Game.GameData.Character[mapping.InfoId];
                 clickSkill = characterInfoData.GetSkill(characterInfoData.SpecialSkill);
 
-                //不是切换功体技能
-                if (clickSkill == null || clickSkill.Item.DamageType != DamageType.ChangeElement)
+                //不是切换功体或召唤技能
+                if (clickSkill == null || (clickSkill.Item.DamageType != DamageType.ChangeElement && clickSkill.Item.DamageType != DamageType.Summon))
                 {
                     return;
                 }
@@ -86,23 +86,66 @@ namespace PathOfWuxia
                     Game.UI.AddMessage(text2, UIPromptMessage.PromptType.Normal);
                     return;
                 }
-                Game.MusicPlayer.Current_Volume = 0.5f;
 
-                //从uibattle处获得五行盘ui
-                UIBattle uiBattle = Game.UI.Open<UIBattle>();
-                WgBattleRound battle_round = uiBattle.battle_round;
-                battle_round.gameObject.SetActive(false);//隐藏右上角的回合数
-                UIAttributeList attr_list = Traverse.Create(uiBattle).Field("attr_list").GetValue<UIAttributeList>();
-
-                //图层设置为最前，否则会被挡住
-                Game.UI.SetParent(attr_list.transform, UIForm.Depth.Front);
-                attr_list.transform.SetAsLastSibling();
-
-                attr_list.Show();
-                attr_list.SetOriginElement((int)characterInfoData.Element, new Action<int>(OnElementSelect), delegate
+                //切换功体
+                if(clickSkill.Item.DamageType == DamageType.ChangeElement)
                 {
-                    Game.MusicPlayer.Current_Volume = 1f;
-                });
+                    Game.MusicPlayer.Current_Volume = 0.5f;
+
+                    //从uibattle处获得五行盘ui
+                    UIBattle uiBattle = Game.UI.Open<UIBattle>();
+                    WgBattleRound battle_round = uiBattle.battle_round;
+                    battle_round.gameObject.SetActive(false);//隐藏右上角的回合数
+                    UIAttributeList attr_list = Traverse.Create(uiBattle).Field("attr_list").GetValue<UIAttributeList>();
+
+                    //图层设置为最前，否则会被挡住
+                    Game.UI.SetParent(attr_list.transform, UIForm.Depth.Front);
+                    attr_list.transform.SetAsLastSibling();
+
+                    attr_list.Show();
+                    attr_list.SetOriginElement((int)characterInfoData.Element, new Action<int>(OnElementSelect), delegate
+                    {
+                        Game.MusicPlayer.Current_Volume = 1f;
+                    });
+                }
+                //召唤小熊猫，开启乖乖技能列表
+                else if(nonbattleUseHealSkill.Value && clickSkill.Item.DamageType == DamageType.Summon)
+                {
+                    CharacterInfoData characterInfoData = Game.GameData.Character["in91001"];
+                    CharacterSkillData skill = characterInfoData.Skill;
+                    Props equip = characterInfoData.Equip.GetEquip(EquipType.Weapon);
+                    if (equip == null)
+                    {
+                        return;
+                    }
+                    List<SkillData> list = new List<SkillData>();
+                    PropsCategory propsCategory = equip.PropsCategory;
+                    foreach (string key in skill.Keys)
+                    {
+                        SkillData skillData = skill[key];
+                        if (skillData.Item == null)
+                        {
+                            Debug.LogError("Skill表中找不到" + skillData.Id + "的文本");
+                        }
+                        else if (!(skillData.Item.Id == characterInfoData.SpecialSkill))
+                        {
+                            list.Add(skillData);
+                        }
+                    }
+                    if (list.Count > 0)
+                    {
+                        MartialArtsWindowInfo martialArtsWindowInfo = new MartialArtsWindowInfo();
+                        martialArtsWindowInfo.Mapping = new CharacterMapping();
+                        Npc npc = Game.Data.Get<Npc>("in91001");
+                        martialArtsWindowInfo.Mapping.Id = "in91001";
+                        martialArtsWindowInfo.Mapping.InfoId = npc.CharacterInfoId;
+                        martialArtsWindowInfo.Mapping.ExteriorId = npc.ExteriorId;
+                        martialArtsWindowInfo.Sort = list;
+                        martialArtsWindowInfo.SkillColumn = (CtrlMartialArts.UISkillColumn)5;
+                        Game.UI.Open<UIMartialArtsWindow>().OpenWindow(martialArtsWindowInfo, null);
+                        return;
+                    }
+                }
             }
         }
 
@@ -145,7 +188,7 @@ namespace PathOfWuxia
             Heluo.Logger.LogError("UpdateIntroductionPatch_nonbattleUseHealSkill start");
 
 
-            if (nonbattleUseHealSkill.Value)
+            if (nonbattleUseHealSkill.Value && index < 4)
             {
                 //获得当前鼠标指向技能
                 CharacterMapping mapping = Traverse.Create(__instance).Field("mapping").GetValue<CharacterMapping>();
@@ -198,6 +241,7 @@ namespace PathOfWuxia
         public static void showUITeamMember(CharacterInfoData source,SkillData selectSkill)
         {
 
+            Heluo.Logger.LogError("showUITeamMember start");
             //先销毁原UI
             if (uiTeamMember != null)
             {
@@ -229,8 +273,15 @@ namespace PathOfWuxia
                 }
                 //}
 
-                //如果当前角色不在队伍中则不能用恢复技能，防止远程治疗
-                if (!list.Contains(source))
+
+                Heluo.Logger.LogError(source.Id);
+                Heluo.Logger.LogError(list[0].Id);
+                Heluo.Logger.LogError(list[1].Id);
+                Heluo.Logger.LogError(list[2].Id);
+                Heluo.Logger.LogError(Game.GameData.Character["in0103"].Id);
+                Heluo.Logger.LogError(list.Contains(Game.GameData.Character["in0103"]));
+                //如果当前角色不在队伍中则不能用恢复技能，防止远程治疗。如果是乖乖的回血技能则看锺若昕是否在队伍中
+                if (!list.Contains(source) && (source.Id == "in91001" && !list.Contains(Game.GameData.Character["in0103"])))
                 {
                     return;
                 }
@@ -260,6 +311,7 @@ namespace PathOfWuxia
 
                 }
             }
+            Heluo.Logger.LogError("showUITeamMember end");
         }
 
         //关闭技能选择页面时销毁左侧队友UI

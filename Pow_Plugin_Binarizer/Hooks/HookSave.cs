@@ -27,6 +27,7 @@ namespace PathOfWuxia
 		private static ConfigEntry<bool> jumpToLatestSave;
 		private static ConfigEntry<bool> pagination;
 		private static ConfigEntry<int> countPerPage;
+		private static ConfigEntry<bool> saveInBattle;
 		private static int currentPage = 1;
 		private static int totalPage = 1;
 
@@ -42,6 +43,7 @@ namespace PathOfWuxia
 			jumpToLatestSave = plugin.Config.Bind("存档设定", "自动跳转到最新存档位置", false, "在存档数量太多的时候会有点作用");
 			pagination = plugin.Config.Bind("存档设定", "存档分页", false, "在存档数量太多的时候会有点作用");
 			countPerPage = plugin.Config.Bind("存档设定", "存档分页-每页存档数", 20, "每页多少条存档，存档分页启用后才有用");
+			saveInBattle = plugin.Config.Bind("存档设定", "战斗中存档", false, "可在战斗中存档");
 		}
 
 		public void OnUpdate()
