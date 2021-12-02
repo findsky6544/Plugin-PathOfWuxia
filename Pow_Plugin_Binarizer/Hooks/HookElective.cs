@@ -327,6 +327,8 @@ namespace PathOfWuxia
 					{
 						if(currentElectiveIndex < selectElectiveString.Count)//还有下一门课
 						{
+							Game.GameData.Character["Player"].HP += 9999;
+							Game.GameData.Character["Player"].MP += 9999;
 							createExecuteCinematic(currentElectiveIndex++, currentElectiveNumber);
 							return false;
 						}

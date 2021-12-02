@@ -149,6 +149,24 @@ namespace PathOfWuxia
             }
         }
 
+        //乖乖不能通过技能窗口改变技能，防止点击技能后消失
+        [HarmonyPrefix, HarmonyPatch(typeof(CtrlMartialArtsWindow), "ChangeMartialArts")]
+        public static bool ChangeMartialArtsPatch_GuaiguaiChangeCancel(ref CtrlMartialArtsWindow __instance)
+        {
+            Heluo.Logger.LogError("ChangeMartialArtsPatch_GuaiguaiChangeCancel start");
+
+
+            CharacterMapping mapping = Traverse.Create(__instance).Field("mapping").GetValue<CharacterMapping>();
+            bool isGuaiguai = false;
+            if(mapping.Id == "in91001")
+            {
+                isGuaiguai = true;
+            }
+
+            Heluo.Logger.LogError("ChangeMartialArtsPatch_GuaiguaiChangeCancel end");
+            return !isGuaiguai;
+        }
+
         //不在战斗中则隐藏无用的buff效果提示
         [HarmonyPostfix, HarmonyPatch(typeof(UIAttributeList), "OnElementHover")]
         public static void OnElementHoverPatch_nonbattleChangeElement(ref UIAttributeList __instance)
@@ -273,13 +291,6 @@ namespace PathOfWuxia
                 }
                 //}
 
-
-                Heluo.Logger.LogError(source.Id);
-                Heluo.Logger.LogError(list[0].Id);
-                Heluo.Logger.LogError(list[1].Id);
-                Heluo.Logger.LogError(list[2].Id);
-                Heluo.Logger.LogError(Game.GameData.Character["in0103"].Id);
-                Heluo.Logger.LogError(list.Contains(Game.GameData.Character["in0103"]));
                 //如果当前角色不在队伍中则不能用恢复技能，防止远程治疗。如果是乖乖的回血技能则看锺若昕是否在队伍中
                 if (!list.Contains(source) && (source.Id == "in91001" && !list.Contains(Game.GameData.Character["in0103"])))
                 {
