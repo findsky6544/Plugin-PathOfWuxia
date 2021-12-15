@@ -22,19 +22,12 @@ namespace PathOfWuxia
         {
             return new Type[] { GetType() };
         }
-        enum genderMode
-        {
-            男,
-            女,
-            随建模
-        }
         public void OnRegister(BaseUnityPlugin plugin)
         {
             newGameAttributePoint = plugin.Config.Bind("开局设定", "增加属性点", 0, "设置开局增加多少属性点");
             newGameTraitPoint = plugin.Config.Bind("开局设定", "增加特性点", 0, "设置开局增加多少特性点");
             newGameExteriorId = plugin.Config.Bind("角色设定", "主角建模", string.Empty, "设定主角建模数据源，请通过CharacterExterior表格查找，使用第一列ID");
             newGamePortraitOverride = plugin.Config.Bind("角色设定", "主角头像", string.Empty, "若已设置建模，则可为空，使用建模的头像，否则用此头像代替");
-            newGameGenderOverride = plugin.Config.Bind("角色设定", "主角性别", genderMode.随建模, "可修改主角的性别（如果和建模、头像不符时可能卡死，慎用）");
             newGameSurNameOverride = plugin.Config.Bind("角色设定", "主角姓", string.Empty, "可修改主角的姓");
             newGameNameOverride = plugin.Config.Bind("角色设定", "主角名", string.Empty, "可修改主角的名");
 
@@ -45,10 +38,6 @@ namespace PathOfWuxia
                 ReplacePlayerExteriorData();
             };
             newGamePortraitOverride.SettingChanged += (o, e) =>
-            {
-                ReplacePlayerExteriorData();
-            };
-            newGameGenderOverride.SettingChanged += (o, e) =>
             {
                 ReplacePlayerExteriorData();
             };
@@ -72,7 +61,6 @@ namespace PathOfWuxia
         static ConfigEntry<string> newGamePortraitOverride;
         static ConfigEntry<string> newGameSurNameOverride;
         static ConfigEntry<string> newGameNameOverride;
-        static ConfigEntry<genderMode> newGameGenderOverride;
 
         // 1 可选多个特性
         //[HarmonyTranspiler]
@@ -214,11 +202,6 @@ namespace PathOfWuxia
                     playerExteriorData.Protrait = characterExterior.Protrait;
                 }
 
-                if(newGameGenderOverride.Value != genderMode.随建模)
-                {
-                    playerExteriorData.Gender = (Gender)newGameGenderOverride.Value;
-                }
-
                 if (!newGameSurNameOverride.Value.Trim().IsNullOrEmpty())
                 {
                     playerExteriorData.SurName = newGameSurNameOverride.Value.Trim();
@@ -239,7 +222,6 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(PlayerTemplate), "BuildEntity")]
         public static bool PlayerTemplatePatch_BuildEntity()
         {
-            Heluo.Logger.LogError("是这里的问题吗？");
             ReplacePlayerExteriorData();
             return true;
         }
