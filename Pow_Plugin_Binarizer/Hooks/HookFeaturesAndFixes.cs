@@ -24,7 +24,7 @@ namespace PathOfWuxia
         {
             elementPos = plugin.Config.Bind("界面改进", "五行位置", new Vector3(-80, 15, 0), "调整五行位置");
             elementTextPos = plugin.Config.Bind("界面改进", "名字位置", new Vector3(8, 18, 0), "调整名字位置");
-            elementKey = plugin.Config.Bind("界面改进", "五行显示热键", KeyCode.F3, "战斗时显示五行。调整位置后需开关一次生效");
+            elementKey = plugin.Config.Bind("界面改进", "五行与名字显示热键", KeyCode.F3, "战斗时显示五行与名字。调整位置后需开关一次生效");
             showThreshold = plugin.Config.Bind("界面改进", "显示练满所需点数", true, "是否提示n次练满所需相应数值");
         }
 
@@ -43,7 +43,7 @@ namespace PathOfWuxia
         static ConfigEntry<Vector3> elementPos;
         static ConfigEntry<Vector3> elementTextPos;
         static ConfigEntry<KeyCode> elementKey;
-        static bool elementShow = true;
+        static bool elementShow = false;
         static ConfigEntry<bool> showThreshold;
 
         // 1 吃药立即显示属性提升

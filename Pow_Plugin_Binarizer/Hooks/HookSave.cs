@@ -394,13 +394,13 @@ namespace PathOfWuxia
 		//创建页码按钮
 		public static GameObject createPageButton(string name, string value)
 		{
-			Heluo.Logger.LogError("createPageButton start");
+			//Heluo.Logger.LogError("createPageButton start");
 			GameObject go = new GameObject(name);
 			Text text = go.AddComponent<Text>();
 			text.font = Game.Resource.Load<Font>("Assets/Font/kaiu.ttf");
 			text.text = value;
 			text.alignment = TextAnchor.MiddleCenter;
-			Heluo.Logger.LogError("createPageButton end");
+			//Heluo.Logger.LogError("createPageButton end");
 			return go;
 		}
 
@@ -446,7 +446,7 @@ namespace PathOfWuxia
 		[HarmonyPostfix, HarmonyPatch(typeof(WGSaveLoadScrollBtn), "UpdateWidget")]
 		public static void UpdateWidgetPatch_pagination(ref WGSaveLoadScrollBtn __instance,ref object[] obj)
 		{
-			Heluo.Logger.LogError("UpdateWidgetPatch_pagination start");
+			//Heluo.Logger.LogError("UpdateWidgetPatch_pagination start");
 			WGText number = Traverse.Create(__instance).Field("number").GetValue<WGText>();
 			SaveLoadScrollInfo saveLoadScrollInfo = obj[0] as SaveLoadScrollInfo;
 			int moveNumber = 0;
@@ -456,7 +456,7 @@ namespace PathOfWuxia
 
 			}
 			number.Text = ""+(int.Parse(saveLoadScrollInfo.number) + moveNumber);
-			Heluo.Logger.LogError("UpdateWidgetPatch_pagination end");
+			//Heluo.Logger.LogError("UpdateWidgetPatch_pagination end");
 		}
 
 		//存档分页-修复修复开启分页时所有存读档操作都会处理成第一页档位的问题
