@@ -33,6 +33,7 @@ namespace PathOfWuxia
         static ConfigEntry<GameLevel> difficulty;
         static ConfigEntry<ProbablyMode> probablyMode;
         static ConfigEntry<int> probablyValue;
+        static ConfigEntry<bool> lockTime;
         enum CameraFocusMode
         {
             Attacker,
@@ -60,6 +61,7 @@ namespace PathOfWuxia
             probablyValue = plugin.Config.Bind("游戏设定", "随机事件值", 50, "SmallChance：多少被界定为小概率 FixedRandomValue：1~100对应必发生/必不发生");
             changeAnim = plugin.Config.Bind("游戏设定", "切换姿势(特殊)", KeyCode.F7, "切换特化战斗姿势(随机选择)");
             changeAnimBack = plugin.Config.Bind("游戏设定", "切换姿势(还原)", KeyCode.F8, "切换回默认战斗姿势");
+            lockTime = plugin.Config.Bind("游戏设定", "锁定昼夜时间", false, "");
 
             cameraFocusMode = plugin.Config.Bind("相机设置", "战斗相机跟随方式", CameraFocusMode.Attacker, "战斗时相机如何跟随，游戏默认跟随攻击者");
             cameraFree = plugin.Config.Bind("相机设置", "场景自由视角", false, "是否开启自由视角");
@@ -280,6 +282,17 @@ namespace PathOfWuxia
                     param.distance = Traverse.Create(__instance).Method("ClampAngle", new object[] { param.distance, param.minDistance, param.maxDistance }).GetValue<float>();
                 }
             }
+        }
+
+        [HarmonyPrefix, HarmonyPatch(typeof(NurturanceLoadScenesAction), "GetValue")]
+        public static bool NurturanceLoadScenesActionPatch_GetValue(NurturanceLoadScenesAction __instance)
+        {
+            if (lockTime.Value)
+            {
+                __instance.isNextTime = false;
+                __instance.timeStage = 0;
+            }
+            return true;
         }
     }
 }
