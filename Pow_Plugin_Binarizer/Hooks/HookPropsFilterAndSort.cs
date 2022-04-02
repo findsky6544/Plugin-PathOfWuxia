@@ -193,11 +193,11 @@ namespace PathOfWuxia
             List<PropsInfo> sort = inventoryWindowInfo.Sort;
 
 
-            Debug.LogError(string.Format("CtrlBattleFormInventory, Index: {0}", 1));
+            Console.WriteLine(string.Format("CtrlBattleFormInventory, Index: {0}", 1));
             EquipSortByCategory(sort);
-            Debug.LogError(string.Format("CtrlBattleFormInventory, Index: {0}", 2));
+            Console.WriteLine(string.Format("CtrlBattleFormInventory, Index: {0}", 2));
             EquipSortByAttack(sort);
-            Debug.LogError(string.Format("CtrlBattleFormInventory, Index: {0}", 3));
+            Console.WriteLine(string.Format("CtrlBattleFormInventory, Index: {0}", 3));
             return true;
         }
 
@@ -208,11 +208,11 @@ namespace PathOfWuxia
             List<PropsInfo> sort = inventoryWindowInfo.Sort;
 
 
-            Debug.LogError(string.Format("CtrlInventoryWindow, Index: {0}", 1));
+            Console.WriteLine(string.Format("CtrlInventoryWindow, Index: {0}", 1));
             EquipSortByCategory(sort);
-            Debug.LogError(string.Format("CtrlInventoryWindow, Index: {0}", 2));
+            Console.WriteLine(string.Format("CtrlInventoryWindow, Index: {0}", 2));
             EquipSortByAttack(sort);
-            Debug.LogError(string.Format("CtrlInventoryWindow, Index: {0}", 3));
+            Console.WriteLine(string.Format("CtrlInventoryWindow, Index: {0}", 3));
             return true;
         }
 
@@ -288,30 +288,30 @@ namespace PathOfWuxia
         }
         public static int getAttack(List<PropsInfo> sort, int index)
         {
-            Debug.LogError(string.Format("getAttack, Index: {0}", 1));
+            Console.WriteLine(string.Format("getAttack, Index: {0}", 1));
             Props iItem = sort[index].Item;
-            Debug.LogError(string.Format("getAttack, iItem: {0}", iItem));
+            Console.WriteLine(string.Format("getAttack, iItem: {0}", iItem));
             int attack = 0;
             if(iItem.PropsEffect != null)
             {
                 for (int i = 0; i < iItem.PropsEffect.Count; i++)
                 {
                     PropsEffect propsEffect = iItem.PropsEffect[i];
-                    Debug.LogError(string.Format("getAttack, propsEffect: {0}", propsEffect));
+                    Console.WriteLine(string.Format("getAttack, propsEffect: {0}", propsEffect));
                     if (propsEffect is PropsBattleProperty)
                     {
                         PropsBattleProperty propsBattleProperty = propsEffect as PropsBattleProperty;
-                        Debug.LogError(string.Format("getAttack, propsBattleProperty: {0}", propsBattleProperty));
+                        Console.WriteLine(string.Format("getAttack, propsBattleProperty: {0}", propsBattleProperty));
                         if (propsBattleProperty.Property == CharacterProperty.Attack || propsBattleProperty.Property == CharacterProperty.Defense)
                         {
-                            Debug.LogError(string.Format("getAttack, propsBattleProperty.Property: {0}", propsBattleProperty.Property));
+                            Console.WriteLine(string.Format("getAttack, propsBattleProperty.Property: {0}", propsBattleProperty.Property));
                             attack = propsBattleProperty.Value;
                             break;
                         }
                     }
                 }
             }
-            Debug.LogError(string.Format("getAttack, attack: {0}", attack));
+            Console.WriteLine(string.Format("getAttack, attack: {0}", attack));
             return attack;
         }
 

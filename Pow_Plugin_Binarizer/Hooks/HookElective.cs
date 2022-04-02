@@ -53,7 +53,7 @@ namespace PathOfWuxia
 
 
 			onCompletedFinal = _onCompleted;
-			Heluo.Logger.LogError("onCompleted:" + onCompletedFinal);
+			Console.WriteLine("onCompleted:" + onCompletedFinal);
 			ElectiveManager electiveManager = __instance;
 
 			UIElective uielective = Game.UI.Open<UIElective>();
@@ -73,7 +73,7 @@ namespace PathOfWuxia
 		{
 			TalkAction talkAction = new TalkAction();
 			talkAction.talkId = electiveIdList[index].Replace("ec", "t") + "00_000";
-			Heluo.Logger.LogError("electiveId:" + electiveIdList[index]);
+			Console.WriteLine("electiveId:" + electiveIdList[index]);
 			if (index < electiveIdList.Count - 1)
 			{
 				talkAction.onCompleted = (Action)Delegate.Combine(talkAction.onCompleted, (Action)delegate { updater.RunOnce(delegate { createContinuationTalk(electiveIdList, index + 1); }); });
@@ -94,7 +94,7 @@ namespace PathOfWuxia
 		{
 			if (multiCourseSelect.Value)
 			{
-				Heluo.Logger.LogError("OnCourseBtnPressedPatch_multiCourseSelect start");
+				Console.WriteLine("OnCourseBtnPressedPatch_multiCourseSelect start");
 
 				CtrlElective controller = Traverse.Create(__instance).Field("controller").GetValue<CtrlElective>();
 
@@ -120,7 +120,7 @@ namespace PathOfWuxia
 					showSelectIcon(CurrentSelected);
 				}
 
-				Heluo.Logger.LogError("OnCourseBtnPressedPatch_multiCourseSelect end");
+				Console.WriteLine("OnCourseBtnPressedPatch_multiCourseSelect end");
 			}
 		}
 
@@ -281,7 +281,7 @@ namespace PathOfWuxia
 
 				if (__instance.Id.IsNullOrEmpty())
 				{
-					Heluo.Logger.Log("當前沒有選課, 無法執行當前選課的演出", Heluo.Logger.LogLevel.MESSAGE, "white", "ExecuteCinematic", "D:\\Work\\PathOfWuxia2018_Update\\Assets\\Scripts\\Table\\Manager\\ElectiveManager.cs", 43);
+					Console.WriteLine("當前沒有選課, 無法執行當前選課的演出", Heluo.Logger.LogLevel.MESSAGE, "white", "ExecuteCinematic", "D:\\Work\\PathOfWuxia2018_Update\\Assets\\Scripts\\Table\\Manager\\ElectiveManager.cs", 43);
 					return false;
 				}
 
@@ -292,7 +292,7 @@ namespace PathOfWuxia
 					__instance.Number = 1;
 				}
 				currentElectiveNumber = __instance.Number;
-				Heluo.Logger.LogError("__instance.Id:"+ __instance.Id);
+				Console.WriteLine("__instance.Id:"+ __instance.Id);
 				selectElectiveString = __instance.Id.Split('_').ToList();
 			//如果中途关闭功能，则只执行所选的第一个课程
 			if (!multiCourseSelect.Value)
@@ -310,7 +310,7 @@ namespace PathOfWuxia
 			RunCinematicAction runCinematicAction = new RunCinematicAction();
 			string str = selectElectiveString[index].Replace("ec", "m") + string.Format("{0:00}", number);
 			runCinematicAction.cinematicId = str + "_00";
-			Heluo.Logger.LogError("runCinematic:"+ runCinematicAction.cinematicId);
+			Console.WriteLine("runCinematic:"+ runCinematicAction.cinematicId);
 			runCinematicAction.GetValue();
 		}
 

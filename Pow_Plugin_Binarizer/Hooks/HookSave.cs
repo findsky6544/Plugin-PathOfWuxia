@@ -56,7 +56,7 @@ namespace PathOfWuxia
 		[HarmonyPrefix, HarmonyPatch(typeof(SteamPlatform), "ListSaveHeaderFile", new Type[] { typeof(GameSaveType) })]
 		public static bool ListSaveHeaderFilePatch_changeSaveCount(ref SteamPlatform __instance, ref GameSaveType Type, ref List<PathOfWuxiaSaveHeader> __result)
 		{
-			Heluo.Logger.LogError("ListSaveHeaderFilePatch_changeSaveCount start");
+			Console.WriteLine("ListSaveHeaderFilePatch_changeSaveCount start");
 			List<PathOfWuxiaSaveHeader> list = new List<PathOfWuxiaSaveHeader>();
 			string format = (Type == GameSaveType.Auto) ? "PathOfWuxia_{0:00}.autosave" : "PathOfWuxia_{0:00}.save";
 
@@ -69,8 +69,8 @@ namespace PathOfWuxia
 				endIndex = Math.Min(currentPage * countPerPage.Value,saveCount.Value);
 			}
 
-			Heluo.Logger.LogError("startIndex:"+ startIndex);
-			Heluo.Logger.LogError("endIndex:"+ endIndex);
+			Console.WriteLine("startIndex:"+ startIndex);
+			Console.WriteLine("endIndex:"+ endIndex);
 			for (int i = startIndex; i < endIndex; i++)
 			{
 				PathOfWuxiaSaveHeader pathOfWuxiaSaveHeader = null;
@@ -91,8 +91,8 @@ namespace PathOfWuxia
 			}
 
 			__result = list;
-			Heluo.Logger.LogError("list.count:" + list.Count);
-			Heluo.Logger.LogError("ListSaveHeaderFilePatch_changeSaveCount end");
+			Console.WriteLine("list.count:" + list.Count);
+			Console.WriteLine("ListSaveHeaderFilePatch_changeSaveCount end");
 			return false;
 		}
 
@@ -102,7 +102,7 @@ namespace PathOfWuxia
 		[HarmonyPrefix, HarmonyPatch(typeof(SaveAction), "AutoSave")]
 		public static bool AutoSavePatch_remindBlankSaveCount(ref SaveAction __instance)
 		{
-			Heluo.Logger.LogError("AutoSavePatch_remindBlankSaveCount start");
+			Console.WriteLine("AutoSavePatch_remindBlankSaveCount start");
 			UIAutoSave uiautoSave = Game.UI.Open<UIAutoSave>();
 			bool paginationTemp = pagination.Value;
 			pagination.Value = false;
@@ -135,7 +135,7 @@ namespace PathOfWuxia
 				string text = "空白存档数量剩余" + (saveCount.Value - num - 1) + "个，请及时扩容，否则将从头开始覆盖存档";
 				Game.UI.OpenMessageWindow(text, null, true);
 			}
-			Heluo.Logger.LogError("AutoSavePatch_remindBlankSaveCount end");
+			Console.WriteLine("AutoSavePatch_remindBlankSaveCount end");
 			return false;
 		}
 
@@ -143,7 +143,7 @@ namespace PathOfWuxia
 		[HarmonyPrefix, HarmonyPatch(typeof(InGame), "AutoSave")]
 		public static bool AutoSavePatch_remindBlankSaveCount2(ref InGame __instance)
 		{
-			Heluo.Logger.LogError("AutoSavePatch_remindBlankSaveCount2 start");
+			Console.WriteLine("AutoSavePatch_remindBlankSaveCount2 start");
 			bool paginationTemp = pagination.Value;
 			pagination.Value = false;
 			List<PathOfWuxiaSaveHeader> list = Game.Platform.ListSaveHeaderFile(GameSaveType.Auto);
@@ -175,7 +175,7 @@ namespace PathOfWuxia
 				string text = "空白存档数量剩余" + (saveCount.Value - num - 1) + "个，请及时扩容，否则将从头开始覆盖存档";
 				Game.UI.OpenMessageWindow(text, null, true);
 			}
-			Heluo.Logger.LogError("AutoSavePatch_remindBlankSaveCount2 end");
+			Console.WriteLine("AutoSavePatch_remindBlankSaveCount2 end");
 			return false;
 		}
 
@@ -183,7 +183,7 @@ namespace PathOfWuxia
 		[HarmonyPostfix, HarmonyPatch(typeof(CtrlSaveLoad), "UpdateSaveLoad")]
 		public static void UpdateSaveLoadPatch_jumpToLatestSave(ref CtrlSaveLoad __instance)
 		{
-			Heluo.Logger.LogError("UpdateSaveLoadPatch_jumpToLatestSave start");
+			Console.WriteLine("UpdateSaveLoadPatch_jumpToLatestSave start");
 			//每次进来先置1，防止中途关闭分页功能后仍然停留在后续页面
 			currentPage = 1;
 			if (jumpToLatestSave.Value)
@@ -259,14 +259,14 @@ namespace PathOfWuxia
 				ScrollRect scrollRect = Traverse.Create(loopScroll).Field("scrollRect").GetValue<ScrollRect>();
 				scrollRect.verticalScrollbar.value = ((float)(totalIndex - currentIndex - 1)) / (totalIndex-1);//滑动条是反的，不知道为什么
 			}
-			Heluo.Logger.LogError("UpdateSaveLoadPatch_jumpToLatestSave end");
+			Console.WriteLine("UpdateSaveLoadPatch_jumpToLatestSave end");
 		}
 
 		//存档分页
 		[HarmonyPostfix, HarmonyPatch(typeof(UISaveLoad), "Show")]
 		public static void showPatch_pagination(ref UISaveLoad __instance)
 		{
-			Heluo.Logger.LogError("showPatch_pagination start");
+			Console.WriteLine("showPatch_pagination start");
 			//创建主挂载对象，这个对象是不会删除的
 			GameObject obj;
 			WGTabScroll saveload = Traverse.Create(__instance).Field("saveload").GetValue<WGTabScroll>();
@@ -303,13 +303,13 @@ namespace PathOfWuxia
             {
 				obj.SetActive(false);
 			}
-			Heluo.Logger.LogError("showPatch_pagination end");
+			Console.WriteLine("showPatch_pagination end");
 		}
 
 		//创建分页栏
 		public static GameObject createPageBar(GameObject pageBar, CtrlSaveLoad controller)
 		{
-			Heluo.Logger.LogError("createPageBar start");
+			Console.WriteLine("createPageBar start");
 			//每次更新都销毁所有页码按钮，重新创建
 			for (int i = 0; i < pageBar.transform.childCount; i++)
 			{
@@ -389,27 +389,27 @@ namespace PathOfWuxia
 			lastPage.AddComponent<Button>().onClick.AddListener(() => pageClick(pageBar, controller, totalPage));
 			lastPage.transform.SetParent(rightBar.transform, false);
 
-			Heluo.Logger.LogError("createPageBar end");
+			Console.WriteLine("createPageBar end");
 			return pageBar;
 		}
 
 		//创建页码按钮
 		public static GameObject createPageButton(string name, string value)
 		{
-			//Heluo.Logger.LogError("createPageButton start");
+			//Console.WriteLine("createPageButton start");
 			GameObject go = new GameObject(name);
 			Text text = go.AddComponent<Text>();
 			text.font = Game.Resource.Load<Font>("Assets/Font/kaiu.ttf");
 			text.text = value;
 			text.alignment = TextAnchor.MiddleCenter;
-			//Heluo.Logger.LogError("createPageButton end");
+			//Console.WriteLine("createPageButton end");
 			return go;
 		}
 
 		//页码按钮事件
 		public static void pageClick(GameObject pageBar, CtrlSaveLoad controller, int page)
 		{
-			Heluo.Logger.LogError("pageClick start");
+			Console.WriteLine("pageClick start");
 			//获得当前页码
 			if (page < 1)
 			{
@@ -441,14 +441,14 @@ namespace PathOfWuxia
 			UISaveLoad view = Traverse.Create(controller).Field("view").GetValue<UISaveLoad>();
 			view.UpdateSaveLoad(countPerPage.Value, true, true);
 
-			Heluo.Logger.LogError("pageClick end");
+			Console.WriteLine("pageClick end");
 		}
 
 		//存档分页-处理存档左侧的数字
 		[HarmonyPostfix, HarmonyPatch(typeof(WGSaveLoadScrollBtn), "UpdateWidget")]
 		public static void UpdateWidgetPatch_pagination(ref WGSaveLoadScrollBtn __instance,ref object[] obj)
 		{
-			//Heluo.Logger.LogError("UpdateWidgetPatch_pagination start");
+			//Console.WriteLine("UpdateWidgetPatch_pagination start");
 			WGText number = Traverse.Create(__instance).Field("number").GetValue<WGText>();
 			SaveLoadScrollInfo saveLoadScrollInfo = obj[0] as SaveLoadScrollInfo;
 			int moveNumber = 0;
@@ -458,7 +458,7 @@ namespace PathOfWuxia
 
 			}
 			number.Text = ""+(int.Parse(saveLoadScrollInfo.number) + moveNumber);
-			//Heluo.Logger.LogError("UpdateWidgetPatch_pagination end");
+			//Console.WriteLine("UpdateWidgetPatch_pagination end");
 		}
 
 		//存档分页-修复修复开启分页时所有存读档操作都会处理成第一页档位的问题
@@ -466,7 +466,7 @@ namespace PathOfWuxia
 		[HarmonyPrefix, HarmonyPatch(typeof(CtrlSaveLoad), "ConfirmSaveLoad")]
 		public static bool ConfirmSaveLoadPatch_pagination(ref CtrlSaveLoad __instance)
 		{
-			Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination start");
+			Console.WriteLine("ConfirmSaveLoadPatch_pagination start");
 			UISaveLoad view = Traverse.Create(__instance).Field("view").GetValue<UISaveLoad>();
 
 			int saveIndex = Traverse.Create(__instance).Field("saveIndex").GetValue<int>();
@@ -483,7 +483,7 @@ namespace PathOfWuxia
 				view.HideBlur();
 				Game.SaveAsync(filename, new Action(__instance.OnSaveFinish));
 				view.ShowBlur();
-				Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination end");
+				Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
 				return false;
 			}
 			Game.UI.HideTeamMemeberUI();
@@ -499,7 +499,7 @@ namespace PathOfWuxia
 				}
 				Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "save"), null);
 				view.Hide();
-				Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination end");
+				Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
 				return false;
 			}
 			//读自动存档
@@ -512,7 +512,7 @@ namespace PathOfWuxia
 				}
 				Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "autosave"), null);
 				view.Hide();
-				Heluo.Logger.LogError("ConfirmSaveLoadPatch_pagination end");
+				Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
 				return false;
 			}
 		}
@@ -522,18 +522,18 @@ namespace PathOfWuxia
 		[HarmonyPrefix, HarmonyPatch(typeof(CtrlMain), "CheckContinue")]
 		public static bool CheckContinuePatch_pagination_pre(ref CtrlMain __instance,ref bool __state)
 		{
-			Heluo.Logger.LogError("CheckContinuePatch_pagination_pre start");
+			Console.WriteLine("CheckContinuePatch_pagination_pre start");
 			__state = pagination.Value;
 			pagination.Value = false;
-			Heluo.Logger.LogError("CheckContinuePatch_pagination_pre end");
+			Console.WriteLine("CheckContinuePatch_pagination_pre end");
 			return true;
 		}
 		[HarmonyPostfix, HarmonyPatch(typeof(CtrlMain), "CheckContinue")]
 		public static void CheckContinuePatch_pagination_post(ref CtrlMain __instance, ref bool __state)
 		{
-			Heluo.Logger.LogError("CheckContinuePatch_pagination_post start");
+			Console.WriteLine("CheckContinuePatch_pagination_post start");
 			pagination.Value = __state;
-			Heluo.Logger.LogError("CheckContinuePatch_pagination_post end");
+			Console.WriteLine("CheckContinuePatch_pagination_post end");
 		}
 	}
 }

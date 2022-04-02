@@ -173,7 +173,7 @@ namespace PathOfWuxia
         // 4 头像模型名称性别替换
         public static void ReplacePlayerExteriorData()
         {
-            Debug.LogError("ReplacePlayerExteriorData start");
+            Console.WriteLine("ReplacePlayerExteriorData start");
             string[] characters = new string[] { GameConfig.Player , "in0196", "in0197", "in0101", "in0115" };
             for(int i = 0;i < characters.Length; i++)
             {
@@ -211,7 +211,7 @@ namespace PathOfWuxia
                     playerExteriorData.Name = newGameNameOverride.Value.Trim();
                 }
             }
-            Debug.LogError("ReplacePlayerExteriorData end");
+            Console.WriteLine("ReplacePlayerExteriorData end");
         }
         //EnterGame之后会直接开始游戏，创建playerEntity，之后再执行InitialRewards。在InitialRewards后再替换模型就晚了一些
         [HarmonyPrefix, HarmonyPatch(typeof(UIRegistration), "EnterGame")]
@@ -262,7 +262,7 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(GameData), "Initialize")]
         public static void GameDataPatch_Initialize(GameData __instance)
         {
-            Debug.LogError("SteamPlatformPatch_LoadFileAsync start"); 
+            Console.WriteLine("SteamPlatformPatch_LoadFileAsync start"); 
             newGameSurNameOverride.SettingChanged -= ReplacePlayerExteriorDataEventHander;
             newGameNameOverride.SettingChanged -= ReplacePlayerExteriorDataEventHander;
 
@@ -271,7 +271,7 @@ namespace PathOfWuxia
 
             newGameSurNameOverride.SettingChanged += ReplacePlayerExteriorDataEventHander;
             newGameNameOverride.SettingChanged += ReplacePlayerExteriorDataEventHander;
-            Debug.LogError("SteamPlatformPatch_LoadFileAsync end");
+            Console.WriteLine("SteamPlatformPatch_LoadFileAsync end");
         }
 
         [HarmonyPostfix, HarmonyPatch(typeof(CtrlRegistration), "SetLastName")]

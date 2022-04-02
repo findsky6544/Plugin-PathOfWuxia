@@ -31,11 +31,11 @@ namespace PathOfWuxia
             nonbattleChangeElement = plugin.Config.Bind("扩展功能", "非战斗时使用五炁朝元", false, "");
             battleChangeMantra = plugin.Config.Bind("扩展功能", "战斗时切换心法", false, "新心法的效果下回合生效，眩晕、封技、气滞时不能切换");
 
-            foreach (var WGBattleUnitMenu in GameObject.FindObjectsOfType<WGBattleUnitMenu>())
+            foreach (var UIBattleUnitMenu in GameObject.FindObjectsOfType<UIBattleUnitMenu>())
             {
                 battleChangeMantra.SettingChanged += (o, e) =>
                 {
-                    showMantraButton(WGBattleUnitMenu);
+                    showMantraButton(UIBattleUnitMenu);
                 };
             }
         }
@@ -57,7 +57,7 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(UIMartialArts), "Show")]
         public static void ShowPatch_nonbattleChangeElement(ref UIMartialArts __instance)
         {
-            Heluo.Logger.LogError("ShowPatch_nonbattleChangeElement start");
+            Console.WriteLine("ShowPatch_nonbattleChangeElement start");
             //获得特技按钮
             WGMartialArtsBtn[] martialArts = Traverse.Create(__instance).Field("martialArts").GetValue<WGMartialArtsBtn[]>();
             WGMartialArtsBtn specialButton = martialArts[5];
@@ -74,7 +74,7 @@ namespace PathOfWuxia
 
         public static void openElementUI()
         {
-            Heluo.Logger.LogError("openElementUI start");
+            Console.WriteLine("openElementUI start");
             if (nonbattleChangeElement.Value)
             {
                 //show结束时ctrlMartialArts还没当前角色数据，需要从ctrlhome处获得
@@ -137,7 +137,7 @@ namespace PathOfWuxia
                         SkillData skillData = skill[key];
                         if (skillData.Item == null)
                         {
-                            Debug.LogError("Skill表中找不到" + skillData.Id + "的文本");
+                            Console.WriteLine("Skill表中找不到" + skillData.Id + "的文本");
                         }
                         else if (!(skillData.Item.Id == characterInfoData.SpecialSkill))
                         {
@@ -165,7 +165,7 @@ namespace PathOfWuxia
         public static bool CtrlMartialArtsWindowPatch_ChangeMartialArts(ref CtrlMartialArtsWindow __instance)
         {
 
-            Heluo.Logger.LogError("CtrlMartialArtsWindowPatch_ChangeMartialArts start");
+            Console.WriteLine("CtrlMartialArtsWindowPatch_ChangeMartialArts start");
 
             //如果在战斗中打开
             if (inBattleOpenMantraWindow)
@@ -215,7 +215,7 @@ namespace PathOfWuxia
             }
 
 
-            Heluo.Logger.LogError("CtrlMartialArtsWindowPatch_ChangeMartialArts end");
+            Console.WriteLine("CtrlMartialArtsWindowPatch_ChangeMartialArts end");
             return !isGuaiguai;
         }
 
@@ -223,20 +223,20 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(UIAttributeList), "OnElementHover")]
         public static void OnElementHoverPatch_nonbattleChangeElement(ref UIAttributeList __instance)
         {
-            Heluo.Logger.LogError("OnElementHoverPatch_nonbattleChangeElement start");
+            Console.WriteLine("OnElementHoverPatch_nonbattleChangeElement start");
 
             if (!GameGlobal.IsInBattle)
             {
                 WGAbilityInfo abilityInfo = __instance.abilityInfo;
                 abilityInfo.gameObject.SetActive(false);
             }
-            Heluo.Logger.LogError("OnElementHoverPatch_nonbattleChangeElement end");
+            Console.WriteLine("OnElementHoverPatch_nonbattleChangeElement end");
         }
 
         //点击五行按钮后的callback，实际切换操作在这里进行
         public static void OnElementSelect(int element)
         {
-            Heluo.Logger.LogError("OnElementSelect start");
+            Console.WriteLine("OnElementSelect start");
             Game.MusicPlayer.Current_Volume = 1f;
             //修改功体，扣除mp，更新界面信息
             characterInfoData.Element = (Element)element;
@@ -244,7 +244,7 @@ namespace PathOfWuxia
             homeController.UpdateBasicInfo(true);
             homeController.UpdateCharacterProperty(true);
             //水功体的回血回蓝功能要不要加上呢……如果加上不就等于白嫖了么
-            Heluo.Logger.LogError("OnElementSelect end");
+            Console.WriteLine("OnElementSelect end");
         }
 
 
@@ -255,7 +255,7 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(CtrlMartialArts), "UpdateIntroduction")]
         public static void UpdateIntroductionPatch_nonbattleUseHealSkill(ref CtrlMartialArtsWindow __instance, ref int index)
         {
-            Heluo.Logger.LogError("UpdateIntroductionPatch_nonbattleUseHealSkill start");
+            Console.WriteLine("UpdateIntroductionPatch_nonbattleUseHealSkill start");
 
 
             if (nonbattleUseHealSkill.Value && index < 4)
@@ -268,14 +268,14 @@ namespace PathOfWuxia
 
                 showUITeamMember(source, selectSkill);
             }
-            Heluo.Logger.LogError("UpdateIntroductionPatch_nonbattleUseHealSkill end");
+            Console.WriteLine("UpdateIntroductionPatch_nonbattleUseHealSkill end");
         }
 
         //技能选择窗口的选择技能
         [HarmonyPostfix, HarmonyPatch(typeof(CtrlMartialArtsWindow), "UpdateIntroduction")]
         public static void UpdateIntroductionPatch2_nonbattleUseHealSkill(ref CtrlMartialArtsWindow __instance, ref int index)
         {
-            Heluo.Logger.LogError("UpdateIntroductionPatch2_nonbattleUseHealSkill start");
+            Console.WriteLine("UpdateIntroductionPatch2_nonbattleUseHealSkill start");
 
 
             if (nonbattleUseHealSkill.Value)
@@ -296,7 +296,7 @@ namespace PathOfWuxia
                 {
                     if (sortSkills.Count <= 0 || index >= sortSkills.Count)
                     {
-                        Debug.LogError(string.Format("MartialArts 的 Scroll 給出的Index出現問題, Index: {0}", index));
+                        Console.WriteLine(string.Format("MartialArts 的 Scroll 給出的Index出現問題, Index: {0}", index));
                         return;
                     }
                     selectSkill = sortSkills[index];
@@ -304,14 +304,14 @@ namespace PathOfWuxia
 
                 showUITeamMember(source, selectSkill);
             }
-            Heluo.Logger.LogError("UpdateIntroductionPatch2_nonbattleUseHealSkill end");
+            Console.WriteLine("UpdateIntroductionPatch2_nonbattleUseHealSkill end");
         }
 
         //显示左侧队友UI
         public static void showUITeamMember(CharacterInfoData source, SkillData selectSkill)
         {
 
-            Heluo.Logger.LogError("showUITeamMember start");
+            Console.WriteLine("showUITeamMember start");
             //先销毁原UI
             if (uiTeamMember != null)
             {
@@ -374,20 +374,21 @@ namespace PathOfWuxia
 
                 }
             }
-            Heluo.Logger.LogError("showUITeamMember end");
+            Console.WriteLine("showUITeamMember end");
         }
 
         //关闭技能选择页面时销毁左侧队友UI
         [HarmonyPostfix, HarmonyPatch(typeof(UIMartialArtsWindow), "Close")]
         public static void ClosePatch_nonbattleUseHealSkill(ref UIMartialArtsWindow __instance)
         {
-            Heluo.Logger.LogError("ClosePatch_nonbattleUseHealSkill start");
+            Console.WriteLine("ClosePatch_nonbattleUseHealSkill start");
             UnityEngine.Object.Destroy(uiTeamMember.gameObject);
+            Console.WriteLine("ClosePatch_nonbattleUseHealSkill end");
         }
 
         public static void nonbattleUseHealSkillAction(CharacterInfoData attacker, List<CharacterInfoData> defender, int index, SkillData skill)
         {
-            Heluo.Logger.LogError("nonbattleUseHealSkillAction start");
+            Console.WriteLine("nonbattleUseHealSkillAction start");
 
             //mp不足
             if (attacker.MP < skill.Item.RequestMP)
@@ -496,13 +497,13 @@ namespace PathOfWuxia
             //刷新主界面角色信息
             homeController.UpdateCharacterProperty(true);
 
-            Heluo.Logger.LogError("nonbattleUseHealSkillAction end");
+            Console.WriteLine("nonbattleUseHealSkillAction end");
         }
 
         //记录攻击者和防御者的属性
         public static void AttachBattleComputerProperty(CharacterInfoData attacker, CharacterInfoData defender)
         {
-            Heluo.Logger.LogError("AttachBattleComputerProperty start");
+            Console.WriteLine("AttachBattleComputerProperty start");
             BattleComputer battleComputer = Singleton<BattleComputer>.Instance;
             BattleFormulaProperty BattleComputerProperty = Traverse.Create(battleComputer).Field("BattleComputerProperty").GetValue<BattleFormulaProperty>();
             BattleComputerFormula BattleComputerFormula = Traverse.Create(battleComputer).Field("BattleComputerFormula").GetValue<BattleComputerFormula>();
@@ -545,7 +546,7 @@ namespace PathOfWuxia
             float num = BattleComputerFormula["basic_attack_of_counter"].Evaluate(BattleComputerProperty.GetDictionary());
             BattleComputerProperty.Add("basic_attack_of_counter", (int)num);
 
-            Heluo.Logger.LogError("AttachBattleComputerProperty end");
+            Console.WriteLine("AttachBattleComputerProperty end");
         }
 
         public static MantraData currentMantra;
@@ -554,10 +555,10 @@ namespace PathOfWuxia
         public static WuxiaUnit currentUnit;
 
         //显示心法按钮
-        [HarmonyPostfix, HarmonyPatch(typeof(WGBattleUnitMenu), "set_all_button")]
-        public static void WGBattleUnitMenuPatch_set_all_button(ref WGBattleUnitMenu __instance, ref WuxiaUnit unit)
+        [HarmonyPostfix, HarmonyPatch(typeof(UIBattleUnitMenu), "set_all_button")]
+        public static void WGBattleUnitMenuPatch_set_all_button(ref UIBattleUnitMenu __instance, ref WuxiaUnit unit)
         {
-            Heluo.Logger.LogError("WGBattleUnitMenuPatch_set_all_button start");
+            Console.WriteLine("WGBattleUnitMenuPatch_set_all_button start");
             currentUnit = unit;
             if(currentUnit != null)
             {
@@ -565,12 +566,13 @@ namespace PathOfWuxia
             }
             showMantraButton(__instance);
 
-            Heluo.Logger.LogError("WGBattleUnitMenuPatch_set_all_button end");
+            Console.WriteLine("WGBattleUnitMenuPatch_set_all_button end");
         }
 
-        public static void showMantraButton(WGBattleUnitMenu __instance)
+        public static void showMantraButton(UIBattleUnitMenu __instance)
         {
 
+            Console.WriteLine("showMantraButton start");
             WGSkillBtn[] skill_buttons = Traverse.Create(__instance).Field("skill_buttons").GetValue<WGSkillBtn[]>();
             WGSkillBtn special_skill_button = Traverse.Create(__instance).Field("special_skill_button").GetValue<WGSkillBtn>();
             ability_info = Traverse.Create(__instance).Field("ability_info").GetValue<WGAbilityInfo>();
@@ -638,19 +640,22 @@ namespace PathOfWuxia
 
 
             }
+            Console.WriteLine("showMantraButton end");
         }
 
         //按钮高亮显示
         private static void OnMantraHighlighed(BaseEventData arg0)
         {
-            Heluo.Logger.LogError("OnMantraHighlighed");
+            Console.WriteLine("OnMantraHighlighed start");
             if (currentMantra != null)
             {
                 //显示说明
+                Console.WriteLine("显示说明");
                 ability_info.ShowTip(currentMantra);
             }
 
             //显示高亮圈
+            Console.WriteLine("显示高亮圈");
             Image image;
             var trans = mantraBtn.transform.Find("MantraBtnBar");
 
@@ -669,14 +674,16 @@ namespace PathOfWuxia
             }
             image.gameObject.SetActive(true);
 
+            Console.WriteLine("放大按钮");
             //放大按钮
             mantraBtn.GetComponent<Image>().rectTransform.sizeDelta = new Vector3(105, 105);
+            Console.WriteLine("OnMantraHighlighed end");
         }
 
         //按钮取消高亮
         public static void OnMantraUnHighlighed(BaseEventData arg0)
         {
-            Heluo.Logger.LogError("OnMantraUnHighlighed");
+            Console.WriteLine("OnMantraUnHighlighed start");
             //隐藏说明
             ability_info.Hide();
 
@@ -689,6 +696,7 @@ namespace PathOfWuxia
 
             //缩小按钮
             mantraBtn.GetComponent<Image>().rectTransform.sizeDelta = new Vector3(90, 90);
+            Console.WriteLine("OnMantraUnHighlighed end");
         }
 
         //心法按钮定义，继承技能按钮
@@ -698,7 +706,7 @@ namespace PathOfWuxia
 
             public void SetMantra(MantraData _mantra, bool _lock)
             {
-                Heluo.Logger.LogError("SetMantra start");
+                Console.WriteLine("SetMantra start");
                 this.MantraData = _mantra;
                 if (_mantra != null)
                 {
@@ -743,13 +751,13 @@ namespace PathOfWuxia
                     Traverse.Create(this).Field("skill_lock").SetValue(skill_lock);
                 }
                 skill_lock.gameObject.SetActive(_lock);
-                Heluo.Logger.LogError("SetMantra end");
+                Console.WriteLine("SetMantra end");
             }
 
             //显示心法图标
             private void UpdateMantra(MantraData skill)
             {
-                Heluo.Logger.LogError("UpdateMantra start");
+                Console.WriteLine("UpdateMantra start");
                 Image icon = Traverse.Create(this).Field("icon").GetValue<Image>();
                 if (icon == null)
                 {
@@ -776,18 +784,23 @@ namespace PathOfWuxia
                         icon.gameObject.SetActive(false);
                     }
                 }
-                Heluo.Logger.LogError("UpdateMantra end");
+                Console.WriteLine("UpdateMantra end");
             }
             //隐藏心法
             public override void Hide()
             {
-                Heluo.Logger.LogError("Hide start");
+                Console.WriteLine("Hide start");
                 Image icon = Traverse.Create(this).Field("icon").GetValue<Image>();
                 if(icon != null && icon.gameObject != null)
                 {
                     icon.gameObject.SetActive(false);
                 }
-                Heluo.Logger.LogError("Hide end");
+                Console.WriteLine("Hide end");
+            }
+
+            public override void Show()
+            {
+                base.gameObject.SetActive(true);
             }
         }
 
@@ -795,17 +808,17 @@ namespace PathOfWuxia
         public static bool inBattleOpenMantraWindow = false;
         public static void OnMantraClick(BaseEventData arg0)
         {
-            Heluo.Logger.LogError("OnMantraClick start");
+            Console.WriteLine("OnMantraClick start");
             inBattleOpenMantraWindow = true;
             SortMantra();
-            Heluo.Logger.LogError("OnMantraClick end");
+            Console.WriteLine("OnMantraClick end");
         }
 
         //心法列表
         public static MantraData selectMantra;
         public static void SortMantra()
         {
-            Heluo.Logger.LogError("SortMantra start");
+            Console.WriteLine("SortMantra start");
             CharacterInfoData characterInfoData = Game.GameData.Character[currentUnit.CharacterInfoId];
             Dictionary<string, MantraData> mantra = characterInfoData.Mantra;
             List<MantraData> list = new List<MantraData>();
@@ -843,38 +856,38 @@ namespace PathOfWuxia
             }
             string text = Game.Data.Get<StringTable>("SecondaryInterface0902").Text;
             OpenLearnedEmptyWindow(text);
-            Heluo.Logger.LogError("SortMantra end");
+            Console.WriteLine("SortMantra end");
         }
 
         //提示无可用心法
         public static void OpenLearnedEmptyWindow(string message)
         {
-            Heluo.Logger.LogError("OpenLearnedEmptyWindow start");
+            Console.WriteLine("OpenLearnedEmptyWindow start");
             Game.UI.OpenMessageWindow(message, null, true);
-            Heluo.Logger.LogError("OpenLearnedEmptyWindow end");
+            Console.WriteLine("OpenLearnedEmptyWindow end");
         }
         //结果回调
         private static void MartialArtsWindow_OnResult(bool result)
         {
-            Heluo.Logger.LogError("MartialArtsWindow_OnResult start");
+            Console.WriteLine("MartialArtsWindow_OnResult start");
             if (result)
             {
                 //如果点击了新心法则更新按钮信息
                 currentMantra = selectMantra;
                 mantraBtn.SetMantra(currentMantra, false);
             }
-            Heluo.Logger.LogError("MartialArtsWindow_OnResult end");
+            Console.WriteLine("MartialArtsWindow_OnResult end");
         }
 
         //关闭心法列表窗口
         [HarmonyPostfix, HarmonyPatch(typeof(UIMartialArtsWindow), "Close")]
         public static void UIMartialArtsWindowPatch_Close(ref UIMartialArtsWindow __instance)
         {
-            Heluo.Logger.LogError("UIMartialArtsWindowPatch_Close start");
+            Console.WriteLine("UIMartialArtsWindowPatch_Close start");
 
             inBattleOpenMantraWindow = false;
 
-            Heluo.Logger.LogError("UIMartialArtsWindowPatch_Close end");
+            Console.WriteLine("UIMartialArtsWindowPatch_Close end");
         }
     }
 }

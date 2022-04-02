@@ -26,6 +26,7 @@ namespace PathOfWuxia
             SmallChance,
             FixedRandomValue
         }
+        static bool speedOn = false;
         static ConfigEntry<float> speedValue;
         static ConfigEntry<KeyCode> speedKey;
         static ConfigEntry<KeyCode> changeAnim;
@@ -76,16 +77,15 @@ namespace PathOfWuxia
         {
             if (Input.GetKeyDown(speedKey.Value))
             {
-                if(customTimeScale == 1f)
+                speedOn = !speedOn;
+                if (!speedOn)
                 {
-                    customTimeScale = Math.Max(0.1f, speedValue.Value);
-                    Time.timeScale *= customTimeScale;
+                    Time.timeScale = 1.0f;
                 }
-                else
-                {
-                    Time.timeScale /= customTimeScale;
-                    customTimeScale = 1f;
-                }
+            }
+            if (speedOn)
+            {
+                Time.timeScale = Math.Max(0.1f, speedValue.Value);
             }
 
             if (Input.GetKeyDown(changeAnim.Value) && Game.BattleStateMachine != null)
@@ -122,7 +122,7 @@ namespace PathOfWuxia
                 difficulty.Value = Game.GameData.GameLevel;
         }
 
-        [HarmonyPostfix, HarmonyPatch(typeof(InCinematic), "OnDisable")]
+        /*[HarmonyPostfix, HarmonyPatch(typeof(InCinematic), "OnDisable")]
         public static void InCinematic_OnDisablePatch_changeTimeScale(ref InCinematic __instance)
         {
                 Time.timeScale *= customTimeScale;
@@ -144,7 +144,7 @@ namespace PathOfWuxia
         public static void UIFastMovie_ResetAllPatch_changeTimeScale(ref UIFastMovie __instance)
         {
                 Time.timeScale *= customTimeScale;
-        }
+        }*/
 
 
 
@@ -299,14 +299,12 @@ namespace PathOfWuxia
             return true;
         }
 
-        [HarmonyPostfix, HarmonyPatch(typeof(AttackProcessStrategy), "CreateDamageInfo")]
-        public static void AttackProcessStrategyPatch_CreateDamageInfo(AttackProcessStrategy __instance, ref DamageInfo __result)
+        [HarmonyPostfix, HarmonyPatch(typeof(BattleComputer), "Calculate_Final_Damage")]
+        public static void BattleComputerPatch_Calculate_Final_Damage(BattleComputer __instance, ref Damage damage,ref SkillData skill)
         {
+            Console.WriteLine("BattleComputerPatch_Calculate_Final_Damage");
             if (onePunch.Value)
             {
-                for (int i = 0; i < __result.damages.Count; i++)
-                {
-                    Damage damage = __result.damages[i];
                     if(damage.Defender.faction == Faction.Enemy || damage.Defender.faction == Faction.Single || damage.Defender.faction == Faction.AbsolutelyNeutral || damage.Defender.faction == Faction.AbsoluteChaos)
                     {
                         damage.final_damage = 999999999;
@@ -315,15 +313,10 @@ namespace PathOfWuxia
                         damage.IsInvincibility = false;//非霸体
                         damage.DamageToAttacker = 0;//反伤为0
                     }
-
-                }
             }
             //消除锁血
             if (noLockHp.Value)
             {
-                for (int i = 0; i < __result.damages.Count; i++)
-                {
-                    Damage damage = __result.damages[i];
                     if (damage.Defender.faction == Faction.Enemy || damage.Defender.faction == Faction.Single || damage.Defender.faction == Faction.AbsolutelyNeutral || damage.Defender.faction == Faction.AbsoluteChaos)
                     {
                         damage.Defender[BattleLiberatedState.Lock_HP_Percent] = 0;
@@ -338,51 +331,6 @@ namespace PathOfWuxia
                         Mantra_Attributes[BattleLiberatedState.Lock_HP_Percent] = 0;
                         Mantra_Attributes[BattleLiberatedState.Lock_HP_Value] = 0;
                     }
-                }
-            }
-        }
-
-        [HarmonyPostfix, HarmonyPatch(typeof(CounterProcessStrategy), "CreateDamageInfo")]
-        public static void CounterProcessStrategyPatch_CreateDamageInfo(CounterProcessStrategy __instance, ref DamageInfo __result)
-        {
-            //一击必杀
-            if (onePunch.Value)
-            {
-                for (int i = 0; i < __result.damages.Count; i++)
-                {
-                    Damage damage = __result.damages[i];
-                    if (damage.Defender.faction == Faction.Enemy || damage.Defender.faction == Faction.Single || damage.Defender.faction == Faction.AbsolutelyNeutral || damage.Defender.faction == Faction.AbsoluteChaos)
-                    {
-                        damage.final_damage = 999999999;
-                        damage.IsDodge = false;//无法闪避
-                        damage.IsLethal = true;//击杀
-                        damage.IsInvincibility = false;//非霸体
-                        damage.DamageToAttacker = 0;//反伤为0
-                    }
-
-                }
-            }
-            //消除锁血
-            if (noLockHp.Value)
-            {
-                for (int i = 0; i < __result.damages.Count; i++)
-                {
-                    Damage damage = __result.damages[i];
-                    if (damage.Defender.faction == Faction.Enemy || damage.Defender.faction == Faction.Single || damage.Defender.faction == Faction.AbsolutelyNeutral || damage.Defender.faction == Faction.AbsoluteChaos)
-                    {
-                        damage.Defender[BattleLiberatedState.Lock_HP_Percent] = 0;
-                        damage.Defender[BattleLiberatedState.Lock_HP_Value] = 0;
-                        List<BufferInfo> BufferList = Traverse.Create(damage.Defender.BattleBuffer).Field("BufferList").GetValue<List<BufferInfo>>();
-                        for (int j = 0; j < BufferList.Count; j++)
-                        {
-                            BufferList[j].BufferAttributes[BattleLiberatedState.Lock_HP_Percent] = 0;
-                            BufferList[j].BufferAttributes[BattleLiberatedState.Lock_HP_Value] = 0;
-                        }
-                        BattleAttributes Mantra_Attributes = Traverse.Create(damage.Defender).Field("Mantra_Attributes").GetValue<BattleAttributes>();
-                        Mantra_Attributes[BattleLiberatedState.Lock_HP_Percent] = 0;
-                        Mantra_Attributes[BattleLiberatedState.Lock_HP_Value] = 0;
-                    }
-                }
             }
         }
     }

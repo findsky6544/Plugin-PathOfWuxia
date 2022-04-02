@@ -16,6 +16,7 @@ using Heluo.FSM.Battle;
 using Heluo.UI;
 using Heluo.Data;
 using Heluo.Utility;
+using Heluo.FSM;
 
 namespace PathOfWuxia
 {
@@ -82,9 +83,9 @@ namespace PathOfWuxia
             WuxiaUnit wuxiaUnit = Timed_Current();
             if (wuxiaUnit == null)
             {
-                Debug.LogError("当前行动列表为空，出错！");
+                Console.WriteLine("当前行动列表为空，出错！");
             }
-            Debug.Log(string.Concat(new string[]
+            Console.WriteLine(string.Concat(new string[]
             {
                 wuxiaUnit.name,
                 " 行动结束, 移动=",
@@ -159,7 +160,7 @@ namespace PathOfWuxia
         {
             if (TimedActives.Count <= 0)
             {
-                UnityEngine.Debug.LogError("列表为空，出错");
+                Console.WriteLine("列表为空，出错");
                 return;
             }
             WuxiaUnit item = TimedActives[0];
@@ -601,12 +602,35 @@ namespace PathOfWuxia
             }
             return false;
         }
+
+
+        static bool IsContinuous_Beheading;
+        [HarmonyPrefix, HarmonyPatch(typeof(UnitPlayAbility), "Perform")]
+        public static bool UnitPlayAbilityPatch_getIsContinuous_Beheading(UnitPlayAbility __instance)
+        {
+            var t = Traverse.Create(__instance);
+            var args = t.Field("args");
+            Console.WriteLine("args:" + args);
+
+            WuxiaUnit Attacker = args.Field("Attacker").GetValue<WuxiaUnit>();
+            Console.WriteLine("Attacker:" + Attacker);
+
+            IsContinuous_Beheading = Attacker.IsContinuous_Beheading;
+            Console.WriteLine("IsContinuous_Beheading:" + IsContinuous_Beheading);
+
+            return true;
+        }
+
+
+
+
         [HarmonyPrefix, HarmonyPatch(typeof(EndUnit), "OnEnable")]
         public static bool TimedPatch_End1(EndUnit __instance)
         {
             Console.WriteLine("EndUnit.OnEnable()");
             var t = Traverse.Create(__instance);
             var selected = t.Property("SelectedUnit");
+            Console.WriteLine("bTimed:" + bTimed+ ",UnitWantWait:" + UnitWantWait);
             if (bTimed && UnitWantWait)   // 处理等待
             {
                 UnitWantWait = false;     // 重置等待
@@ -630,8 +654,15 @@ namespace PathOfWuxia
             BM.OnBattleEvent(BattleEventToggleTime.EndUnit, Array.Empty<object>());
             FSM.UI.CloseMenu();
             FSM.UI.CloseUnitInfo();
+            Console.WriteLine("1");
+            Console.WriteLine("BM.IsEvent:" + BM.IsEvent);
             if (!BM.IsEvent)
             {
+                var fsmvar = Traverse.Create((GameStateMachine)FSM);
+                var endUnitEventArgs = fsmvar.Field("eventArgs");
+                Console.WriteLine("endUnitEventArgs:" + endUnitEventArgs);
+                Console.WriteLine("IsContinuous_Beheading:" + endUnitEventArgs.Field("IsContinuous_Beheading").GetValue<bool>());
+                Console.WriteLine("IsContinuous_Beheading:" + IsContinuous_Beheading);
                 if (selected.GetValue<WuxiaUnit>() != null)
                 {
                     WuxiaUnit selectedUnit = selected.GetValue<WuxiaUnit>();
@@ -643,6 +674,22 @@ namespace PathOfWuxia
                     if (selectedUnit2 != null)
                     {
                         selectedUnit2.OnTurnEnd();
+                    }
+                    if (endUnitEventArgs != null && IsContinuous_Beheading)
+                    {
+                        BM.SendBillboard(new BillboardArg
+                        {
+                            Pos = selected.GetValue<WuxiaUnit>().transform.position,
+                            Numb = 0,
+                            MessageType = Heluo.Battle.MessageType.Continuous
+                        });
+                        BM.OnBufferEvent(BufferTiming.Continuous_Beheading);
+                        WuxiaUnit selectedUnit3 = selected.GetValue<WuxiaUnit>();
+                        if (selectedUnit3 != null)
+                        {
+                            Console.WriteLine("selectedUnit3.OnTurnStart()");
+                            selectedUnit3.OnTurnStart();
+                        }
                     }
                     if (selected.GetValue<WuxiaUnit>()[BattleLiberatedState.InfiniteAction] > 0)
                     {
@@ -907,7 +954,7 @@ namespace PathOfWuxia
                 BM.OnBattleEvent(BattleEventToggleTime.BeginUnit, Array.Empty<object>());
                 if (BM.IsEvent)
                 {
-                    Debug.Log("AI回合，等待事件結束");
+                    Console.WriteLine("AI回合，等待事件結束");
                 }
                 else
                 {
@@ -1047,7 +1094,7 @@ namespace PathOfWuxia
             await 0.1f;
             while (BM.IsEvent)
             {
-                Debug.Log("AI回合，等待事件結束");
+                Console.WriteLine("AI回合，等待事件結束");
                 await 0.1f;
             }
             if (Timed_Current() != null)
