@@ -26,16 +26,12 @@ namespace PathOfWuxia
     // 多Mod支持
     public class HookModSupport : IHook
     {
-        public IEnumerable<Type> GetRegisterTypes()
-        {
-            return new Type[] { GetType() };
-        }
-        static private BaseUnityPlugin Plugin = null;
+        static private PluginBinarizer Plugin = null;
 
-        public void OnRegister(BaseUnityPlugin plugin)
+        public void OnRegister(PluginBinarizer plugin)
         {
             Plugin = plugin;
-            modBasePath = plugin.Config.Bind("Mod设置", "Mod总路径", "", new ConfigDescription("Mod主目录", null, new ConfigurationManagerAttributes { IsAdvanced = true, Order = 3 }));
+            modBasePath = plugin.Config.Bind("Mod设置", "Mod总路径", "Mods\\", new ConfigDescription("Mod主目录", null, new ConfigurationManagerAttributes { IsAdvanced = true, Order = 3 }));
             modBattleVoicePath = Plugin.Config.Bind("Mod设置", "Mod战斗语音路径", "audio/voice/um_{0}_{1}.ogg", new ConfigDescription("可更改相对路径和扩展名", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             modTalkVoicePath = Plugin.Config.Bind("Mod设置", "Mod对话语音路径", "audio/voice/talk_{0}.ogg", new ConfigDescription("可更改相对路径和扩展名", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             string[] dirs = null;
@@ -51,10 +47,6 @@ namespace PathOfWuxia
         {
             modTheme = Plugin.Config.Bind("Mod设置", "Mod主菜单音乐", string.Empty, "下次进入主菜单生效");
             modCustomVoice = Plugin.Config.Bind("Mod设置", "Mod语音开关", false, "配音开关");
-        }
-
-        public void OnUpdate()
-        {
         }
 
         static ConfigEntry<string> modBasePath;

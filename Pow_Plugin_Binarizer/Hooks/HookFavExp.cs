@@ -1,9 +1,4 @@
-﻿using BepInEx;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
@@ -18,19 +13,10 @@ namespace PathOfWuxia
     {
         private static ConfigEntry<bool> showFavExp;
 
-        public IEnumerable<Type> GetRegisterTypes()
-        {
-            return new Type[] { GetType() };
-        }
 
-        public void OnRegister(BaseUnityPlugin plugin)
+        public void OnRegister(PluginBinarizer plugin)
         {
             showFavExp = plugin.Config.Bind("界面改进", "显示好友好感度与礼物好感度", false, "在好友界面显示当前好感度/总需好感度 在送礼和商店界面显示礼物可提高的好感度");
-        }
-
-        public void OnUpdate()
-        {
-            
         }
 
 

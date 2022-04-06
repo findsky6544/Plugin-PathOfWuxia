@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using HarmonyLib;
-using BepInEx;
 using BepInEx.Configuration;
 using Heluo;
 using Heluo.UI;
@@ -16,11 +14,7 @@ namespace PathOfWuxia
     {
         static ConfigEntry<bool> duelOn;
 
-        public IEnumerable<Type> GetRegisterTypes()
-        {
-            return new Type[] { GetType() };
-        }
-        public void OnRegister(BaseUnityPlugin plugin)
+        public void OnRegister(PluginBinarizer plugin)
         {
             duelOn = plugin.Config.Bind("扩展功能", "切磋开关", false, "开启后交友-出游指令会被替换为此模式");
             duelOn.SettingChanged += (o, e) =>
@@ -31,10 +25,6 @@ namespace PathOfWuxia
                         duelOn.Value = false;
                 }
             };
-        }
-
-        public void OnUpdate()
-        {
         }
 
         // UI Tips

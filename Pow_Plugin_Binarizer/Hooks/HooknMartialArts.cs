@@ -21,11 +21,7 @@ namespace PathOfWuxia
 {
     public class HooknMartialArts : IHook
     {
-        public IEnumerable<Type> GetRegisterTypes()
-        {
-            return new Type[] { GetType() };
-        }
-        public void OnRegister(BaseUnityPlugin plugin)
+        public void OnRegister(PluginBinarizer plugin)
         {
             nonbattleUseHealSkill = plugin.Config.Bind("扩展功能", "非战斗时使用恢复技能", false, "");
             nonbattleChangeElement = plugin.Config.Bind("扩展功能", "非战斗时使用五炁朝元", false, "");
@@ -38,10 +34,6 @@ namespace PathOfWuxia
                     showMantraButton(UIBattleUnitMenu);
                 };
             }
-        }
-
-        public void OnUpdate()
-        {
         }
 
         //private static ConfigEntry<bool> nonbattle;
@@ -676,7 +668,7 @@ namespace PathOfWuxia
 
             Console.WriteLine("放大按钮");
             //放大按钮
-            mantraBtn.GetComponent<Image>().rectTransform.sizeDelta = new Vector3(105, 105);
+            mantraBtn.GetComponents<Image>()[0].rectTransform.sizeDelta = new Vector3(105, 105);
             Console.WriteLine("OnMantraHighlighed end");
         }
 

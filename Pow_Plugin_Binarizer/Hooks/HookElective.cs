@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
-using Heluo.Platform;
 using Heluo.Data;
-using Steamworks;
 using Heluo.Flow;
 using Heluo;
 using Heluo.UI;
-using Heluo.FSM.Main;
 using UnityEngine.UI;
 using UnityEngine;
-using System.Reflection.Emit;
-using System.Reflection;
 using Heluo.Utility;
 using Heluo.Controller;
 using Heluo.Manager;
-using Heluo.Features;
 
 namespace PathOfWuxia
 {
@@ -28,19 +19,11 @@ namespace PathOfWuxia
 	{
 		private static ConfigEntry<bool> multiCourseSelect;
 
-		public IEnumerable<Type> GetRegisterTypes()
-		{
-			return new Type[] { GetType() };
-		}
-
-		public void OnRegister(BaseUnityPlugin plugin)
+		public void OnRegister(PluginBinarizer plugin)
 		{
 			multiCourseSelect = plugin.Config.Bind("扩展功能", "自由选课", false, "每次选课可自由选择上哪些课");
 		}
 
-		public void OnUpdate()
-		{
-		}
 
 		public static Action onCompletedFinal;
 

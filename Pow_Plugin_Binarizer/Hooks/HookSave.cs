@@ -31,12 +31,8 @@ namespace PathOfWuxia
 		private static int currentPage = 1;
 		private static int totalPage = 1;
 
-		public IEnumerable<Type> GetRegisterTypes()
-		{
-			return new Type[] { GetType() };
-		}
 
-		public void OnRegister(BaseUnityPlugin plugin)
+		public void OnRegister(PluginBinarizer plugin)
 		{
 			saveCount = plugin.Config.Bind("存档设定", "存档数量", 20, "扩充存档数量");
 			remindBlankSaveCount = plugin.Config.Bind("存档设定", "自动存档剩余数量提示", false, "在自动存档剩余空白存档数量不足5个时弹窗提示");
@@ -44,11 +40,6 @@ namespace PathOfWuxia
 			pagination = plugin.Config.Bind("存档设定", "存档分页", false, "在存档数量太多的时候会有点作用");
 			countPerPage = plugin.Config.Bind("存档设定", "存档分页-每页存档数", 20, "每页多少条存档，存档分页启用后才有用");
 			deleteSaveFile = plugin.Config.Bind("存档设定", "删除存档（未完成）", false, "可删除存档");
-		}
-
-		public void OnUpdate()
-		{
-
 		}
 
 		//修改存档数量，分页展示

@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using HarmonyLib;
 using Heluo.FSM.Player;
-using UnityEngine;
-using Heluo.Actor;
-using Heluo;
 
 namespace PathOfWuxia
 {
@@ -17,12 +8,8 @@ namespace PathOfWuxia
     {
         private static ConfigEntry<float> moveSpeed;
 
-        public IEnumerable<Type> GetRegisterTypes()
-        {
-            return new Type[] { GetType() };
-        }
 
-        public void OnRegister(BaseUnityPlugin plugin)
+        public void OnRegister(PluginBinarizer plugin)
         {
             moveSpeed = plugin.Config.Bind("游戏设定", "移动速度", 1f, "修改玩家在大地图的移动速度 如果太快可能会穿模"); 
 		}
@@ -37,10 +24,6 @@ namespace PathOfWuxia
             return true;
         }
 
-            public void OnUpdate()
-        {
-
-        }
 
     }
 }

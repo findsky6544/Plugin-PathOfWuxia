@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\</OutputPath>
+    <OutputPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,8 +34,10 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\core\0Harmony.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="AmplifyBloom">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\AmplifyBloom.dll</HintPath>
@@ -57,9 +59,6 @@
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp_bak">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Assembly-CSharp_bak.dll</HintPath>
-    </Reference>
     <Reference Include="BehaviourMachineRuntime, Version=1.0.6215.41608, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\BehaviourMachineRuntime.dll</HintPath>
@@ -67,46 +66,47 @@
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\core\BepInEx.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx.Harmony">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\BepInEx.Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx.Preloader">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\BepInEx.Preloader.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="BigInteger">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\BigInteger.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ConfigurationManager">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\plugins\ConfigurationManager.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween43">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween43.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween46">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween46.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="DOTween50">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween50.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Enums.NET">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Enums.NET.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="FileHelpers">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\FileHelpers.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="HarmonyXInterop">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\HarmonyXInterop.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="INIFileParser">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\INIFileParser.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Ionic.Zip.Reduced.dll</HintPath>
@@ -118,30 +118,15 @@
     </Reference>
     <Reference Include="Microsoft.Contracts">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Microsoft.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\Mono.Cecil.Rocks.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Posix">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Mono.Posix.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Security">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Mono.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.RuntimeDetour">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\MonoMod.RuntimeDetour.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.Utils">
-      <HintPath>..\..\Plugin.And.Mod.1.2\BepInEx\core\MonoMod.Utils.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MoonSharp.Interpreter">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MoonSharp.Interpreter.dll</HintPath>
@@ -149,13 +134,16 @@
     </Reference>
     <Reference Include="MoreLinq">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MoreLinq.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.EnterpriseServices" />
@@ -167,21 +155,27 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Unity.Addressables">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.Addressables.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.AssetGraph">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.AssetGraph.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.Postprocessing.Runtime.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.ResourceManager">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.ScriptableBuildPipeline">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.ScriptableBuildPipeline.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.dll</HintPath>
@@ -189,9 +183,11 @@
     </Reference>
     <Reference Include="UnityEngine.AccessibilityModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AIModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
@@ -199,9 +195,11 @@
     </Reference>
     <Reference Include="UnityEngine.ARModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ARModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
@@ -209,9 +207,11 @@
     </Reference>
     <Reference Include="UnityEngine.BaselibModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.BaselibModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClothModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClusterInputModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
@@ -219,6 +219,7 @@
     </Reference>
     <Reference Include="UnityEngine.ClusterRendererModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClusterRendererModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
@@ -447,19 +448,26 @@
     <Compile Include="GameExtensions\RewardUniqueEquipByValue.cs" />
     <Compile Include="GameExtensions\RewardUniqueScroll.cs" />
     <Compile Include="Hooks\HookBuff.cs" />
+    <Compile Include="Hooks\HookCharacterExterior.cs" />
     <Compile Include="Hooks\HookFavExp.cs" />
     <Compile Include="Hooks\HookEnglishTranslate.cs" />
     <Compile Include="Hooks\HookDuelPractice.cs" />
+    <Compile Include="Hooks\HookGameDifficulty.cs" />
+    <Compile Include="Hooks\HookLockTime.cs" />
     <Compile Include="Hooks\HookModDebug.cs" />
     <Compile Include="Hooks\HookMove.cs" />
+    <Compile Include="Hooks\HookNurturanceOrder.cs" />
+    <Compile Include="Hooks\HookOnePunch.cs" />
     <Compile Include="Hooks\HookPropsFilterAndSort.cs" />
+    <Compile Include="Hooks\HookElective.cs" />
     <Compile Include="Hooks\HookSave.cs" />
+    <Compile Include="Hooks\HooknMartialArts.cs" />
     <Compile Include="Hooks\HookTeamManage.cs" />
     <Compile Include="Hooks\HookSkillExp.cs" />
     <Compile Include="Hooks\HookUniqueItem.cs" />
     <Compile Include="Hooks\HookInitiactiveBattle.cs" />
     <Compile Include="Hooks\IHook.cs" />
-    <Compile Include="Hooks\HookFeaturesAndFixes.cs" />
+    <Compile Include="Hooks\HookBattleName.cs" />
     <Compile Include="Hooks\HookModExtensions.cs" />
     <Compile Include="GameExtensions\Randomizer.cs" />
     <Compile Include="GameExtensions\RewardRandomProps.cs" />
@@ -470,7 +478,7 @@
     <Compile Include="Hooks\HookModSupport.cs" />
     <Compile Include="Hooks\HookNewGame.cs" />
     <Compile Include="Hooks\HookMoreAccessories.cs" />
-    <Compile Include="Hooks\HookGenerals.cs" />
+    <Compile Include="Hooks\HookGameSpeed.cs" />
     <Compile Include="PluginBinarizer.cs" />
     <Compile Include="GameExtensions\ModResourceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

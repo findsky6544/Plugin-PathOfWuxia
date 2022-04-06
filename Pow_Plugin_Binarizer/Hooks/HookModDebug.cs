@@ -20,11 +20,7 @@ namespace PathOfWuxia
     // Mod辅助扩展
     public class HookModDebug : IHook
     {
-        public IEnumerable<Type> GetRegisterTypes()
-        {
-            return new Type[] { GetType() };
-        }
-        public void OnRegister(BaseUnityPlugin plugin)
+        public void OnRegister(PluginBinarizer plugin)
         {
             var adv1 = new ConfigDescription("", null, new ConfigurationManagerAttributes { IsAdvanced = true, Order = 3 });
             DebugOn = plugin.Config.Bind("Debug功能", "调试开关", false, adv1);
@@ -49,6 +45,8 @@ namespace PathOfWuxia
             MovieFilePath = plugin.Config.Bind("Debug功能", "过场文件保存路径", "movie/{0}.json", adv);
             SortSchedule = plugin.Config.Bind("Debug功能", "过场是否重新排序", false, adv);
             SortSchedule.SettingChanged += (o, e) => { ScheduleGraphConverter.WriteSorted = SortSchedule.Value; };
+
+            plugin.onUpdate += OnUpdate;
         }
 
         enum MovieType
