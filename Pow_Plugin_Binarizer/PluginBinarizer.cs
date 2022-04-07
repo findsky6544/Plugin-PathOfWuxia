@@ -5,10 +5,11 @@ using HarmonyLib;
 using BepInEx;
 using BepInEx.Configuration;
 using System.Linq;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
-    [BepInPlugin("binarizer.plugin.pow.function_sets", "功能合集 by Binarizer，修改 by 寻宇", "1.10.0")]
+    [BepInPlugin("binarizer.plugin.pow.function_sets", "功能合集 by Binarizer，修改 by 寻宇", "2.1.0")]
     public class PluginBinarizer : BaseUnityPlugin
     {
         /// <summary>
@@ -42,15 +43,17 @@ namespace PathOfWuxia
         /// </summary>
         void Awake()
         {
-            var adv1 = new ConfigDescription("游戏重启生效", null, new ConfigurationManagerAttributes { IsAdvanced = true, Order = 4 });
             Assembly assembly = Assembly.GetExecutingAssembly();
             Console.WriteLine($"当前程序：{assembly.FullName}");
             var hookTypes = from t in assembly.GetTypes() where typeof(IHook).IsAssignableFrom(t) && !t.IsAbstract select t;
             Console.WriteLine("美好的初始化开始，统计钩子模块");
             foreach (var hookType in hookTypes)
             {
-                Console.WriteLine($"计入模块 [{hookType.Name}]");
-                moduleEntries[hookType] = Config.Bind("模块选择", hookType.Name, false, adv1);
+                DisplayNameAttribute displayName = (DisplayNameAttribute)hookType.GetCustomAttribute(typeof(DisplayNameAttribute));
+                DescriptionAttribute description = (DescriptionAttribute)hookType.GetCustomAttribute(typeof(DescriptionAttribute));
+                var adv1 = new ConfigDescription(description.Description, null, new ConfigurationManagerAttributes { IsAdvanced = true, Order = 4 });
+                Console.WriteLine($"计入模块 [{displayName.DisplayName + ":" + description.Description}]");
+                moduleEntries[hookType] = Config.Bind("模块选择", displayName.DisplayName, false, adv1);
             }
 
             foreach (var modulePair in moduleEntries)

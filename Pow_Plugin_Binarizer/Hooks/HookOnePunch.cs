@@ -4,9 +4,12 @@ using Heluo.Battle;
 using Heluo.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("一击必杀")]
+    [Description("一击必杀")]
     class HookOnePunch : IHook
     {
         static ConfigEntry<bool> onePunch;

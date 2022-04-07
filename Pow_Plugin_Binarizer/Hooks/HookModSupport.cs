@@ -24,6 +24,8 @@ using Newtonsoft.Json;
 namespace PathOfWuxia
 {
     // 多Mod支持
+    [System.ComponentModel.DisplayName("Mod支持")]
+    [System.ComponentModel.Description("Mod支持")]
     public class HookModSupport : IHook
     {
         static private PluginBinarizer Plugin = null;

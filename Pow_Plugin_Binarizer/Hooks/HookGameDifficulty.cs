@@ -2,9 +2,12 @@
 using Heluo;
 using Heluo.Data;
 using System;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("修改难度")]
+    [Description("修改难度")]
     class HookGameDifficulty : IHook
     {
         static ConfigEntry<GameLevel> difficulty;

@@ -18,6 +18,8 @@ using Heluo.UI;
 namespace PathOfWuxia
 {
     // Mod辅助扩展
+    [System.ComponentModel.DisplayName("Debug功能")]
+    [System.ComponentModel.Description("Debug功能")]
     public class HookModDebug : IHook
     {
         public void OnRegister(PluginBinarizer plugin)

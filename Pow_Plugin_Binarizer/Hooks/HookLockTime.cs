@@ -4,6 +4,8 @@ using Heluo.Flow;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("锁定昼夜时间")]
+    [System.ComponentModel.Description("锁定昼夜时间")]
     class HookLockTime : IHook
     {
         static ConfigEntry<bool> lockTime;

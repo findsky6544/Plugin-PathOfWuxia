@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
 using Heluo.Platform;
@@ -15,11 +11,11 @@ using Heluo.UI;
 using Heluo.FSM.Main;
 using UnityEngine.UI;
 using UnityEngine;
-using System.Reflection.Emit;
-using System.Reflection;
 
 namespace PathOfWuxia
 {
+	[System.ComponentModel.DisplayName("存档设定")]
+	[System.ComponentModel.Description("存档设定")]
 	class HookSave : IHook
 	{
 		private static ConfigEntry<int> saveCount;

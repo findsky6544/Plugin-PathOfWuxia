@@ -15,6 +15,8 @@ using Heluo.Manager;
 
 namespace PathOfWuxia
 {
+	[System.ComponentModel.DisplayName("自由选课")]
+	[System.ComponentModel.Description("自由选课")]
 	class HookElective : IHook
 	{
 		private static ConfigEntry<bool> multiCourseSelect;

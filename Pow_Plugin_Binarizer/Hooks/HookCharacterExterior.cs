@@ -13,6 +13,8 @@ using UnityEngine;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("角色设定")]
+    [System.ComponentModel.Description("修改建模、头像、姓名")]
     class HookCharacterExterior : IHook
     {
         static ConfigEntry<string> playerExteriorId;

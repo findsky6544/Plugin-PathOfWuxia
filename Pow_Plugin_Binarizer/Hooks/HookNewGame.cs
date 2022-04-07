@@ -4,10 +4,13 @@ using BepInEx.Configuration;
 using Heluo;
 using Heluo.UI;
 using Heluo.Data;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
     // 开局设定
+    [System.ComponentModel.DisplayName("开局设定")]
+    [Description("开局设定")]
     public class HookNewGame : IHook
     {
 

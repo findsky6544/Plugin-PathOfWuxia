@@ -5,9 +5,12 @@ using BepInEx.Configuration;
 using Heluo.Battle;
 using Heluo.Components;
 using Heluo.Controller;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("相机设置")]
+    [Description("相机设置")]
     // 自由相机功能
     public class HookCamera : IHook
     {

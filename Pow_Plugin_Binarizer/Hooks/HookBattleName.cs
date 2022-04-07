@@ -4,9 +4,12 @@ using Heluo;
 using Heluo.UI;
 using UnityEngine;
 using UnityEngine.UI;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("战斗时显示名字")]
+    [Description("战斗时显示名字")]
     public class HookBattleName : IHook
     {
 

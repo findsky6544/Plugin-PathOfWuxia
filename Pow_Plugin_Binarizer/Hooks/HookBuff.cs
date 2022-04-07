@@ -3,9 +3,12 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using Heluo.Battle;
 using Heluo;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("显示隐藏buff")]
+    [Description("显示隐藏buff")]
     class HookBuff : IHook
     {
         private static ConfigEntry<bool> showHideBuff;

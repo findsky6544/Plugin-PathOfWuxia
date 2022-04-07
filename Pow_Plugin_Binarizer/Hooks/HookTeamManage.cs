@@ -14,6 +14,8 @@ using Heluo.Flow;
 namespace PathOfWuxia
 {
     // 队伍管理
+    [System.ComponentModel.DisplayName("队伍管理")]
+    [System.ComponentModel.Description("队伍管理")]
     public class HookTeamManage : IHook
     {
         static ConfigEntry<bool> teamManageOn;

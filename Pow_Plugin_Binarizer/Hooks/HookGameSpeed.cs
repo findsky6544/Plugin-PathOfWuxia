@@ -2,9 +2,12 @@
 using HarmonyLib;
 using UnityEngine;
 using BepInEx.Configuration;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("游戏速度设置")]
+    [Description("游戏速度设置")]
     // 一般游戏设定功能
     public class HookGameSpeed : IHook
     {

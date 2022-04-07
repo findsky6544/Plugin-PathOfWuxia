@@ -10,6 +10,8 @@ using Heluo.Flow;
 namespace PathOfWuxia
 {
     // 双修系统（对练）
+    [System.ComponentModel.DisplayName("切磋开关")]
+    [System.ComponentModel.Description("出游指令替换为切磋")]
     public class HookDuelPractice : IHook
     {
         static ConfigEntry<bool> duelOn;

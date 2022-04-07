@@ -6,9 +6,12 @@ using Heluo;
 using Heluo.UI;
 using Heluo.Data;
 using UnityEngine.UI;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("显示好感度")]
+    [Description("显示好感度")]
     class HookFavExp : IHook
     {
         private static ConfigEntry<bool> showFavExp;

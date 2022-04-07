@@ -4,9 +4,12 @@ using Heluo.Data;
 using Heluo.Manager;
 using Heluo.UI;
 using System;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("养成指令")]
+    [Description("显示练满所需点数")]
     class HookNurturanceOrder : IHook
     {
         static ConfigEntry<bool> showThreshold;

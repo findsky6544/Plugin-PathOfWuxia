@@ -9,9 +9,12 @@ using HarmonyLib;
 using Heluo.UI;
 using Heluo.Data;
 using UnityEngine;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("物品过滤与排序")]
+    [Description("物品过滤与排序")]
     class HookPropsFilterAndSort : IHook
     {
         enum SortMode

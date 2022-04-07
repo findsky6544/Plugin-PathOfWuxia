@@ -1,9 +1,12 @@
 ﻿using BepInEx.Configuration;
 using HarmonyLib;
 using Heluo.FSM.Player;
+using System.ComponentModel;
 
 namespace PathOfWuxia
 {
+    [System.ComponentModel.DisplayName("移动速度设置")]
+    [Description("移动速度")]
     class HookMove : IHook
     {
         private static ConfigEntry<float> moveSpeed;
