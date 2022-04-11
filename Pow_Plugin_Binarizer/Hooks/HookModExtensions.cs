@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
-using BepInEx;
 using BepInEx.Configuration;
 using Heluo;
 using Heluo.UI;
@@ -19,8 +18,8 @@ using Heluo.Features;
 namespace PathOfWuxia
 {
     // Mod辅助扩展
-    [System.ComponentModel.DisplayName("剑击江湖mod扩展功能")]
-    [System.ComponentModel.Description("剑击江湖mod扩展功能")]
+    [System.ComponentModel.DisplayName("mod扩展功能")]
+    [System.ComponentModel.Description("mod扩展功能，剑击江湖用（道具型秘籍、Json脚本支持、战场掉落、随机战场、扩展战斗回调）")]
     public class HookModExtensions : IHook
     {
 
@@ -622,6 +621,22 @@ namespace PathOfWuxia
                 string path = string.Format(GameConfig.BattleSchedulePath, GameConfig.Language, ScheduleID + ".json");
                 try
                 {
+                    Debug.Log($"尝试加载老版战斗：{path}");
+                    BattleSchedule bsOld = ModJson.FromJsonResource<BattleSchedule>(path, true);
+                    if (bsOld?.BattleSchedules == null)
+                        throw new NullReferenceException("无战斗节点");
+                    Traverse.Create(__instance).Property("BattleSchedule").SetValue(bsOld);
+                    ScheduleID = null;  //skip original load
+                    return true;
+                }
+                catch
+                {
+                    Debug.Log($"非老版战斗");
+                }
+
+                try
+                {
+                    Debug.Log($"尝试加载新版战斗：{path}");
                     BattleScheduleBundle bundle = ModJson.FromJsonResource<BattleScheduleBundle>(path, true);
                     BattleSchedule battleSchedule = new BattleSchedule();
                     Heluo.Flow.Battle.BattleRootNode battleRootNode = new Heluo.Flow.Battle.BattleRootNode();
@@ -638,9 +653,9 @@ namespace PathOfWuxia
                     Traverse.Create(__instance).Property("BattleSchedule").SetValue(battleSchedule);
                     Traverse.Create(__instance).Method("CreateBattleSchedules", battleRootNode, bundle).GetValue();
                 }
-                catch
+                catch (Exception e)
                 {
-                    Console.WriteLine("無法Mod讀取,换原版 : " + path);
+                    Console.WriteLine($"無法Mod讀取,调回原版函数. 错误=【{e}】");
                     return true;
                 }
             }
@@ -648,8 +663,8 @@ namespace PathOfWuxia
             return true;
         }
         // Heluo.Data.Buffer 加载
-        [HarmonyPrefix, HarmonyPatch(typeof(WuxiaBattleBuffer), "AddBuffer", new Type[] { typeof(WuxiaUnit), typeof(string), typeof(bool), typeof(bool) })]
-        public static bool Patch_ScheduleLoad3(WuxiaBattleBuffer __instance, WuxiaUnit unit, string bufferId, bool _is_born, bool _first)
+        [HarmonyPrefix, HarmonyPatch(typeof(WuxiaBattleBuffer), "AddBuffer", new Type[] { typeof(WuxiaUnit), typeof(string), typeof(BufferType) })]
+        public static bool Patch_ScheduleLoad3(WuxiaBattleBuffer __instance, WuxiaUnit unit, string bufferId, BufferType type)
         {
             if (bufferId.IsNullOrEmpty())
             {
@@ -660,7 +675,7 @@ namespace PathOfWuxia
             {
                 string path = string.Format(GameConfig.ButtleBufferPath, GameConfig.Language, bufferId + ".json");
                 Heluo.Data.Buffer buffer = ModJson.FromJsonResource<Heluo.Data.Buffer>(path, false);    // buff大概不用替换id吧..
-                __instance.AddBuffer(unit, buffer, _is_born, _first);
+                __instance.AddBuffer(unit, buffer, type);
             }
             catch
             {

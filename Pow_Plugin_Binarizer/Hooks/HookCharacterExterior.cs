@@ -116,22 +116,6 @@ namespace PathOfWuxia
             }
         }
 
-        /*[HarmonyPrefix, HarmonyPatch(typeof(UIRegistration), "UpdateView")]
-        public static bool UIRegistrationPatch_UpdateView(UIRegistration __instance, ref RegistrationInfo _info)
-        {
-            _info.SurName = newGameSurNameOverride.Value.IsNullOrEmpty()? "亦": newGameSurNameOverride.Value;
-            _info.Name = newGameNameOverride.Value.IsNullOrEmpty() ? "天凛" : newGameNameOverride.Value;
-            return true;
-        }
-
-        [HarmonyPrefix, HarmonyPatch(typeof(UIRegistration), "UpdateName")]
-        public static bool UIRegistrationPatch_UpdateName(UIRegistration __instance, ref string surName, ref string Name)
-        {
-            surName = newGameSurNameOverride.Value;
-            Name = newGameNameOverride.Value;
-            return true;
-        }*/
-
         [HarmonyPostfix, HarmonyPatch(typeof(GameData), "Initialize")]
         public static void GameDataPatch_Initialize(GameData __instance)
         {

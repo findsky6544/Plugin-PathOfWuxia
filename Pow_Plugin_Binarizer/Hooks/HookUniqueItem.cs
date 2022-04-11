@@ -6,7 +6,6 @@ using MessagePack.Resolvers;
 using HarmonyLib;
 using System.Reflection;
 using Ninject.Activation;
-using BepInEx;
 using BepInEx.Configuration;
 using Heluo;
 using Heluo.Data;
@@ -18,7 +17,7 @@ namespace PathOfWuxia
 {
     // 独特物品系统(装备重铸、随机词条等等)
     [System.ComponentModel.DisplayName("装备重铸")]
-    [Description("装备重铸")]
+    [Description("铁匠铺按R可开启随机重铸功能，会修改存档格式，Mod用")]
     public class HookUniqueItem : IHook
     {
         public void OnRegister(PluginBinarizer plugin)

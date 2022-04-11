@@ -7,18 +7,26 @@ using Heluo.Battle;
 using Heluo.FSM.Battle;
 using Heluo.Data;
 using System.ComponentModel;
+using UnityEngine;
+using Heluo;
+using Heluo.Resource;
+using System.Linq;
+using Heluo.UI;
+using UnityEngine.EventSystems;
+using Heluo.Utility;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace PathOfWuxia
 {
     [System.ComponentModel.DisplayName("战斗模式设置")]
-    [Description("战斗模式")]
+    [Description("半即时战斗模式、自动战斗等功能")]
     // 半即时战斗
     public class HookInitiactiveBattle : IHook
     {
         public void OnRegister(PluginBinarizer plugin)
         {
-            //会导致无法连斩，先注释掉
-            //initiactiveBattle = plugin.Config.Bind("战斗模式", "半即时战斗", false, "开关时序制半即时战斗系统");
+            initiactiveBattle = plugin.Config.Bind("战斗模式", "半即时战斗", false, "开关时序制半即时战斗系统");
             autoBattle = plugin.Config.Bind("战斗模式", "自动战斗", false, "我方自动战斗，重开战斗生效");
 
             plugin.onUpdate += OnUpdate;
@@ -26,7 +34,7 @@ namespace PathOfWuxia
 
         public void OnUpdate()
         {
-            /*if (bTimed && FSM != null)
+            if (bTimed && FSM != null)
             {
                 for (int num = 0; num < UIPortraits.Count; num++)
                 {
@@ -51,7 +59,7 @@ namespace PathOfWuxia
                     var unit = Traverse.Create(UnitMenu).Field("unit").GetValue<WuxiaUnit>();
                     wait_button.gameObject.SetActive(!Timed_IsWaiting(unit) && !unit.IsMoving && !unit.IsMoved && !unit.IsAction);
                 }
-            }*/
+            }
         }
 
         private static ConfigEntry<bool> initiactiveBattle;
@@ -194,7 +202,7 @@ namespace PathOfWuxia
         }
 
         // 1 战斗开始，添加/删除单位
-        /*static WuxiaBattleManager BM;
+        static WuxiaBattleManager BM;
         static BattleStateMachine FSM;
         [HarmonyPostfix, HarmonyPatch(typeof(WuxiaBattleManager), "InitBattle", new Type[] { typeof(BattleStateMachine), typeof(string), typeof(IDataProvider), typeof(IResourceProvider), typeof(Action<BillboardArg>) })]
         public static void TimedPatch_Begin(ref WuxiaBattleManager __instance, BattleStateMachine bsm)
@@ -220,7 +228,7 @@ namespace PathOfWuxia
                 Timed_AddUnit(__result);    // 添加单位
             }
         }
-        [HarmonyPrefix, HarmonyPatch(typeof(WuxiaBattleUnit), "OnUnitDestory"/*mdzz*//*, new Type[] { typeof(WuxiaUnit), typeof(bool) })]
+        [HarmonyPrefix, HarmonyPatch(typeof(WuxiaBattleUnit), "OnUnitDestory"/*mdzz*/, new Type[] { typeof(WuxiaUnit), typeof(bool) })]
         public static bool TimedPatch_RemoveUnit(WuxiaBattleUnit __instance, WuxiaUnit unit)
         {
             if (bTimed)
@@ -238,7 +246,7 @@ namespace PathOfWuxia
                 Timed_EncourageUnit(__instance);    // 顺序提前
             }
             return true;
-        }*/
+        }
 
         // 2 UI!!
         public static List<Image> UIPortraits = new List<Image>();
@@ -250,7 +258,7 @@ namespace PathOfWuxia
         public static Dictionary<WuxiaUnit, int> UIUnitIndex = new Dictionary<WuxiaUnit, int>();
         public static List<int> UIPortraitOrder = new List<int>();
         public static List<WuxiaUnit> UIWuxiaUnits = new List<WuxiaUnit>();
-        /*public static void UpdateTimedDisplay(List<WuxiaUnit> timedUnits)
+        public static void UpdateTimedDisplay(List<WuxiaUnit> timedUnits)
         {
             UIWuxiaUnits = timedUnits;
             for (int i = 0; i < timedUnits.Count; i++)
@@ -514,8 +522,8 @@ namespace PathOfWuxia
             if (bTimed && cell.Unit != null && btn == PointerEventData.InputButton.Left)
                 return cell.Unit == Timed_Current();
             return true;
-        }*/
-
+        }
+        
         // 5. 状态机！！
         [HarmonyPrefix, HarmonyPatch(typeof(BattleState), "FirstUnitSelect")]
         public static bool TimedPatch_FirstUnit(BattleState __instance)
@@ -526,7 +534,7 @@ namespace PathOfWuxia
                 return false;
             }
 
-            /*if (bTimed)
+            if (bTimed)
             {
                 var t = Traverse.Create(__instance);
                 var selected = t.Property("SelectedUnit");
@@ -540,10 +548,10 @@ namespace PathOfWuxia
                 }
                 __instance.SendEvent("ENDTURN");
                 return false;
-            }*/
+            }
             return true;
         }
-        /*[HarmonyPrefix, HarmonyPatch(typeof(BeginUnit), "OnEnable")]
+        [HarmonyPrefix, HarmonyPatch(typeof(BeginUnit), "OnEnable")]
         public static bool TimedPatch_BeginUnit2(BeginUnit __instance)
         {
             var t = Traverse.Create(__instance);
@@ -573,12 +581,12 @@ namespace PathOfWuxia
                         Timed_SetBeginTurn(wuxiaUnit, false);
                     }
                     BM.OnBattleEvent(BattleEventToggleTime.BeginUnit, Array.Empty<object>());
-                    WaitClick = new Action( ()=>
+                    WaitClick = new Action(() =>
                     {
                         UnitWantWait = true;
                         UnitIsRest = false;
                         __instance.SendEvent("FINISHED");
-                    } );
+                    });
                 }
             }
             else
@@ -595,33 +603,12 @@ namespace PathOfWuxia
         }
 
 
-        static bool IsContinuous_Beheading;
-        [HarmonyPrefix, HarmonyPatch(typeof(UnitPlayAbility), "Perform")]
-        public static bool UnitPlayAbilityPatch_getIsContinuous_Beheading(UnitPlayAbility __instance)
-        {
-            var t = Traverse.Create(__instance);
-            var args = t.Field("args");
-            Console.WriteLine("args:" + args);
-
-            WuxiaUnit Attacker = args.Field("Attacker").GetValue<WuxiaUnit>();
-            Console.WriteLine("Attacker:" + Attacker);
-
-            IsContinuous_Beheading = Attacker.IsContinuous_Beheading;
-            Console.WriteLine("IsContinuous_Beheading:" + IsContinuous_Beheading);
-
-            return true;
-        }
-
-
-
-
         [HarmonyPrefix, HarmonyPatch(typeof(EndUnit), "OnEnable")]
         public static bool TimedPatch_End1(EndUnit __instance)
         {
             Console.WriteLine("EndUnit.OnEnable()");
             var t = Traverse.Create(__instance);
             var selected = t.Property("SelectedUnit");
-            Console.WriteLine("bTimed:" + bTimed+ ",UnitWantWait:" + UnitWantWait);
             if (bTimed && UnitWantWait)   // 处理等待
             {
                 UnitWantWait = false;     // 重置等待
@@ -645,15 +632,10 @@ namespace PathOfWuxia
             BM.OnBattleEvent(BattleEventToggleTime.EndUnit, Array.Empty<object>());
             FSM.UI.CloseMenu();
             FSM.UI.CloseUnitInfo();
-            Console.WriteLine("1");
-            Console.WriteLine("BM.IsEvent:" + BM.IsEvent);
             if (!BM.IsEvent)
             {
-                var fsmvar = Traverse.Create((GameStateMachine)FSM);
-                var endUnitEventArgs = fsmvar.Field("eventArgs");
-                Console.WriteLine("endUnitEventArgs:" + endUnitEventArgs);
-                Console.WriteLine("IsContinuous_Beheading:" + endUnitEventArgs.Field("IsContinuous_Beheading").GetValue<bool>());
-                Console.WriteLine("IsContinuous_Beheading:" + IsContinuous_Beheading);
+                var eventArgs = Traverse.Create(FSM).Property("eventArgs");
+
                 if (selected.GetValue<WuxiaUnit>() != null)
                 {
                     WuxiaUnit selectedUnit = selected.GetValue<WuxiaUnit>();
@@ -666,19 +648,18 @@ namespace PathOfWuxia
                     {
                         selectedUnit2.OnTurnEnd();
                     }
-                    if (endUnitEventArgs != null && IsContinuous_Beheading)
+                    if (eventArgs.GetValue() != null && eventArgs.Field("IsContinuous_Beheading").GetValue<bool>())
                     {
                         BM.SendBillboard(new BillboardArg
                         {
-                            Pos = selected.GetValue<WuxiaUnit>().transform.position,
+                            Pos = selectedUnit.transform.position,
                             Numb = 0,
                             MessageType = Heluo.Battle.MessageType.Continuous
                         });
-                        BM.OnBufferEvent(BufferTiming.Continuous_Beheading);
-                        WuxiaUnit selectedUnit3 = selected.GetValue<WuxiaUnit>();
+                        selectedUnit.OnBufferEvent(BufferTiming.Continuous_Beheading);
+                        WuxiaUnit selectedUnit3 = selectedUnit;
                         if (selectedUnit3 != null)
                         {
-                            Console.WriteLine("selectedUnit3.OnTurnStart()");
                             selectedUnit3.OnTurnStart();
                         }
                     }
@@ -933,14 +914,14 @@ namespace PathOfWuxia
             {
                 WuxiaUnit unit = Timed_Current();
                 List<WuxiaUnit> second = (from u in BM.WuxiaUnits
-                                            where u.faction == unit.faction
-                                            select u).ToList<WuxiaUnit>();
+                                          where u.faction == unit.faction
+                                          select u).ToList<WuxiaUnit>();
                 BM.WuxiaUnits.Except(second).ToList<WuxiaUnit>();
                 if (Timed_GetBeginTurn(unit))
                 {
                     unit.OnBufferEvent(BufferTiming.BeginTurn);
                     unit.CalculationNumber_Of_Movements();
-                    Timed_SetBeginTurn(unit,false);
+                    Timed_SetBeginTurn(unit, false);
                 }
                 BM.OnBattleEvent(BattleEventToggleTime.BeginUnit, Array.Empty<object>());
                 if (BM.IsEvent)
@@ -958,159 +939,159 @@ namespace PathOfWuxia
                         continue;
                     }
                     unit.OnBufferEvent(BufferTiming.BeginUnit);
-                    if (!t.Field("disable").GetValue<bool>())   //*state.disable*/
-        /*{
-            BM.CameraLookAt = unit.Cell.transform.position;
-            List<WuxiaCell> moveInRange = t.Method("ShowMoveRange", unit).GetValue<List<WuxiaCell>>();//state.ShowMoveRange(unit);
+                    if (!t.Field("disable").GetValue<bool>())   //*state.disable*//*
+                    {
+                        BM.CameraLookAt = unit.Cell.transform.position;
+                        List<WuxiaCell> moveInRange = t.Method("ShowMoveRange", unit).GetValue<List<WuxiaCell>>();//state.ShowMoveRange(unit);
+                        await 0.1f;
+                        AIActionInfo useinfo = Traverse.Create(t.Method("GetBattleAI", unit).GetValue()).Method("Evaluate", moveInRange).GetValue<AIActionInfo>();//state.GetBattleAI(unit).Evaluate(moveInRange);
+                        if (useinfo == null)
+                        {
+                            foreach (WuxiaCell wuxiaCell in moveInRange)
+                            {
+                                wuxiaCell.UnMark();
+                            }
+                            Timed_EndUnit(isMove, isRest);
+                            UpdateTimedUI();
+                            unit.ReCover();
+                            BM.OnBattleEvent(BattleEventToggleTime.EndUnit, Array.Empty<object>());
+                            unit.OnBufferEvent(BufferTiming.EndUnit);
+                            continue;
+                        }
+                        if (useinfo.skill != null && useinfo.attackCell == unit.Cell)
+                        {
+                            useinfo.attackCell = useinfo.moveEnd;
+                        }
+                        AIActionInfo aiactionInfo = useinfo;
+                        List<WuxiaCell> list = aiactionInfo?.path;
+                        List<WuxiaCell> shortestPath = new List<WuxiaCell>();
+                        int num = unit[BattleProperty.Move];
+                        foreach (WuxiaCell wuxiaCell2 in moveInRange)
+                        {
+                            wuxiaCell2.UnMark();
+                        }
+                        if (list.HasData<WuxiaCell>())
+                        {
+                            foreach (WuxiaCell wuxiaCell3 in list)
+                            {
+                                shortestPath.Add(wuxiaCell3);
+                                if (num == 0)
+                                {
+                                    break;
+                                }
+                                wuxiaCell3.Mark(CellMarkType.WalkPath);
+                                num--;
+                            }
+                            unit.Move(shortestPath[0], shortestPath);
+                            while (unit.IsMoving)
+                            {
+                                isMove = true;
+                                await 0;
+                            }
+                            foreach (WuxiaCell wuxiaCell4 in shortestPath)
+                            {
+                                wuxiaCell4.UnMark();
+                            }
+                            unit.Actor.Move = false;
+                        }
+                        if (unit[BattleRestrictedState.Daze] > 0 || unit[BattleRestrictedState.Seal] > 0 || unit.IsAction)
+                        {
+                            unit.OnUnitEnd();
+                        }
+                        else if (useinfo.attackCell != null)
+                        {
+                            WuxiaCell point = useinfo.attackCell;
+                            List<WuxiaCell> attackInRange = t.Method("ShowAttackRange", useinfo.skill, unit.Cell).GetValue<List<WuxiaCell>>();//state.ShowAttackRange(useinfo.skill, unit.Cell);
+                            await 0.1f;
+                            foreach (WuxiaCell wuxiaCell5 in attackInRange)
+                            {
+                                wuxiaCell5.UnMark();
+                            }
+                            List<WuxiaCell> targetInRange = state.GetTargetInRange(useinfo.skill, attackInRange, unit.Cell, point);
+                            await 0.1f;
+                            foreach (WuxiaCell wuxiaCell6 in targetInRange)
+                            {
+                                wuxiaCell6.UnMark();
+                            }
+                            List<WuxiaUnit> list2 = new List<WuxiaUnit>();
+                            for (int i = 0; i < targetInRange.Count; i++)
+                            {
+                                if (targetInRange[i].Unit != null && Traverse.Create(BM).Method("CheckSkillUnit", targetInRange[i], useinfo.skill, unit).GetValue<bool>()/*BM.CheckSkillUnit(targetInRange[i], useinfo.skill, unit)*/  && !list2.Contains(targetInRange[i].Unit))
+                                {
+                                    list2.Add(targetInRange[i].Unit);
+                                }
+                            }
+                            if (list2.Count > 0 || useinfo.skill.Item.DamageType == DamageType.Summon)
+                            {
+                                if (unit.SpecialSkill == "specialskill0101" && list2.Count > 0 && useinfo.skill.Item.DamageType == DamageType.Damage)
+                                {
+                                    t.Method("PlayChangeElement", unit.LearnedSkills["specialskill0101"], unit, list2).GetValue();//state.PlayChangeElement(unit.LearnedSkills["specialskill0101"], unit, list2);
+                                }
+                                t.Method("PlayAbility", useinfo.skill, point, unit, list2).GetValue();//state.PlayAbility(useinfo.skill, point, unit, list2);
+                            }
+                            while (t.Field("isPlayAbility").GetValue<bool>())//state.isPlayAbility)
+                            {
+                                BattleGlobalVariable.AddUsedSkill(unit.UnitID, useinfo.skill.Item.Id);
+                                isRest = false;
+                                await 0;
+                            }
+                            if (!(unit.SpecialSkill == useinfo.skill.Id))
+                            {
+                                unit.OnUnitEnd();
+                            }
+                        }
+                        else
+                        {
+                            unit.OnUnitEnd();
+                        }
+                        if (unit.IsEndUnit)
+                        {
+                            if (!unit.IsDead)
+                            {
+                                Timed_EndUnit(isMove, isRest);
+                                UpdateTimedUI();
+                            }
+                            BM.OnBattleEvent(BattleEventToggleTime.EndUnit, Array.Empty<object>());
+                        }
+                        if (!unit.IsDead)
+                        {
+                            unit.OnBufferEvent(BufferTiming.EndUnit);
+                            continue;
+                        }
+                        continue;
+                    }
+                }
+                return;
+            }
             await 0.1f;
-            AIActionInfo useinfo = Traverse.Create(t.Method("GetBattleAI", unit).GetValue()).Method("Evaluate", moveInRange).GetValue<AIActionInfo>();//state.GetBattleAI(unit).Evaluate(moveInRange);
-            if (useinfo == null)
+            while (BM.IsEvent)
             {
-                foreach (WuxiaCell wuxiaCell in moveInRange)
-                {
-                    wuxiaCell.UnMark();
-                }
-                Timed_EndUnit(isMove, isRest);
-                UpdateTimedUI();
-                unit.ReCover();
-                BM.OnBattleEvent(BattleEventToggleTime.EndUnit, Array.Empty<object>());
-                unit.OnBufferEvent(BufferTiming.EndUnit);
-                continue;
-            }
-            if (useinfo.skill != null && useinfo.attackCell == unit.Cell)
-            {
-                useinfo.attackCell = useinfo.moveEnd;
-            }
-            AIActionInfo aiactionInfo = useinfo;
-            List<WuxiaCell> list = aiactionInfo?.path;
-            List<WuxiaCell> shortestPath = new List<WuxiaCell>();
-            int num = unit[BattleProperty.Move];
-            foreach (WuxiaCell wuxiaCell2 in moveInRange)
-            {
-                wuxiaCell2.UnMark();
-            }
-            if (list.HasData<WuxiaCell>())
-            {
-                foreach (WuxiaCell wuxiaCell3 in list)
-                {
-                    shortestPath.Add(wuxiaCell3);
-                    if (num == 0)
-                    {
-                        break;
-                    }
-                    wuxiaCell3.Mark(CellMarkType.WalkPath);
-                    num--;
-                }
-                unit.Move(shortestPath[0], shortestPath);
-                while (unit.IsMoving)
-                {
-                    isMove = true;
-                    await 0;
-                }
-                foreach (WuxiaCell wuxiaCell4 in shortestPath)
-                {
-                    wuxiaCell4.UnMark();
-                }
-                unit.Actor.Move = false;
-            }
-            if (unit[BattleRestrictedState.Daze] > 0 || unit[BattleRestrictedState.Seal] > 0 || unit.IsAction)
-            {
-                unit.OnUnitEnd();
-            }
-            else if (useinfo.attackCell != null)
-            {
-                WuxiaCell point = useinfo.attackCell;
-                List<WuxiaCell> attackInRange = t.Method("ShowAttackRange", useinfo.skill, unit.Cell).GetValue<List<WuxiaCell>>();//state.ShowAttackRange(useinfo.skill, unit.Cell);
+                Console.WriteLine("AI回合，等待事件結束");
                 await 0.1f;
-                foreach (WuxiaCell wuxiaCell5 in attackInRange)
-                {
-                    wuxiaCell5.UnMark();
-                }
-                List<WuxiaCell> targetInRange = state.GetTargetInRange(useinfo.skill, attackInRange, unit.Cell, point);
-                await 0.1f;
-                foreach (WuxiaCell wuxiaCell6 in targetInRange)
-                {
-                    wuxiaCell6.UnMark();
-                }
-                List<WuxiaUnit> list2 = new List<WuxiaUnit>();
-                for (int i = 0; i < targetInRange.Count; i++)
-                {
-                    if (targetInRange[i].Unit != null && Traverse.Create(BM).Method("CheckSkillUnit", targetInRange[i], useinfo.skill, unit).GetValue<bool>()/*BM.CheckSkillUnit(targetInRange[i], useinfo.skill, unit)*/ /* && !list2.Contains(targetInRange[i].Unit))
-                   {
-                        list2.Add(targetInRange[i].Unit);
-                    }
-                }
-                if (list2.Count > 0 || useinfo.skill.Item.DamageType == DamageType.Summon)
-                {
-                    if (unit.SpecialSkill == "specialskill0101" && list2.Count > 0 && useinfo.skill.Item.DamageType == DamageType.Damage)
-                    {
-                        t.Method("PlayChangeElement", unit.LearnedSkills["specialskill0101"], unit, list2).GetValue();//state.PlayChangeElement(unit.LearnedSkills["specialskill0101"], unit, list2);
-                    }
-                    t.Method("PlayAbility", useinfo.skill, point, unit, list2).GetValue();//state.PlayAbility(useinfo.skill, point, unit, list2);
-                }
-                while (t.Field("isPlayAbility").GetValue<bool>())//state.isPlayAbility)
-                {
-                    BattleGlobalVariable.AddUsedSkill(unit.UnitID, useinfo.skill.Item.Id);
-                    isRest = false;
-                    await 0;
-                }
-                if (!(unit.SpecialSkill == useinfo.skill.Id))
-                {
-                    unit.OnUnitEnd();
-                }
             }
-            else
+            if (Timed_Current() != null)
             {
-                unit.OnUnitEnd();
+                t.Method("FirstUnitSelect").GetValue();//state.FirstUnitSelect();
             }
-            if (unit.IsEndUnit)
-            {
-                if (!unit.IsDead)
-                {
-                    Timed_EndUnit(isMove, isRest);
-                    UpdateTimedUI();
-                }
-                BM.OnBattleEvent(BattleEventToggleTime.EndUnit, Array.Empty<object>());
-            }
-            if (!unit.IsDead)
-            {
-                unit.OnBufferEvent(BufferTiming.EndUnit);
-                continue;
-            }
-            continue;
+            FSM.SendEvent("ENDTURN");
         }
-    }
-    return;
-}
-await 0.1f;
-while (BM.IsEvent)
-{
-    Console.WriteLine("AI回合，等待事件結束");
-    await 0.1f;
-}
-if (Timed_Current() != null)
-{
-    t.Method("FirstUnitSelect").GetValue();//state.FirstUnitSelect();
-}
-FSM.SendEvent("ENDTURN");
-}
-[HarmonyPrefix, HarmonyPatch(typeof(AITurn), "OnEnable")]
-public static bool TimedPatch_AIEnable(AITurn __instance)
-{
-Console.WriteLine("AITurn.OnEnable()");
-var t = Traverse.Create(__instance);
-t.Method("initialization").GetValue();//__instance.initialization();
+        [HarmonyPrefix, HarmonyPatch(typeof(AITurn), "OnEnable")]
+        public static bool TimedPatch_AIEnable(AITurn __instance)
+        {
+            Console.WriteLine("AITurn.OnEnable()");
+            var t = Traverse.Create(__instance);
+            t.Method("initialization").GetValue();//__instance.initialization();
 
-Game.Input.Push(__instance);    //base.OnEnable();
-t.Field("disable").SetValue(false);//__instance.disable = false;
-if (bTimed)
-{
-    SimpleAIAsync_Timed(__instance);
-    return false;
-}
-t.Method("SimlpeAIAsync").GetValue();// __instance.SimlpeAIAsync();
-return false;
-}*/
+            Game.Input.Push(__instance);    //base.OnEnable();
+            t.Field("disable").SetValue(false);//__instance.disable = false;
+            if (bTimed)
+            {
+                SimpleAIAsync_Timed(__instance);
+                return false;
+            }
+            t.Method("SimlpeAIAsync").GetValue();// __instance.SimlpeAIAsync();
+            return false;
+        }
     }
 
 }
