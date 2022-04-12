@@ -11,7 +11,7 @@ using System.ComponentModel;
 namespace PathOfWuxia
 {
     [System.ComponentModel.DisplayName("显示好感度")]
-    [Description("显示好感度")]
+    [Description("交友页面、礼物显示好感度数值")]
     class HookFavExp : IHook
     {
         private static ConfigEntry<bool> showFavExp;
@@ -39,7 +39,7 @@ namespace PathOfWuxia
                     expText.fontSize = 25;
                     expText.alignment = TextAnchor.MiddleLeft;
                     expText.rectTransform.sizeDelta = new Vector2(120f, 40f);
-                    expText.transform.localPosition = new Vector3(-5f, 50f, 0f);
+                    expText.transform.localPosition = new Vector3(-5f, 48f, 0f);
             }
             else
             {

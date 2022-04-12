@@ -7,7 +7,6 @@ using System.Text;
 using System.Timers;
 using HarmonyLib;
 using UnityEngine;
-using BepInEx;
 using BepInEx.Configuration;
 using Heluo;
 using Heluo.UI;
@@ -25,7 +24,7 @@ namespace PathOfWuxia
 {
     // 多Mod支持
     [System.ComponentModel.DisplayName("Mod支持")]
-    [System.ComponentModel.Description("Mod支持")]
+    [System.ComponentModel.Description("Mod支持，若要加Mod必须勾选。支持自定义语音、音乐，扩展新的特效模型包等等")]
     public class HookModSupport : IHook
     {
         static private PluginBinarizer Plugin = null;
@@ -70,6 +69,7 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(ResourceManager), "Reset", new Type[] { typeof(ICoroutineRunner), typeof(Heluo.Mod.IModManager), typeof(Type[]) })]
         public static void ModPatch_Reset(ResourceManager __instance, ICoroutineRunner runner)
         {
+            Console.WriteLine("ModPatch_Reset");
             string[] paths = modList.Value.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             if (paths.Length > 0)
             {
@@ -104,6 +104,7 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(DataManager), "ReadData", new Type[] { typeof(string) })]
         public static bool ModPatch_ReadData_Mod(ref DataManager __instance, string path)
         {
+            Console.WriteLine("ModPatch_ReadData_Mod");
             var dict = Traverse.Create(__instance).Field("dict");
             var resource = Traverse.Create(__instance).Field("resource").GetValue<IResourceProvider>();
             path = __instance.CheckPath(path);
@@ -229,6 +230,7 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(MusicPlayer), "ChangeMusic", new Type[] { typeof(string), typeof(float), typeof(float), typeof(bool), typeof(bool), typeof(bool) })]
         public static bool ModPatch_ChangeTheme(ref string _name)
         {
+            Console.WriteLine("ModPatch_ChangeTheme");
             if (GlobalLib.ModResource != null && !modTheme.Value.IsNullOrEmpty() && _name == "In_theme_01.wav")
                 _name = modTheme.Value;
             return true;
@@ -240,6 +242,7 @@ namespace PathOfWuxia
 
         public static void PlayCustomizedVoice(AudioClip clip)
         {
+            Console.WriteLine("PlayCustomizedVoice");
             AudioSource ss = Traverse.Create(Game.MusicPlayer).Field("single_source").GetValue<AudioSource>();
             var currVol = Traverse.Create(Game.MusicPlayer).Field("current_volume_percent");
             if (ss == null)
@@ -268,6 +271,7 @@ namespace PathOfWuxia
         }
         public static void PlayCvByCharacter(string id)
         {
+            Console.WriteLine("PlayCvByCharacter");
             List<AudioClip> list;
             if (!_battleVoices.ContainsKey(id))
             {
@@ -294,6 +298,7 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(UIBattle), "OpenBattleStatus", new Type[] { typeof(WuxiaUnit) })]
         public static void ModPatch_BattleVoice(WuxiaUnit _unit)
         {
+            Console.WriteLine("ModPatch_BattleVoice");
             if (GlobalLib.ModResource != null && modCustomVoice.Value)
             {
                 PlayCvByCharacter(_unit.ExteriorId);
@@ -302,6 +307,7 @@ namespace PathOfWuxia
         // 4 玩家自定义配音-对话
         public static bool PlayCvByPath(string soundPath)
         {
+            Console.WriteLine("PlayCvByPath");
             AudioClip audioClip = Game.Resource.Load<AudioClip>(soundPath);
             if (audioClip == null)
             {
@@ -313,6 +319,7 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(CtrlTalk), "SetMessageView", new Type[] { typeof(Talk) })]
         public static void ModPatch_TalkVoice(Talk talk)
         {
+            Console.WriteLine("ModPatch_TalkVoice");
             if (GlobalLib.ModResource != null && modCustomVoice.Value)
             {
                 PlayCvByPath(string.Format(modTalkVoicePath.Value, talk.Id));
@@ -324,6 +331,7 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(BattleAction), "GetValue")]
         public static bool ModPatch_BattleAction(BattleAction __instance, ref bool __result)
         {
+            Console.WriteLine("ModPatch_BattleAction");
             if (!Application.isPlaying || __instance.battleId.IsNullOrEmpty())
             {
                 __result = false;
@@ -370,6 +378,7 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(GameState<MainStateMachine>), "SendEvent", new Type[] { typeof(string), typeof(EventArgs) })]
         public static bool ModPatch_LoadBattlePost(GameState<MainStateMachine> __instance, ref string eventName, ref EventArgs e)
         {
+            Console.WriteLine("ModPatch_LoadBattlePost");
             Console.WriteLine("当前BattleId=" + CachedBattleId);
             Console.WriteLine("eventName=" + eventName);
             Console.WriteLine("e=" + e);
@@ -387,6 +396,7 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(AssetBundleSheet), "GetBundleName", new Type[] { typeof(string) })]
         public static bool ModPatch_AssetBundle(AssetBundleSheet __instance, string filePath, ref string __result)
         {
+            //Console.WriteLine("ModPatch_AssetBundle");
             string text = filePath.ToLower().Trim();
             if (__instance.FilesInfo.ContainsKey(text))
             {
