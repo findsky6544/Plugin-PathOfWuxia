@@ -371,7 +371,10 @@ namespace PathOfWuxia
         public static void ClosePatch_nonbattleUseHealSkill(ref UIMartialArtsWindow __instance)
         {
             Console.WriteLine("ClosePatch_nonbattleUseHealSkill start");
-            UnityEngine.Object.Destroy(uiTeamMember.gameObject);
+            if(uiTeamMember != null)
+            {
+                UnityEngine.Object.Destroy(uiTeamMember.gameObject);
+            }
             Console.WriteLine("ClosePatch_nonbattleUseHealSkill end");
         }
 
@@ -665,7 +668,7 @@ namespace PathOfWuxia
 
             Console.WriteLine("放大按钮");
             //放大按钮
-            mantraBtn.GetComponents<Image>()[0].rectTransform.sizeDelta = new Vector3(105, 105);
+            mantraBtn.GetComponentsInChildren<Image>()[0].rectTransform.sizeDelta = new Vector3(105, 105);
             Console.WriteLine("OnMantraHighlighed end");
         }
 
@@ -684,7 +687,7 @@ namespace PathOfWuxia
             }
 
             //缩小按钮
-            mantraBtn.GetComponent<Image>().rectTransform.sizeDelta = new Vector3(90, 90);
+            mantraBtn.GetComponentsInChildren<Image>()[0].rectTransform.sizeDelta = new Vector3(90, 90);
             Console.WriteLine("OnMantraUnHighlighed end");
         }
 
@@ -773,6 +776,25 @@ namespace PathOfWuxia
                         icon.gameObject.SetActive(false);
                     }
                 }
+                /*Text skill_name = Traverse.Create(this).Field("skill_name").GetValue<Text>();
+                if (skill_name == null)
+                {
+                    var trans = mantraBtn.transform.Find("skill_name");
+                    if (trans == null)
+                    {
+                        GameObject textObj = new GameObject("skill_name");
+                        textObj.transform.SetParent(mantraBtn.transform, false);
+                        skill_name = textObj.AddComponent<Text>();
+                    }
+
+                    Traverse.Create(this).Field("skill_name").SetValue(skill_name);
+                    skill_name.text = skill.Item.Name;
+                    skill_name.transform.position = new Vector3(100,100,100);
+                }
+                if (skill_name != null)
+                {
+                    skill_name.text = skill.Item.Name;
+                }*/
                 Console.WriteLine("UpdateMantra end");
             }
             //隐藏心法
@@ -859,6 +881,7 @@ namespace PathOfWuxia
         private static void MartialArtsWindow_OnResult(bool result)
         {
             Console.WriteLine("MartialArtsWindow_OnResult start");
+            inBattleOpenMantraWindow = false;
             if (result)
             {
                 //如果点击了新心法则更新按钮信息
@@ -866,17 +889,6 @@ namespace PathOfWuxia
                 mantraBtn.SetMantra(currentMantra, false);
             }
             Console.WriteLine("MartialArtsWindow_OnResult end");
-        }
-
-        //关闭心法列表窗口
-        [HarmonyPostfix, HarmonyPatch(typeof(UIMartialArtsWindow), "Close")]
-        public static void UIMartialArtsWindowPatch_Close(ref UIMartialArtsWindow __instance)
-        {
-            Console.WriteLine("UIMartialArtsWindowPatch_Close start");
-
-            inBattleOpenMantraWindow = false;
-
-            Console.WriteLine("UIMartialArtsWindowPatch_Close end");
         }
     }
 }
