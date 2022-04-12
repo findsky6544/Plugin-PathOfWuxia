@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\plugins\</OutputPath>
+    <OutputPath>G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,104 +38,104 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\BepInEx\core\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="AmplifyBloom">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\AmplifyBloom.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\AmplifyBloom.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Antlr4.Runtime.Standard">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Antlr4.Runtime.Standard.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Antlr4.Runtime.Standard.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Artemis_Unity5">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Artemis_Unity5.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Artemis_Unity5.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BehaviourMachineRuntime, Version=1.0.6215.41608, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\BehaviourMachineRuntime.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\BehaviourMachineRuntime.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\core\BepInEx.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BigInteger">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\BigInteger.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\BigInteger.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ConfigurationManager">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\BepInEx\plugins\ConfigurationManager.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\ConfigurationManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DOTween">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DOTween43">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween43.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween43.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DOTween46">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween46.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween46.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DOTween50">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween50.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\DOTween50.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Enums.NET">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Enums.NET.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Enums.NET.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="FileHelpers">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\FileHelpers.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\FileHelpers.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="INIFileParser">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\INIFileParser.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\INIFileParser.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Ionic.Zip.Reduced">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Ionic.Zip.Reduced.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Ionic.Zip.Reduced.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MessagePack">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MessagePack.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MessagePack.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.Contracts">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Microsoft.Contracts.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Microsoft.Contracts.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Posix">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Mono.Posix.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Mono.Posix.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Security">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Mono.Security.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Mono.Security.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MoonSharp.Interpreter">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MoonSharp.Interpreter.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MoonSharp.Interpreter.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MoreLinq">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MoreLinq.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\MoreLinq.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -158,283 +158,283 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Unity.Addressables">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.Addressables.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.Addressables.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.AssetGraph">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.AssetGraph.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.AssetGraph.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.Postprocessing.Runtime.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.Postprocessing.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.ResourceManager">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.ResourceManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.ScriptableBuildPipeline">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.ScriptableBuildPipeline.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.ScriptableBuildPipeline.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AccessibilityModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AccessibilityModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AIModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ARModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ARModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ARModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.BaselibModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.BaselibModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.BaselibModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClothModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClothModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClusterInputModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClusterInputModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ClusterRendererModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClusterRendererModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ClusterRendererModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CrashReportingModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.CrashReportingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.DirectorModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.DirectorModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.DirectorModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.FileSystemHttpModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.FileSystemHttpModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.FileSystemHttpModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GameCenterModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.GameCenterModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.GameCenterModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.GridModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.GridModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.GridModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.HotReloadModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.HotReloadModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.HotReloadModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.InputModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.LocalizationModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.LocalizationModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.LocalizationModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Networking">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.Networking.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.Networking.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PerformanceReportingModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.PerformanceReportingModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.PerformanceReportingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ProfilerModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ProfilerModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.ScreenCaptureModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.ScreenCaptureModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SharedInternalsModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SharedInternalsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SpatialTracking">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SpatialTracking.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SpatialTracking.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SpriteMaskModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SpriteShapeModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SpriteShapeModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.StreamingModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.StreamingModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.StreamingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.StyleSheetsModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.StyleSheetsModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.StyleSheetsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.SubstanceModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.SubstanceModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TerrainModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TerrainModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TerrainPhysicsModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TerrainPhysicsModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TerrainPhysicsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextCoreModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TilemapModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TilemapModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TilemapModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.Timeline">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.Timeline.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.Timeline.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TimelineModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TimelineModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TimelineModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.TLSModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TLSModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.TLSModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UmbraModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UmbraModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UmbraModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UNETModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UNETModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UNETModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityAnalyticsModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityAnalyticsModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityConnectModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityConnectModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityConnectModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityTestProtocolModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityTestProtocolModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityTestProtocolModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAssetBundleModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAudioModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestTextureModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VehiclesModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VFXModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VFXModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VFXModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VideoModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VideoModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.VRModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VRModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.VRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.WindModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.WindModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.WindModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.XRModule">
-      <HintPath>F:\SteamLibrary\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.XRModule.dll</HintPath>
+      <HintPath>G:\Steam\steamapps\common\PathOfWuxia\PathOfWuxia_Data\Managed\UnityEngine.XRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -451,6 +451,7 @@
     <Compile Include="GameExtensions\RewardUniquePropsFromProps.cs" />
     <Compile Include="GameExtensions\RewardUniqueEquipByValue.cs" />
     <Compile Include="GameExtensions\RewardUniqueScroll.cs" />
+    <Compile Include="Hooks\HookBattleMemo.cs" />
     <Compile Include="Hooks\HookBattlePose.cs" />
     <Compile Include="Hooks\HookBuff.cs" />
     <Compile Include="Hooks\HookCamera.cs" />
