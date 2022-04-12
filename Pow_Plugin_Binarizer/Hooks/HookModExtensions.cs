@@ -648,8 +648,10 @@ namespace PathOfWuxia
             return true;
         }
         // Heluo.Data.Buffer 加载
-        [HarmonyPrefix, HarmonyPatch(typeof(WuxiaBattleBuffer), "AddBuffer", new Type[] { typeof(WuxiaUnit), typeof(string), typeof(bool), typeof(bool) })]
-        public static bool Patch_ScheduleLoad3(WuxiaBattleBuffer __instance, WuxiaUnit unit, string bufferId, bool _is_born, bool _first)
+
+        //修改了一下参数使编译通过 bool,bool -> BufferType
+        [HarmonyPrefix, HarmonyPatch(typeof(WuxiaBattleBuffer), "AddBuffer", new Type[] { typeof(WuxiaUnit), typeof(string), typeof(BufferType) })]
+        public static bool Patch_ScheduleLoad3(WuxiaBattleBuffer __instance, WuxiaUnit unit, string bufferId, BufferType type)
         {
             if (bufferId.IsNullOrEmpty())
             {
@@ -660,7 +662,7 @@ namespace PathOfWuxia
             {
                 string path = string.Format(GameConfig.ButtleBufferPath, GameConfig.Language, bufferId + ".json");
                 Heluo.Data.Buffer buffer = ModJson.FromJsonResource<Heluo.Data.Buffer>(path, false);    // buff大概不用替换id吧..
-                __instance.AddBuffer(unit, buffer, _is_born, _first);
+                __instance.AddBuffer(unit, buffer, type);
             }
             catch
             {
