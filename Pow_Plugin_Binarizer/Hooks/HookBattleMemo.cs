@@ -44,11 +44,12 @@ namespace PathOfWuxia
             Persuit,
             Counter,
             Preemptive,
-            Support
+            Support,
+            Null
 
         }
         static Stack<AttackType> AttackTypeStack = new Stack<AttackType>();
-
+        static AttackType newAttackType = AttackType.Null;
 
         static List<String> msgs = new List<String>();
         //static int msgCount = 0;
@@ -498,67 +499,78 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(AttackProcessStrategy), nameof(AttackProcessStrategy.Process), new Type[] {typeof (BattleEventArgs) })]
         public static void preAttack(BattleEventArgs arg)
         {
-            AttackTypeStack.Push(AttackType.Normal);
+            //AttackTypeStack.Push(AttackType.Normal);
+            newAttackType = AttackType.Normal;
             Console.WriteLine("加入普攻事件");
         }
+        /*
         [HarmonyPostfix, HarmonyPatch(typeof(AttackProcessStrategy), nameof(AttackProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void postAttack(BattleEventArgs arg)
         {
-           // AttackTypeStack.Pop();
-           // Console.WriteLine("弹出");
+            //AttackTypeStack.Pop();
+            newAttackType = AttackType.Null;
+            Console.WriteLine("弹出普攻");
         }
-
+        */
         [HarmonyPrefix, HarmonyPatch(typeof(PursuitProcessStrategy), nameof(PursuitProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void prePursuit(BattleEventArgs arg)
         {
-            AttackTypeStack.Push(AttackType.Persuit);
+            newAttackType=AttackType.Persuit;
             Console.WriteLine("加入追击事件");
         }
+        /*
         [HarmonyPostfix, HarmonyPatch(typeof(PursuitProcessStrategy), nameof(PursuitProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void postPursuit(BattleEventArgs arg)
         {
-           // AttackTypeStack.Pop();
-            
-           // Console.WriteLine("弹出");
+            newAttackType = AttackType.Null;
+
+            Console.WriteLine("弹出追击");
         }
+        */
         [HarmonyPrefix, HarmonyPatch(typeof(BuffProcessStrategy), nameof(BuffProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void preBuff(BattleEventArgs arg)
         {
-            AttackTypeStack.Push(AttackType.Buff);
+            newAttackType = AttackType.Buff;
             
             Console.WriteLine("加入buff事件");
         }
+        /*
         [HarmonyPostfix, HarmonyPatch(typeof(BuffProcessStrategy), nameof(BuffProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void postBuff(BattleEventArgs arg)
         {
-            //AttackTypeStack.Pop();
-            //Console.WriteLine("弹出");
+            newAttackType = AttackType.Null;
+            Console.WriteLine("弹出buff");
         }
+        */
         [HarmonyPrefix, HarmonyPatch(typeof(HealProcessStrategy), nameof(HealProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void preHeal(BattleEventArgs arg)
         {
-            AttackTypeStack.Push(AttackType.Heal);
+            newAttackType = AttackType.Heal;
             Console.WriteLine("加入heal事件");
         }
+        /*
         [HarmonyPostfix, HarmonyPatch(typeof(HealProcessStrategy), nameof(HealProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void postHeal(BattleEventArgs arg)
         {
-           // AttackTypeStack.Pop();
-           // Console.WriteLine("弹出");
+            newAttackType = AttackType.Null;
+            Console.WriteLine("弹出heal");
         }
+        */
         [HarmonyPrefix, HarmonyPatch(typeof(SummonProcessStrategy), nameof(SummonProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void preSummonl(BattleEventArgs arg)
         {
-            AttackTypeStack.Push(AttackType.Summon);
+            newAttackType = AttackType.Summon;
             Console.WriteLine("加入summon事件");
         }
+        /*
         [HarmonyPostfix, HarmonyPatch(typeof(SummonProcessStrategy), nameof(SummonProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void postSummonl(BattleEventArgs arg)
         {
-            //AttackTypeStack.Pop();
-            //
-        }
+            newAttackType = AttackType.Null;
+            Console.WriteLine("弹出summon");
 
+        }
+        */
 
         [HarmonyPrefix, HarmonyPatch(typeof(CounterProcessStrategy), nameof(CounterProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void preCounter(BattleEventArgs arg)
@@ -567,28 +579,29 @@ namespace PathOfWuxia
             switch (temparg.Type)
             {
                 case CounterEventArgs.CounterType.Counter:
-                    AttackTypeStack.Push(AttackType.Counter);
+                    newAttackType=AttackType.Counter;
                     Console.WriteLine("加入反击事件");
                     break;
                 case CounterEventArgs.CounterType.Preemptive:
-                    AttackTypeStack.Push(AttackType.Preemptive);
+                    newAttackType = AttackType.Preemptive;
                     
                     Console.WriteLine("加入先制事件");
                     break;
                 case CounterEventArgs.CounterType.Support:
-                    AttackTypeStack.Push(AttackType.Support);
+                    newAttackType = AttackType.Support;
                     Console.WriteLine("加入援护事件");
                     break;
             }
             
         }
+        /*
         [HarmonyPostfix, HarmonyPatch(typeof(CounterProcessStrategy), nameof(CounterProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
         public static void postCounter(BattleEventArgs arg)
-        {
-            //AttackTypeStack.Pop();
-            //Console.WriteLine("弹出");
+        {   
+            newAttackType = AttackType.Null;
+            Console.WriteLine("弹出反击");
         }
-
+        */
 
         [HarmonyPostfix, HarmonyPatch(typeof(BattleComputer),nameof(BattleComputer.Calculate_Final_Damage))]
         public static void calcDam(BattleComputer __instance, Damage damage, SkillData skill)
@@ -600,17 +613,18 @@ namespace PathOfWuxia
                 ispred = false;
                 return;
             }
+            AttackType atp = newAttackType;
             Console.WriteLine("进入伤害计算的补丁");
-            if(AttackTypeStack.Count == 0)
+            if(BattleGlobalVariable.CurrentDamage == null)
             {
                 Console.WriteLine("没有实际攻击事件，提前退出伤害计算的补丁");
                 return;
             }
-            AttackType atp = AttackTypeStack.Pop();
-            Console.WriteLine("弹出最近加入的攻击行为");
+            //AttackType atp = AttackTypeStack.Pop();
+            //Console.WriteLine("弹出最近加入的攻击行为");
           
 
-            if (atp == AttackType.Summon)
+            if (atp == AttackType.Summon )
             {
                // 不知道是干嘛的，还没玩第三年
                 return;
