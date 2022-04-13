@@ -100,7 +100,7 @@ public class HookBattleMemo : IHook
                     curContent.transform.parent.gameObject.GetComponent<Image>().sprite =
                         Heluo.Game.Resource.Load<Sprite>( getpath() );
                 } else {
-                    curContent.transform.parent.gameObject.GetComponent<Image>().color = Color.clear;
+                    curContent.transform.parent.gameObject.GetComponent<Image>().sprite = null;
                 }
             }
 
@@ -339,6 +339,7 @@ public class HookBattleMemo : IHook
     public static void died( WuxiaUnit __instance )
     {
         msgs.Add( "- " + __instance.FullName + " 失去战斗能力并离开战场" );
+        update_msg();
     }
     [HarmonyPostfix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
                                    new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
@@ -357,7 +358,7 @@ public class HookBattleMemo : IHook
         }
 
         string str = "+ " + unit.FullName + "受到效果 " + buffer.Name +
-                     ( buffer.Times > 0 ? ( "持续" + buffer.Times + "回合" ) : "" ) + ", 来源: ";
+                     ( buffer.Times > 0 ? ( " 持续" + buffer.Times + " 回合" ) : "" ) + ", 来源: ";
         Console.WriteLine( str );
         switch( type ) {
             case BufferType.Difficulty:
@@ -673,7 +674,7 @@ public class HookBattleMemo : IHook
         //尽量语句通顺吧，代码过于混乱- -
         string description = "";
         string str = damage.Attacker.FullName + "对 " + damage.Defender.FullName +
-                     ( skill.Item.Name != null ? " 使用 " : " 攻击 " );
+                     ( skill.Item.Name != null ? " 使用" : " 攻击 " );
 
         description += skill.Item.Name;
 
@@ -729,10 +730,9 @@ public class HookBattleMemo : IHook
         if( damage.IsSuperiority ) {
             description += " 效果拔群! ";
         }
-        //if(damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] > 0)
-        //{
-        //    description += " 被真气抵挡%%" + damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] + "伤害";
-        //}
+        if( damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] > 0 ) {
+            description += damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] + "%" + " 被真气抵挡";
+        }
         if( damage.IsHeal ) {
             str += " 回复 " + damage.final_damage + ( skill.Item.DamageType == DamageType.Heal ? " 气血" :
                     " 内力" );
@@ -940,7 +940,7 @@ public class HookBattleMemo : IHook
         if( getpath() != null ) {
             im2.sprite = Heluo.Game.Resource.Load<Sprite>( getpath() );
         } else {
-            im2.color = Color.clear;
+            im2.sprite = null;
         }
 
         //把内容块设为滚动框的child
