@@ -228,7 +228,7 @@ public class HookBattleMemo : IHook
                                                   typeof( LayoutElement ) );
             //Text类的似乎不需要设置添加LayoutElement？反正先随便设置一下有问题再删
             curBlock.GetComponent<LayoutElement>().flexibleWidth = 0f;
-            curBlock.GetComponent<LayoutElement>().preferredWidth = 800f;
+            curBlock.GetComponent<LayoutElement>().preferredWidth = 750f;
             curBlock.GetComponent<LayoutElement>().flexibleHeight = 0f;
             curBlock.GetComponent<LayoutElement>().preferredHeight = 30f;
             Console.WriteLine( "flagdddddddddddddddddddddddddddddd " );
@@ -268,7 +268,7 @@ public class HookBattleMemo : IHook
             Console.WriteLine("Fontsize" + curBlock.GetComponent<Text>().fontSize);
             Console.WriteLine("colour r" + curBlock.GetComponent<Text>().color.r + "colour g"+ curBlock.GetComponent<Text>().color.g + "colour b"+curBlock.GetComponent<Text>().color.b);
             */
-            curBlock.GetComponent<RectTransform>().sizeDelta = new Vector2( 800f, 30f );
+            curBlock.GetComponent<RectTransform>().sizeDelta = new Vector2( 750f, 30f );
             curBlock.GetComponent<RectTransform>().SetParent( curContent.GetComponent<RectTransform>(), false );
             Console.WriteLine( "debug: " );
             Console.WriteLine( "anchormin" + curBlock.GetComponent<RectTransform>().anchorMin );
@@ -1007,7 +1007,7 @@ public class HookBattleMemo : IHook
         RectTransform rect = Content.GetComponent<RectTransform>();
         rect.SetParent( rect2 );
         rect.pivot = new Vector2( 0.65f, 1f );
-        rect.sizeDelta = new Vector2( 700f, 1000f );
+        rect.sizeDelta = new Vector2( 750f, 1000f );
         rect.localPosition = new Vector3( 0f, -100f, 0f );
 
 
