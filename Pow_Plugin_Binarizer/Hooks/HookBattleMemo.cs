@@ -181,15 +181,15 @@ public class HookBattleMemo : IHook
     //把存储的消息同步到屏幕
     static public void update_msg()
     {
-        Console.WriteLine( "同步消息开始." );
+        //Console.WriteLine( "同步消息开始." );
         if( !curContent ) {
-            Console.WriteLine( "没找到对象" );
+            //Console.WriteLine( "没找到对象" );
             return;
         }
 
         while( curContent.GetComponent<RectTransform>().childCount < msgs.Count ) {
-            Console.WriteLine( "childCount" + curContent.GetComponent<RectTransform>().childCount +
-                               "    msgs.Count" + msgs.Count );
+            //Console.WriteLine( "childCount" + curContent.GetComponent<RectTransform>().childCount +
+            //                   "    msgs.Count" + msgs.Count );
             if( curContent.GetComponent<RectTransform>().childCount > 1 &&
                 msgs[curContent.GetComponent<RectTransform>().childCount].Equals(
                     msgs[curContent.GetComponent<RectTransform>().childCount - 1] ) ) {
@@ -197,16 +197,16 @@ public class HookBattleMemo : IHook
                 repeated++;
                 if( curContent.GetComponent<RectTransform>().GetChild(
                         curContent.GetComponent<RectTransform>().childCount - 1 ) ) {
-                    Console.WriteLine( "object exists" + curContent.GetComponent<RectTransform>().GetChild(
-                                           curContent.GetComponent<RectTransform>().childCount - 1 ).name );
+                    //Console.WriteLine( "object exists" + curContent.GetComponent<RectTransform>().GetChild(
+                    //                       curContent.GetComponent<RectTransform>().childCount - 1 ).name );
                 }
                 Text ttt = curContent.GetComponent<RectTransform>().GetChild(
                                curContent.GetComponent<RectTransform>().childCount - 1 ).gameObject.GetComponent<Text>();
-                Console.WriteLine( "flaggg text length" + ttt.text.Length );
+                //Console.WriteLine( "flaggg text length" + ttt.text.Length );
                 ttt.text = ttt.text.Remove( ttt.text.Length - 3 );
-                Console.WriteLine( "flagaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" );
+                //Console.WriteLine( "flagaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" );
                 ttt.text += "×" + repeated;
-                Console.WriteLine( ttt.text );
+                //Console.WriteLine( ttt.text );
                 if( msgs[curContent.GetComponent<RectTransform>().childCount].StartsWith( "•" ) ||
                     msgs[curContent.GetComponent<RectTransform>().childCount].StartsWith( "+" ) ||
                     msgs[curContent.GetComponent<RectTransform>().childCount].StartsWith( "-" ) ) {
@@ -217,13 +217,13 @@ public class HookBattleMemo : IHook
                 if( curContent.GetComponent<RectTransform>().childCount == msgs.Count ) {
                     break;
                 }
-                Console.WriteLine( "flagbbbbbbbbbbbbbbbbbbbbbbb " );
+                //Console.WriteLine( "flagbbbbbbbbbbbbbbbbbbbbbbb " );
 
             } else {
                 repeated = 1;
             }
 
-            Console.WriteLine( "flagccccccccccccccccccccccccccc " );
+            //Console.WriteLine( "flagccccccccccccccccccccccccccc " );
             GameObject curBlock = new GameObject( "msgBlock", typeof( RectTransform ), typeof( Text ),
                                                   typeof( LayoutElement ) );
             //Text类的似乎不需要设置添加LayoutElement？反正先随便设置一下有问题再删
@@ -231,13 +231,13 @@ public class HookBattleMemo : IHook
             curBlock.GetComponent<LayoutElement>().preferredWidth = 750f;
             curBlock.GetComponent<LayoutElement>().flexibleHeight = 0f;
             curBlock.GetComponent<LayoutElement>().preferredHeight = 30f;
-            Console.WriteLine( "flagdddddddddddddddddddddddddddddd " );
+            //Console.WriteLine( "flagdddddddddddddddddddddddddddddd " );
 
 
             if( curContent != null ) {
-                Console.WriteLine( "flag childCount " + curContent.GetComponent<RectTransform>().childCount +
-                                   "msgs count" + msgs.Count );
-                Console.WriteLine( "设定文本." + msgs[curContent.GetComponent<RectTransform>().childCount] );
+                //Console.WriteLine( "flag childCount " + curContent.GetComponent<RectTransform>().childCount +
+                //                   "msgs count" + msgs.Count );
+                //Console.WriteLine( "设定文本." + msgs[curContent.GetComponent<RectTransform>().childCount] );
             }
             curBlock.GetComponent<Text>().font = Heluo.Game.Resource.Load<Font>( "Assets/Font/kaiu.ttf" );
             curBlock.GetComponent<Text>().fontSize = 20;
@@ -270,31 +270,31 @@ public class HookBattleMemo : IHook
             */
             curBlock.GetComponent<RectTransform>().sizeDelta = new Vector2( 750f, 30f );
             curBlock.GetComponent<RectTransform>().SetParent( curContent.GetComponent<RectTransform>(), false );
-            Console.WriteLine( "debug: " );
-            Console.WriteLine( "anchormin" + curBlock.GetComponent<RectTransform>().anchorMin );
-            Console.WriteLine( "anchormax" + curBlock.GetComponent<RectTransform>().anchorMax );
-            Console.WriteLine( "pivot" + curBlock.GetComponent<RectTransform>().pivot );
-            Console.WriteLine( "localposition" + curBlock.GetComponent<RectTransform>().localPosition );
-            Console.WriteLine( "anchoredPosition" + curBlock.GetComponent<RectTransform>().anchoredPosition );
-            Console.WriteLine( "sizeDelta" + curBlock.GetComponent<RectTransform>().sizeDelta );
-            Console.WriteLine( "text:  " + curBlock.GetComponent<Text>().text );
-            Console.WriteLine( "添加parent 结束." );
-            Console.WriteLine( "child count " + curContent.GetComponent<RectTransform>().childCount );
+            //Console.WriteLine( "debug: " );
+            //Console.WriteLine( "anchormin" + curBlock.GetComponent<RectTransform>().anchorMin );
+            //Console.WriteLine( "anchormax" + curBlock.GetComponent<RectTransform>().anchorMax );
+            //Console.WriteLine( "pivot" + curBlock.GetComponent<RectTransform>().pivot );
+            //Console.WriteLine( "localposition" + curBlock.GetComponent<RectTransform>().localPosition );
+            //Console.WriteLine( "anchoredPosition" + curBlock.GetComponent<RectTransform>().anchoredPosition );
+            // Console.WriteLine( "sizeDelta" + curBlock.GetComponent<RectTransform>().sizeDelta );
+            //Console.WriteLine( "text:  " + curBlock.GetComponent<Text>().text );
+            //Console.WriteLine( "添加parent 结束." );
+            //Console.WriteLine( "child count " + curContent.GetComponent<RectTransform>().childCount );
             curBlock.SetActive( true );
         }
 
         while( msgs.Count > maxCount ) {
-            Console.WriteLine( "删除队首元素" );
+            //Console.WriteLine( "删除队首元素" );
             GameObject.Destroy( curContent.GetComponent<RectTransform>().GetChild( 0 ) );
             curContent.GetComponent<RectTransform>().GetChild( 0 ).SetParent( null );
-            Console.WriteLine( "child count " + curContent.GetComponent<RectTransform>().childCount );
+            //Console.WriteLine( "child count " + curContent.GetComponent<RectTransform>().childCount );
             msgs.RemoveAt( 0 );
-            Console.WriteLine( "msg length " + msgs.Count );
+            // Console.WriteLine( "msg length " + msgs.Count );
         }
 
 
-        Console.WriteLine( "同步消息结束." );
-        Console.WriteLine( "reposition" );
+        //Console.WriteLine( "同步消息结束." );
+        //Console.WriteLine( "reposition" );
 
 
         //msgs.Add("-------------------------------------------------------");
@@ -305,7 +305,7 @@ public class HookBattleMemo : IHook
         Vector2 localpos = curContent.GetComponent<RectTransform>().localPosition;
         localpos.y = + Math.Max( msgs.Count - 20 - 2 * ( height.Value - 5 ), 0 ) * 30;
         curContent.GetComponent<RectTransform>().localPosition = localpos;
-        Console.WriteLine( "end reposition" );
+        //Console.WriteLine( "end reposition" );
         LayoutRebuilder.ForceRebuildLayoutImmediate( curContent.GetComponent<RectTransform>() );
 
     }
@@ -367,13 +367,13 @@ public class HookBattleMemo : IHook
             return;
         }
         if( unit == null && buffer == null ) {
-            Console.WriteLine( "addbuffer patch end" );
+            //Console.WriteLine( "addbuffer patch end" );
             return;
         }
 
         string str = "+ " + unit.FullName + "受到效果 " + buffer.Name +
                      ( buffer.Times > 0 ? ( " 持续" + buffer.Times + " 回合" ) : "" ) + ", 来源: ";
-        Console.WriteLine( str );
+        //Console.WriteLine( str );
         switch( type ) {
             case BufferType.Difficulty:
                 str += "难度";
@@ -407,7 +407,7 @@ public class HookBattleMemo : IHook
         msgs.Add( str );
         description.Enqueue( buffer.Desc );
         update_msg();
-        Console.WriteLine( "addbuffer patch end" );
+        //Console.WriteLine( "addbuffer patch end" );
     }
 
     [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.RemoveBuffer ),
@@ -416,7 +416,7 @@ public class HookBattleMemo : IHook
                                      WuxiaUnit _unit, string _bufferId )
     {
 
-        Console.WriteLine( "removebuffer patch" );
+        //Console.WriteLine( "removebuffer patch" );
         if( auraCount > 0 && !showAura.Value ) {
             return true;
         }
@@ -430,17 +430,17 @@ public class HookBattleMemo : IHook
             return true;
         }
         if( !__instance.IsExist( _unit.UnitID, _bufferId ) ) {
-            Console.WriteLine( "removebuffer patch error" );
+            //Console.WriteLine( "removebuffer patch error" );
             return true;
         }
 
         BufferInfo bufferInfo = ___BufferList.Find( ( BufferInfo i ) => i.UnitId == _unit.UnitID &&
                                 i.BufferId == _bufferId );
         if( bufferInfo == null ) {
-            Console.WriteLine( "removebuffer erro, list length =" + ___BufferList.Count );
+            //Console.WriteLine( "removebuffer erro, list length =" + ___BufferList.Count );
             return true;
         } else {
-            Console.WriteLine( "buffer info found" );
+            //Console.WriteLine( "buffer info found" );
         }
 
         if( bufferInfo.Table == null || bufferInfo.Table.Name == null ) {
@@ -449,10 +449,10 @@ public class HookBattleMemo : IHook
         string str = "- " + _unit.FullName + " 失去效果 " + bufferInfo.Table.Name;
         msgs.Add( str );
         description.Enqueue( bufferInfo.Table.Desc );
-        Console.WriteLine( "added remove msg:" + str );
+        //Console.WriteLine( "added remove msg:" + str );
         update_msg();
 
-        Console.WriteLine( "removebuffer patch end" );
+        //Console.WriteLine( "removebuffer patch end" );
         return true;
     }
 
@@ -560,7 +560,7 @@ public class HookBattleMemo : IHook
         } else {
             newAttackType = AttackType.Normal;
         }
-        Console.WriteLine( "加入普攻事件" );
+        //Console.WriteLine( "加入普攻事件" );
     }
     /*
     [HarmonyPostfix, HarmonyPatch(typeof(AttackProcessStrategy), nameof(AttackProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
@@ -576,7 +576,7 @@ public class HookBattleMemo : IHook
     public static void prePursuit( BattleEventArgs arg )
     {
         newAttackType = AttackType.Persuit;
-        Console.WriteLine( "加入追击事件" );
+        //Console.WriteLine( "加入追击事件" );
     }
     /*
     [HarmonyPostfix, HarmonyPatch(typeof(PursuitProcessStrategy), nameof(PursuitProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
@@ -593,7 +593,7 @@ public class HookBattleMemo : IHook
     {
         newAttackType = AttackType.Buff;
 
-        Console.WriteLine( "加入buff事件" );
+        //Console.WriteLine( "加入buff事件" );
     }
     /*
     [HarmonyPostfix, HarmonyPatch(typeof(BuffProcessStrategy), nameof(BuffProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
@@ -608,7 +608,7 @@ public class HookBattleMemo : IHook
     public static void preHeal( BattleEventArgs arg )
     {
         newAttackType = AttackType.Heal;
-        Console.WriteLine( "加入heal事件" );
+        //Console.WriteLine( "加入heal事件" );
     }
     /*
     [HarmonyPostfix, HarmonyPatch(typeof(HealProcessStrategy), nameof(HealProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
@@ -623,7 +623,7 @@ public class HookBattleMemo : IHook
     public static void preSummonl( BattleEventArgs arg )
     {
         newAttackType = AttackType.Summon;
-        Console.WriteLine( "加入summon事件" );
+        //Console.WriteLine( "加入summon事件" );
     }
     /*
     [HarmonyPostfix, HarmonyPatch(typeof(SummonProcessStrategy), nameof(SummonProcessStrategy.Process), new Type[] { typeof(BattleEventArgs) })]
@@ -643,16 +643,16 @@ public class HookBattleMemo : IHook
         switch( temparg.Type ) {
             case CounterEventArgs.CounterType.Counter:
                 newAttackType = AttackType.Counter;
-                Console.WriteLine( "加入反击事件" );
+                //Console.WriteLine( "加入反击事件" );
                 break;
             case CounterEventArgs.CounterType.Preemptive:
                 newAttackType = AttackType.Preemptive;
 
-                Console.WriteLine( "加入先制事件" );
+                //Console.WriteLine( "加入先制事件" );
                 break;
             case CounterEventArgs.CounterType.Support:
                 newAttackType = AttackType.Support;
-                Console.WriteLine( "加入援护事件" );
+                //Console.WriteLine( "加入援护事件" );
                 break;
         }
 
@@ -676,9 +676,9 @@ public class HookBattleMemo : IHook
             return;
         }
         AttackType atp = newAttackType;
-        Console.WriteLine( "进入伤害计算的补丁" );
+        //Console.WriteLine( "进入伤害计算的补丁" );
         if( BattleGlobalVariable.CurrentDamage == null ) {
-            Console.WriteLine( "没有实际攻击事件，提前退出伤害计算的补丁" );
+            //Console.WriteLine( "没有实际攻击事件，提前退出伤害计算的补丁" );
             return;
         }
         //AttackType atp = AttackTypeStack.Pop();
@@ -711,9 +711,9 @@ public class HookBattleMemo : IHook
             details += "背刺系数: " + __instance.Coefficient_Of_Direction( damage );
         }
         if( damage.IsDodge ) {
-            msgs.Add( "• " + str + skill.Item.Name + " 被闪避" );
+            msgs.Add( "•" + str + skill.Item.Name + " 被闪避" );
             HookBattleMemo.description.Enqueue( "你在找啥？被闪避了给出伤害系数也没意义..." );
-            //update_msg();
+            update_msg();
             return;
         }
         if( !damage.IsHit ) {
@@ -769,7 +769,7 @@ public class HookBattleMemo : IHook
         //}
 
 
-        msgs.Add( "• " + str + description + "造成" + damage.final_damage + "伤害" );
+        msgs.Add( "•" + str + description + "造成" + damage.final_damage + "伤害" );
 
 
         float coe = ( 1 + ( float )damage.Attacker[BattleProperty.Attack_Damage_Add] / 100 ) * ( 1 -
@@ -840,7 +840,7 @@ public class HookBattleMemo : IHook
         curContent = null;
         //AttackTypeStack.Clear();
 
-        Console.WriteLine( "执行中" );
+        //Console.WriteLine( "执行中" );
         //创建新对象
         GameObject MsgScroll = new GameObject( "MsgScroll" );
         //GameObject ScrollCell = new GameObject("ScrollCell");
@@ -900,7 +900,7 @@ public class HookBattleMemo : IHook
 
         //调整一下大小
         RectTransform sb = small_button.GetComponent<RectTransform>();
-        Console.WriteLine( "flag1" );
+        //Console.WriteLine( "flag1" );
         sb.SetParent( arrow.gameObject.GetComponent<RectTransform>() );
         sb.pivot = new Vector2( 0.5f, 0.5f );
         sb.localPosition = new Vector3( 0f, 5f, 0f );
@@ -909,7 +909,7 @@ public class HookBattleMemo : IHook
 
 
         small_button.SetActive( true );
-        Console.WriteLine( "flag2,,," + ( Small_button.IsActive() ? "true" : "false" ) );
+        //Console.WriteLine( "flag2,,," + ( Small_button.IsActive() ? "true" : "false" ) );
 
         /* 测试用
         Console.WriteLine("debug: " );
@@ -921,11 +921,11 @@ public class HookBattleMemo : IHook
         Console.WriteLine("sizeDelta" + arrow.gameObject.GetComponent<RectTransform>().sizeDelta);
         */
 
-        Console.WriteLine( "flag3" );
+        //Console.WriteLine( "flag3" );
 
 
 
-        Console.WriteLine( "flag4" );
+        //Console.WriteLine( "flag4" );
 
         /* 内容块的图片(测试用)
         Image im = Content.AddComponent<Image>();
@@ -934,7 +934,7 @@ public class HookBattleMemo : IHook
         Sprite sprite = Sprite.Create(tempTex, new Rect(0f, 0f, (float)tempTex.width, (float)tempTex.height), new Vector2(0.5f, 0.5f));
         im.sprite = sprite;
         */
-        Console.WriteLine( "flag5" );
+        //Console.WriteLine( "flag5" );
         //给对象装上脚本
         UILoopVerticalScrollRect msgScroll = MsgScroll.AddComponent<UILoopVerticalScrollRect>();
         //随便初始化一下，能用就行
@@ -944,7 +944,7 @@ public class HookBattleMemo : IHook
         msgScroll.vertical = true;
         msgScroll.horizontal = false;
 
-        Console.WriteLine( "flag6" );
+        //Console.WriteLine( "flag6" );
 
         //注册按钮
         void ToggleMsgScroll( BaseEventData ev ) {
@@ -965,7 +965,7 @@ public class HookBattleMemo : IHook
         }
         Small_button.PointerClick.AddListener( new UnityAction<BaseEventData>( ToggleMsgScroll ) );
 
-        Console.WriteLine( "flag7" );
+        //Console.WriteLine( "flag7" );
 
         //滚动框随便初始化一下
         RectTransform rect2 = MsgScroll.GetComponent<RectTransform>();
@@ -1022,7 +1022,7 @@ public class HookBattleMemo : IHook
 
         //MsgScroll.SetActive(true);
         //Content.SetActive(true);
-        Console.WriteLine( "执行完毕" );
+        //Console.WriteLine( "执行完毕" );
 
 
 
