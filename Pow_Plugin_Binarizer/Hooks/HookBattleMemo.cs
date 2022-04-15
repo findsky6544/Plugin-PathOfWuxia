@@ -30,6 +30,7 @@ public class HookBattleMemo : IHook
     static ConfigEntry<int> height;
     static int last_style = 0;
     static int last_height = 0;
+    static float last_sensitivity = 1;
     static int repeated = 1;
     static int turn = 0;
     static bool ispred = false;
@@ -113,21 +114,28 @@ public class HookBattleMemo : IHook
         showTurnZero = plugin.Config.Bind( "战斗记录", "显示第一回合开始前的buff", true,
                                            "如果取消此选项，那么记录会从玩家的第一个回合开始" );
         showAura = plugin.Config.Bind( "战斗记录", "显示光环相关的buff", false,
-                                       "如果开启此选项，你的眼睛会瞎" );
+                                       "如果开启此选项，会记录大量没啥用的光环buff添加" );
         height = plugin.Config.Bind( "战斗记录", "记录牌高度", 5,
                                      new ConfigDescription( "调整高度", new AcceptableValueRange<int>( 0, 15 ) ) );
         plugin.onUpdate += OnUpdate;
+        last_sensitivity = scroll_sensitivity.Value;
+        last_style = board_style.Value;
+        last_height = height.Value;
         Console.WriteLine( "加载战斗记录结束" );
     }
 
     //即时调整
     public void OnUpdate()
     {
-        if( curContent && curContent.gameObject && curContent.gameObject.activeInHierarchy ) {
+        if( ( scroll_sensitivity.Value != last_sensitivity || height.Value != last_height ) && curContent &&
+            curContent.gameObject && curContent.gameObject.activeInHierarchy ) {
+
             UILoopVerticalScrollRect scr = curContent.transform.parent.GetComponent<UILoopVerticalScrollRect>();
             if( scr != null ) {
-                scr.scrollSensitivity = scroll_sensitivity.Value;
-                if( scr.gameObject.GetComponent<RectTransform>() != null && height.Value != last_height ) {
+                if( scroll_sensitivity.Value != last_sensitivity ) {
+                    scr.scrollSensitivity = scroll_sensitivity.Value;
+                }
+                if( height.Value != last_height && scr.gameObject.GetComponent<RectTransform>() != null ) {
                     last_height = height.Value;
                     scr.gameObject.GetComponent<RectTransform>().sizeDelta =  new Vector2( 800f,
                             600f + ( height.Value - 5 ) * 60 );
@@ -748,12 +756,12 @@ public class HookBattleMemo : IHook
         }
         if( damage.direction == DamageDirection.Back ) {
             description += " 背刺";
-            details += "背刺系数: " + __instance.Coefficient_Of_Direction( damage );
+            details += "背袭系数: " + __instance.Coefficient_Of_Direction( damage );
         }
 
         if( damage.direction == DamageDirection.Side ) {
             description += " 侧袭";
-            details += "背刺系数: " + __instance.Coefficient_Of_Direction( damage );
+            details += "侧袭系数: " + __instance.Coefficient_Of_Direction( damage );
         }
         if( damage.IsDodge ) {
             msgs.Add( "•" + str + skill.Item.Name + " 被闪避" );
