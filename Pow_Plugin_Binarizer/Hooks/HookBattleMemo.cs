@@ -36,6 +36,7 @@ public class HookBattleMemo : IHook
     static int HpBeforeDmg;
     static int MpBeforeDmg;
     static int auraCount = 0;
+    static bool cb = false;
     enum AttackType {
         Summon,
         Heal,
@@ -251,10 +252,13 @@ public class HookBattleMemo : IHook
             }
             if( curBlock.GetComponent<Text>().text.StartsWith( "+" ) ||
                 curBlock.GetComponent<Text>().text.StartsWith( "-" ) ) {
-                curBlock.GetComponent<Text>().fontStyle = FontStyle.Italic;
                 //补充说明
                 curBlock.AddComponent<CompForSavingSingleStr>().just_a_string =
                     HookBattleMemo.description.Dequeue();
+
+            }
+            if( curBlock.GetComponent<Text>().text.StartsWith( "=" ) ) {
+                curBlock.GetComponent<Text>().fontStyle = FontStyle.Italic;
             }
 
             curBlock.GetComponent<Text>().color = ( board_style.Value == 3 || board_style.Value > 4 ||
@@ -352,7 +356,7 @@ public class HookBattleMemo : IHook
     [HarmonyPostfix, HarmonyPatch( typeof( WuxiaUnit ), nameof( WuxiaUnit.Die ) )]
     public static void died( WuxiaUnit __instance )
     {
-        msgs.Add( __instance.FullName + " 失去战斗能力并离开战场" );
+        msgs.Add( "= " + __instance.FullName + " 失去战斗能力并离开战场" );
         update_msg();
     }
     [HarmonyPostfix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
@@ -457,20 +461,61 @@ public class HookBattleMemo : IHook
     }
 
 
-
-    [HarmonyPostfix, HarmonyPatch( typeof( WGBattleTurn ), nameof( WGBattleTurn.NextTurnAsync ) )]
-    public static void beginTurn( bool isPlayer )
+    [HarmonyPostfix, HarmonyPatch( typeof( WuxiaBattleManager ),
+                                   nameof( WuxiaBattleManager.OnBattleEvent ) )]
+    public static void postBattleEvent( WuxiaBattleManager __instance, BattleEventToggleTime time,
+                                        params object[] args )
     {
-        if( isPlayer ) {
-            turn++;
-            msgs.Add( "============================第 " + turn +
-                      " 回合 ==================================" );
-            msgs.Add( "己方回合开始" );
-        } else {
-            msgs.Add( "AI回合开始" );
+        if( __instance.IsEvent ) {
+            return;
+        }
+        if( time == BattleEventToggleTime.BeginTurn ) {
+            if( __instance.BattleFSM.CurrentFaction == Faction.Player ) {
+                HookBattleMemo.turn++;
+                if( HookBattleMemo.turn > 0 ) {
+                    msgs.Add( "============================第 " + HookBattleMemo.turn +
+                              " 回合 ==================================" );
+                    msgs.Add( "============================己方阵营回合开始============================" );
+
+                }
+
+            } else if( __instance.BattleFSM.CurrentFaction == Faction.Teamofplayer ) {
+                msgs.Add( "============================友军阵营回合开始============================" );
+            } else if( __instance.BattleFSM.CurrentFaction == Faction.AbsolutelyNeutral ) {
+                msgs.Add( "============================中立阵营回合开始============================" );
+            }
+        } else if( time == BattleEventToggleTime.BeginAITurn ) {
+            if( __instance.BattleFSM.CurrentFaction == Faction.Enemy ) {
+                msgs.Add( "============================敌方阵营回合开始============================" );
+            } else {
+                msgs.Add( "============================混乱阵营回合开始============================" );
+            }
+
         }
         update_msg();
     }
+
+
+    [HarmonyPrefix, HarmonyPatch( typeof( WuxiaUnit ), nameof( WuxiaUnit.OnBufferEvent ) )]
+    public static void preBufferEvent( WuxiaUnit __instance, BufferTiming time )
+    {
+        if( time == BufferTiming.EndUnit ) {
+            msgs.Add( "= " + __instance.FullName + " 结束行动" );
+            if( __instance[BattleLiberatedState.InfiniteAction] > 0 ||
+                __instance[BattleLiberatedState.Encourage] > 0 ) {
+                msgs.Add( "= " + __instance.FullName + " 再次行动" );
+            }
+            if( cb == true ) {
+                msgs.Add( "= 连斩! " + __instance.FullName + " 再次行动" );
+                cb = false;
+            }
+        }
+        if( time == BufferTiming.Continuous_Beheading ) {
+            cb = true;
+        }
+        update_msg();
+    }
+
     [HarmonyPostfix, HarmonyPatch( typeof( BattleComputer ),
                                    nameof( BattleComputer.Calculate_Basic_Dart_Damage ) )]
     public static void preddart( bool _is_random )
@@ -511,7 +556,7 @@ public class HookBattleMemo : IHook
         }
         string str1;
         string str2;
-        des = __instance.FullName + des + value + "点内力";
+        des = "= " + __instance.FullName + des + value + "点内力";
 
         des = des.PadRight( 25 - __instance.FullName.Length );
         str1 = "MP:" + MpBeforeDmg.ToString().PadLeft( 6 )  + " -> ";
@@ -536,7 +581,7 @@ public class HookBattleMemo : IHook
         }
         string str1;
         string str2;
-        des = __instance.FullName + "受到" + value + des;
+        des = "= " + __instance.FullName + "受到" + value + des;
 
         des = des.PadRight( 25 - __instance.FullName.Length );
         str1 = "HP:" + HpBeforeDmg.ToString().PadLeft( 6 )  + " -> ";
