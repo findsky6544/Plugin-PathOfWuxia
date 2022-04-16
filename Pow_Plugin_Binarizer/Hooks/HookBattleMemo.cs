@@ -18,19 +18,19 @@ using Heluo.Flow.Battle;
 namespace PathOfWuxia
 {
 
-[DisplayName( "战斗记录" )]
+[DisplayName( "战斗消息记录" )]
 [Description( "添加类似于前作的战斗信息记录,默认关闭.点击屏幕右上角箭头开关." )]
 public class HookBattleMemo : IHook
 {
     static ConfigEntry<int> board_style;
-    static ConfigEntry<int> scroll_sensitivity;
+    //static ConfigEntry<int> scroll_sensitivity;
     static ConfigEntry<bool> autoUpdateMsg;
     static ConfigEntry<bool> showTurnZero;
     static ConfigEntry<bool> showAura;
     static ConfigEntry<int> height;
     static int last_style = 0;
     static int last_height = 0;
-    static float last_sensitivity = 1;
+    static float last_sensitivity = 50;
     static int repeated = 1;
     static int turn = 0;
     static bool ispred = false;
@@ -52,6 +52,10 @@ public class HookBattleMemo : IHook
 
     }
 
+    static int index_first_visible = 0;
+    static int index_last_visible = 0;
+    static float last_top;
+    static float last_bottom;
     //static Stack<AttackType> AttackTypeStack = new Stack<AttackType>();
     static AttackType newAttackType = AttackType.Null;
 
@@ -64,6 +68,8 @@ public class HookBattleMemo : IHook
     //哎反正占不了多大空间
     //补充说明栏的对象
     static GameObject curDetails = new GameObject();
+    static RectTransform curConRect;
+
     //Do I really need to do such a stupid thing?
     public class CompForSavingSingleStr : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
@@ -103,42 +109,45 @@ public class HookBattleMemo : IHook
 
     public void OnRegister( PluginBinarizer plugin )
     {
-        Console.WriteLine( "加载战斗记录" );
+        Console.WriteLine( "加载战斗消息记录" );
 
-        board_style = plugin.Config.Bind( "战斗记录", "战斗面板样式", 0,
+        board_style = plugin.Config.Bind( "战斗消息记录", "消息面板样式", 0,
                                           new ConfigDescription( "扣了几张图当背景", new AcceptableValueRange<int>( 0, 6 ) ) );
-        scroll_sensitivity = plugin.Config.Bind( "战斗记录", "战斗面板滚轮灵敏度", 1,
-                             new ConfigDescription( "滚轮灵敏度", new AcceptableValueRange<int>( 1, 50 ) ) );
-        autoUpdateMsg = plugin.Config.Bind( "战斗记录", "面板信息自动滚动刷新", true,
+        /*
+            scroll_sensitivity = plugin.Config.Bind( "战斗记录", "战斗面板滚轮灵敏度", 1,
+                             new ConfigDescription( "滚轮灵敏度", new AcceptableValueRange<int>( 20, 80 ) ) );
+        */
+        autoUpdateMsg = plugin.Config.Bind( "战斗消息记录", "面板信息自动滚动刷新", true,
                                             "如果取消此选项，那么当新信息被记录时不会自动滚动，请手动浏览记录" );
-        showTurnZero = plugin.Config.Bind( "战斗记录", "显示第一回合开始前的buff", true,
+        showTurnZero = plugin.Config.Bind( "战斗消息记录", "显示第一回合开始前的buff", true,
                                            "如果取消此选项，那么记录会从玩家的第一个回合开始" );
-        showAura = plugin.Config.Bind( "战斗记录", "显示光环相关的buff", false,
+        showAura = plugin.Config.Bind( "战斗消息记录", "显示光环相关的buff", false,
                                        "如果开启此选项，会记录大量没啥用的光环buff添加" );
-        height = plugin.Config.Bind( "战斗记录", "记录牌高度", 5,
-                                     new ConfigDescription( "调整高度", new AcceptableValueRange<int>( 0, 15 ) ) );
+        height = plugin.Config.Bind( "战斗消息记录", "记录牌高度", 5,
+                                     new ConfigDescription( "调整高度", new AcceptableValueRange<int>( 0, 10 ) ) );
         plugin.onUpdate += OnUpdate;
-        last_sensitivity = scroll_sensitivity.Value;
+        //last_sensitivity = scroll_sensitivity.Value;
         last_style = board_style.Value;
         last_height = height.Value;
-        Console.WriteLine( "加载战斗记录结束" );
+        Console.WriteLine( "加载战斗消息记录结束" );
     }
 
     //即时调整
     public void OnUpdate()
     {
-        if( ( scroll_sensitivity.Value != last_sensitivity || height.Value != last_height ) && curContent &&
+
+
+        if( ( height.Value != last_height ) && curContent &&
             curContent.gameObject && curContent.gameObject.activeInHierarchy ) {
 
             UILoopVerticalScrollRect scr = curContent.transform.parent.GetComponent<UILoopVerticalScrollRect>();
             if( scr != null ) {
-                if( scroll_sensitivity.Value != last_sensitivity ) {
-                    scr.scrollSensitivity = scroll_sensitivity.Value;
-                }
+
                 if( height.Value != last_height && scr.gameObject.GetComponent<RectTransform>() != null ) {
                     last_height = height.Value;
                     scr.gameObject.GetComponent<RectTransform>().sizeDelta =  new Vector2( 800f,
                             600f + ( height.Value - 5 ) * 60 );
+
                     update_msg();
                 }
             }
@@ -164,6 +173,7 @@ public class HookBattleMemo : IHook
                       board_style.Value < 0 ? new Color( 0, 0, 0, 1 ) : new Color( 1, 1, 1, 1 ) );
             }
         }
+
 
     }
     static string getpath()
@@ -292,7 +302,7 @@ public class HookBattleMemo : IHook
             //Console.WriteLine( "text:  " + curBlock.GetComponent<Text>().text );
             //Console.WriteLine( "添加parent 结束." );
             //Console.WriteLine( "child count " + curContent.GetComponent<RectTransform>().childCount );
-            curBlock.SetActive( true );
+            curBlock.SetActive( false );
         }
 
         while( msgs.Count > maxCount ) {
@@ -313,17 +323,121 @@ public class HookBattleMemo : IHook
         if( !autoUpdateMsg.Value ) {
             return;
         }
-        //位置都是乱设的，居然还能用
+
+
+
+        if( msgs.Count == 0 ) {
+            return;
+        }
+
+        //重新定位可见项目，禁用变为不可见的项目
+        for( int i = index_first_visible; i < msgs.Count - 30 && i <= index_last_visible; i++ ) {
+            curConRect.GetChild( i ).gameObject.SetActive( false );
+        }
+        for( int i = Math.Max( index_last_visible + 1, msgs.Count - 30 ); i < msgs.Count ; i++ ) {
+            curConRect.GetChild( i ).gameObject.SetActive( true );
+        }
+        index_last_visible = msgs.Count - 1;
+        index_first_visible = Math.Max( 0, msgs.Count - 30 );
+
+
+
+        //位置都是乱设的，居然还能用,有些坐标自己都忘了
         Vector2 localpos = curContent.GetComponent<RectTransform>().localPosition;
-        localpos.y = + Math.Max( msgs.Count - 20 - 2 * ( height.Value - 5 ), 0 ) * 30;
+        //localpos.y = Math.Max(Math.Min(msgs.Count, 30) - 20 - 2 * (height.Value - 5), 0) * 30;
+        localpos.y = ( 10 - height.Value ) * 60;
         curContent.GetComponent<RectTransform>().localPosition = localpos;
+        LayoutRebuilder.ForceRebuildLayoutImmediate( curConRect );
+
+        Canvas.ForceUpdateCanvases();
         //Console.WriteLine( "end reposition" );
-        LayoutRebuilder.ForceRebuildLayoutImmediate( curContent.GetComponent<RectTransform>() );
+    }
+
+    //发现性能问题很严重，但是原本的Class里关于动态加载项目的代码似乎有缺失
+    //在没法给私有方法打补丁的情况下只好根据原代码的思路自己做了个只适用于自己的轻量级的动态加载功能
+    //基本上就是把不需要渲染的项目禁用，避免在消息过多时卡顿
+    //因为嫌麻烦没有涉及内存空间的优化（要重新设计显示项目的结构然后摧毁和新建实例）
+    public static void UpdateRender()
+    {
+        //Console.WriteLine("flag1");
+        bool flag = false;
+
+        float bottom = curConRect.localPosition.y - curConRect.sizeDelta.y;
+        float top = curConRect.localPosition.y;
+        //Console.WriteLine("flag2");
+        if( top > 10 ) {
+            //Console.WriteLine("flag2.1");
+            curConRect.GetChild( index_first_visible ).gameObject.SetActive( false );
+            index_first_visible++;
+            curConRect.localPosition = new Vector3( curConRect.localPosition.x, curConRect.localPosition.y - 30,
+                                                    curConRect.localPosition.z );
+            flag = true;
+            // Console.WriteLine("flag2.1e");
+        } else if( top < 150 && index_first_visible > 0 ) {
+            //Console.WriteLine("flag2.2");
+            curConRect.GetChild( index_first_visible - 1 ).gameObject.SetActive( true );
+            index_first_visible--;
+            curConRect.localPosition = new Vector3( curConRect.localPosition.x, curConRect.localPosition.y + 30,
+                                                    curConRect.localPosition.z );
+            flag = true;
+            //Console.WriteLine("flag2.2e");
+        }
+        if( bottom < -1049 ) {
+            //Console.WriteLine("flag2.3");
+            curConRect.GetChild( index_last_visible - 1 ).gameObject.SetActive( false );
+            index_last_visible--;
+            flag = true;
+            //Console.WriteLine("flag2.3e");
+        } else if( bottom > -1045 && index_last_visible < msgs.Count ) {
+            //Console.WriteLine("flag2.4");
+            curConRect.GetChild( index_last_visible ).gameObject.SetActive( true );
+            index_last_visible++;
+            flag = true;
+            //Console.WriteLine("flag2.4e");
+            //curConRect.localPosition = new Vector3(curConRect.localPosition.x, curConRect.localPosition.y + 30, curConRect.localPosition.z);
+        }
+        if( index_last_visible == msgs.Count ) {
+            // curConRect.localPosition = new Vector3(curConRect.localPosition.x, Math.Max(0, index_last_visible-index_first_visible)*30 -300 - height.Value * 60, curConRect.localPosition.z);
+        }
+        //Console.WriteLine("flag3");
+
+        if( flag ) {
+            //curConRect.localPosition = new Vector3(curConRect.localPosition.x, 150 + index_first_visible * 30, curConRect.localPosition.z);
+            LayoutRebuilder.ForceRebuildLayoutImmediate( curConRect );
+            // Console.WriteLine("flag4");
+            Canvas.ForceUpdateCanvases();
+            //Console.WriteLine("flag5");
+        }
+
 
     }
     //*************************************************
     // 下面是补丁
     //****************************************************
+    /*
+    [HarmonyPrefix, HarmonyPatch(typeof(UILoopScrollRect), nameof(UILoopScrollRect.OnDrag))]
+    public static void preOnDrag()
+    {
+        UpdateRender();
+    }
+    */
+    [HarmonyPostfix, HarmonyPatch( typeof( UILoopScrollRect ), nameof( UILoopScrollRect.OnDrag ) )]
+    public static void postOnDrag()
+    {
+        UpdateRender();
+    }
+    /*
+    [HarmonyPostfix, HarmonyPatch(typeof(UILoopScrollRect), nameof(UILoopScrollRect.OnScroll))]
+    public static void preOnScroll()
+    {
+        UpdateRender();
+    }
+    */
+    [HarmonyPostfix, HarmonyPatch( typeof( UILoopScrollRect ), nameof( UILoopScrollRect.OnScroll ) )]
+    public static void postScroll()
+    {
+        UpdateRender();
+    }
 
     [HarmonyPrefix, HarmonyPatch( typeof( AssignAuraPromoteAction ),
                                   nameof( AssignAuraPromoteAction.GetValue ) )]
@@ -484,23 +598,27 @@ public class HookBattleMemo : IHook
                     msgs.Add( "============================第 " + HookBattleMemo.turn +
                               " 回合 ==================================" );
                     msgs.Add( "============================己方阵营回合开始============================" );
-
+                    update_msg();
                 }
 
             } else if( __instance.BattleFSM.CurrentFaction == Faction.Teamofplayer ) {
                 msgs.Add( "============================友军阵营回合开始============================" );
+                update_msg();
             } else if( __instance.BattleFSM.CurrentFaction == Faction.AbsolutelyNeutral ) {
                 msgs.Add( "============================中立阵营回合开始============================" );
+                update_msg();
             }
         } else if( time == BattleEventToggleTime.BeginAITurn ) {
             if( __instance.BattleFSM.CurrentFaction == Faction.Enemy ) {
                 msgs.Add( "============================敌方阵营回合开始============================" );
+                update_msg();
             } else {
                 msgs.Add( "============================混乱阵营回合开始============================" );
+                update_msg();
             }
 
         }
-        update_msg();
+
     }
 
 
@@ -517,11 +635,12 @@ public class HookBattleMemo : IHook
                 msgs.Add( "= 连斩! " + __instance.FullName + " 再次行动" );
                 cb = false;
             }
+            update_msg();
         }
         if( time == BufferTiming.Continuous_Beheading ) {
             cb = true;
         }
-        update_msg();
+
     }
 
     [HarmonyPostfix, HarmonyPatch( typeof( BattleComputer ),
@@ -892,6 +1011,8 @@ public class HookBattleMemo : IHook
         ispred = false;
         curContent = null;
         //AttackTypeStack.Clear();
+        index_last_visible = 0;
+        index_first_visible = 0;
 
         //Console.WriteLine( "执行中" );
         //创建新对象
@@ -904,7 +1025,9 @@ public class HookBattleMemo : IHook
         vLayout.childForceExpandHeight = false;
         vLayout.childForceExpandWidth = true;
         vLayout.childControlWidth = false;
-        vLayout.childControlWidth = false;
+
+
+
 
 
         //加个fitter，随内容扩大
@@ -992,7 +1115,7 @@ public class HookBattleMemo : IHook
         UILoopVerticalScrollRect msgScroll = MsgScroll.AddComponent<UILoopVerticalScrollRect>();
         //随便初始化一下，能用就行
         msgScroll.movementType = UILoopScrollRect.MovementType.Clamped;
-        msgScroll.scrollSensitivity = scroll_sensitivity.Value;
+        msgScroll.scrollSensitivity = last_sensitivity;
         msgScroll.content = Content.GetComponent<RectTransform>();
         msgScroll.vertical = true;
         msgScroll.horizontal = false;
@@ -1061,7 +1184,10 @@ public class HookBattleMemo : IHook
         rect.SetParent( rect2 );
         rect.pivot = new Vector2( 0.65f, 1f );
         rect.sizeDelta = new Vector2( 750f, 1000f );
-        rect.localPosition = new Vector3( 0f, -100f, 0f );
+        rect.localPosition = new Vector3( 0f, 0f, 0f );
+
+        //方便找
+        curConRect = rect;
 
 
 
