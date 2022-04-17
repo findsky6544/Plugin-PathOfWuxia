@@ -222,7 +222,7 @@ public class HookBattleMemo : IHook
                 Text ttt = curContent.GetComponent<RectTransform>().GetChild(
                                curContent.GetComponent<RectTransform>().childCount - 1 ).gameObject.GetComponent<Text>();
                 //Console.WriteLine( "flaggg text length" + ttt.text.Length );
-                ttt.text = ttt.text.Remove( ttt.text.Length - 3 );
+                ttt.text = ttt.text.Remove( ttt.text.Length - repeated / 10 - 2 );
                 //Console.WriteLine( "flagaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" );
                 ttt.text += "×" + repeated;
                 //Console.WriteLine( ttt.text );
@@ -481,20 +481,20 @@ public class HookBattleMemo : IHook
         msgs.Add( "= " + __instance.FullName + " 失去战斗能力并离开战场" );
         update_msg();
     }
-    [HarmonyPostfix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
-                                   new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
-    public static void addBuffer( WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
+    [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
+                                  new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
+    public static bool addBuffer( WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
     {
 
         if( auraCount > 0 && !showAura.Value ) {
-            return;
+            return true;
         }
         if( turn == 0 && !showTurnZero.Value ) {
-            return;
+            return  true;
         }
         if( unit == null && buffer == null ) {
             //Console.WriteLine( "addbuffer patch end" );
-            return;
+            return true;
         }
 
         string str = "+ " + unit.FullName + "受到效果 " + buffer.Name +
@@ -533,6 +533,7 @@ public class HookBattleMemo : IHook
         msgs.Add( str );
         description.Enqueue( buffer.Desc );
         update_msg();
+        return true;
         //Console.WriteLine( "addbuffer patch end" );
     }
 
@@ -843,10 +844,12 @@ public class HookBattleMemo : IHook
     {
 
         //如果是估计伤害则不计入消息
+        /*
         if( ispred ) {
             ispred = false;
             return;
         }
+        */
         AttackType atp = newAttackType;
         //Console.WriteLine( "进入伤害计算的补丁" );
         if( BattleGlobalVariable.CurrentDamage == null ) {
