@@ -11,6 +11,9 @@ using Heluo.UI;
 using Heluo.FSM.Main;
 using UnityEngine.UI;
 using UnityEngine;
+using System.IO;
+using System.Threading.Tasks;
+using System.Text;
 
 namespace PathOfWuxia
 {
@@ -24,6 +27,8 @@ namespace PathOfWuxia
 		private static ConfigEntry<bool> pagination;
 		private static ConfigEntry<int> countPerPage;
 		private static ConfigEntry<bool> deleteSaveFile;
+		private static ConfigEntry<bool> fixEditSaveFileBug;
+		private static ConfigEntry<string> saveFilePath;
 		private static int currentPage = 1;
 		private static int totalPage = 1;
 
@@ -36,6 +41,8 @@ namespace PathOfWuxia
 			pagination = plugin.Config.Bind("存档设定", "存档分页", false, "在存档数量太多的时候会有点作用");
 			countPerPage = plugin.Config.Bind("存档设定", "存档分页-每页存档数", 20, "每页多少条存档，存档分页启用后才有用");
 			deleteSaveFile = plugin.Config.Bind("存档设定", "删除存档（未完成）", false, "可删除存档");
+			fixEditSaveFileBug = plugin.Config.Bind("存档设定", "修复修改存档后消失bug", false, "修复存档修改器修改后存档消失的bug");
+			saveFilePath = plugin.Config.Bind("存档设定", "存档路径", string.Empty, "存档路径,修复修改存档后消失bug使用");
 		}
 
 		//修改存档数量，分页展示
@@ -53,11 +60,11 @@ namespace PathOfWuxia
 			if (pagination.Value)
 			{
 				startIndex = (currentPage - 1) * countPerPage.Value;
-				endIndex = Math.Min(currentPage * countPerPage.Value,saveCount.Value);
+				endIndex = Math.Min(currentPage * countPerPage.Value, saveCount.Value);
 			}
 
-			Console.WriteLine("startIndex:"+ startIndex);
-			Console.WriteLine("endIndex:"+ endIndex);
+			Console.WriteLine("startIndex:" + startIndex);
+			Console.WriteLine("endIndex:" + endIndex);
 			for (int i = startIndex; i < endIndex; i++)
 			{
 				PathOfWuxiaSaveHeader pathOfWuxiaSaveHeader = null;
@@ -215,14 +222,14 @@ namespace PathOfWuxia
 				//重新给saves和autosaves赋值
 				if (pagination.Value)
 				{
-					currentPage = (num / countPerPage.Value)+1;
+					currentPage = (num / countPerPage.Value) + 1;
 
 					//如果是最后一页，有可能出现存档数不足一页的情况，所以以总数量-前面几页的数量计算
-					if(currentPage == totalPage)
+					if (currentPage == totalPage)
 					{
 						totalIndex = saveCount.Value - (currentPage - 1) * countPerPage.Value;
 					}
-                    else
+					else
 					{
 						totalIndex = countPerPage.Value;
 					}
@@ -244,7 +251,7 @@ namespace PathOfWuxia
 				//更新滚动条位置
 				WGInfiniteScroll loopScroll = Traverse.Create(saveload).Field("loopScroll").GetValue<WGInfiniteScroll>();
 				ScrollRect scrollRect = Traverse.Create(loopScroll).Field("scrollRect").GetValue<ScrollRect>();
-				scrollRect.verticalScrollbar.value = ((float)(totalIndex - currentIndex - 1)) / (totalIndex-1);//滑动条是反的，不知道为什么
+				scrollRect.verticalScrollbar.value = ((float)(totalIndex - currentIndex - 1)) / (totalIndex - 1);//滑动条是反的，不知道为什么
 			}
 			Console.WriteLine("UpdateSaveLoadPatch_jumpToLatestSave end");
 		}
@@ -271,23 +278,23 @@ namespace PathOfWuxia
 				layout.childForceExpandWidth = true;
 
 				pageBar.transform.SetParent(saveload.transform, false);
-				pageBar.transform.position = new Vector3(pageBar.transform.position.x, pageBar.transform.position.y - Screen.height/2 + 50, 0);
+				pageBar.transform.position = new Vector3(pageBar.transform.position.x, pageBar.transform.position.y - Screen.height / 2 + 50, 0);
 				pageBar.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, 100);
 
 				//controller:刷新用
 				CtrlSaveLoad controller = Traverse.Create(__instance).Field("controller").GetValue<CtrlSaveLoad>();
 				obj = createPageBar(pageBar, controller);
 			}
-            else
-            {
+			else
+			{
 				obj = trans.gameObject;
 			}
 			if (pagination.Value)
 			{
 				obj.SetActive(true);
 			}
-            else
-            {
+			else
+			{
 				obj.SetActive(false);
 			}
 			Console.WriteLine("showPatch_pagination end");
@@ -328,7 +335,7 @@ namespace PathOfWuxia
 			middleLayout.childControlWidth = true;
 			middleLayout.childForceExpandHeight = true;
 			middleLayout.childForceExpandWidth = true;
-			middleBar.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width-400, 100);
+			middleBar.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width - 400, 100);
 			middleBar.transform.SetParent(pageBar.transform, false);
 
 			totalPage = (int)Math.Ceiling((float)saveCount.Value / countPerPage.Value);
@@ -348,7 +355,7 @@ namespace PathOfWuxia
 				{
 					page.GetComponentInChildren<Text>().color = Color.red;//当前页标红
 				}
-				page.transform.SetParent(middleBar.transform,false);
+				page.transform.SetParent(middleBar.transform, false);
 
 				if (i != totalPage && i > currentPage + 3)
 				{
@@ -433,18 +440,18 @@ namespace PathOfWuxia
 
 		//存档分页-处理存档左侧的数字
 		[HarmonyPostfix, HarmonyPatch(typeof(WGSaveLoadScrollBtn), "UpdateWidget")]
-		public static void UpdateWidgetPatch_pagination(ref WGSaveLoadScrollBtn __instance,ref object[] obj)
+		public static void UpdateWidgetPatch_pagination(ref WGSaveLoadScrollBtn __instance, ref object[] obj)
 		{
 			//Console.WriteLine("UpdateWidgetPatch_pagination start");
 			WGText number = Traverse.Create(__instance).Field("number").GetValue<WGText>();
 			SaveLoadScrollInfo saveLoadScrollInfo = obj[0] as SaveLoadScrollInfo;
 			int moveNumber = 0;
-            if (pagination.Value)
-            {
+			if (pagination.Value)
+			{
 				moveNumber = (currentPage - 1) * countPerPage.Value;
 
 			}
-			number.Text = ""+(int.Parse(saveLoadScrollInfo.number) + moveNumber);
+			number.Text = "" + (int.Parse(saveLoadScrollInfo.number) + moveNumber);
 			//Console.WriteLine("UpdateWidgetPatch_pagination end");
 		}
 
@@ -507,7 +514,7 @@ namespace PathOfWuxia
 		//存档分页-修复开启分页时首页的继续游戏按钮消失问题
 		//检查前关闭分页功能，检查后恢复即可
 		[HarmonyPrefix, HarmonyPatch(typeof(CtrlMain), "CheckContinue")]
-		public static bool CheckContinuePatch_pagination_pre(ref CtrlMain __instance,ref bool __state)
+		public static bool CheckContinuePatch_pagination_pre(ref CtrlMain __instance, ref bool __state)
 		{
 			Console.WriteLine("CheckContinuePatch_pagination_pre start");
 			__state = pagination.Value;
@@ -522,5 +529,109 @@ namespace PathOfWuxia
 			pagination.Value = __state;
 			Console.WriteLine("CheckContinuePatch_pagination_post end");
 		}
+
+		//读取本地存档头
+		[HarmonyPrefix, HarmonyPatch(typeof(SteamPlatform), "GetSaveFileHeader")]
+		public static bool SteamPlatformPatch_GetSaveFileHeader(ref SteamPlatform __instance, ref string filename, ref PathOfWuxiaSaveHeader header)
+		{
+			Console.WriteLine("SteamPlatformPatch_GetSaveFileHeader");
+			if (fixEditSaveFileBug.Value)
+			{
+				//获取本地存档路径
+				string fileName = saveFilePath.Value + "\\" + filename;
+				if (!File.Exists(fileName))
+				{
+					return false;
+				}
+				//获取文件大小
+				FileInfo fileInfo = new FileInfo(fileName);
+				long fileSize = 0;
+
+				if (fileInfo != null && fileInfo.Exists)
+				{
+					fileSize = fileInfo.Length;
+
+				}
+				byte[] array = new byte[fileSize];
+				//读取文件
+				FileStream readstream = File.OpenRead(fileName);
+				StreamReader sr = new StreamReader(readstream);
+
+				sr.BaseStream.Read(array, 0, array.Length);
+				sr.Close();
+				readstream.Close();
+
+				//获得文件头
+				try
+				{
+					GameDataHepler.GetSaveHader(array, ref header);
+				}
+				catch
+				{
+					Debug.LogError("檔案毀損 : " + filename);
+				}
+				return false;
+			}
+			return true;
+		}
+
+		//读取本地存档
+		[HarmonyPrefix, HarmonyPatch(typeof(SteamPlatform), "LoadFileAsync")]
+		public static bool SteamPlatformPatch_LoadFileAsync(ref SteamPlatform __instance, ref string filename, ref Task<GameData> __result)
+		{
+			Console.WriteLine("SteamPlatformPatch_LoadFileAsync");
+			if (fixEditSaveFileBug.Value)
+			{
+				//获得本地存档路径
+				string[] filePaths = filename.Split('/');
+				string fileName = saveFilePath.Value + "\\" + filePaths[filePaths.Length - 1];
+				//获取文件大小
+				FileInfo fileInfo = new FileInfo(fileName);
+				long fileSize = 0;
+
+				if (fileInfo != null && fileInfo.Exists)
+                {
+					fileSize = fileInfo.Length;
+
+				}
+				byte[] array = new byte[fileSize];
+				//读取文件
+				FileStream readstream = File.OpenRead(fileName);
+				StreamReader sr = new StreamReader(readstream);
+
+				sr.BaseStream.Read(array, 0, array.Length);
+				sr.Close();
+				readstream.Close();
+
+				//存档头
+				byte[] array2 = new byte[17];
+				using (MemoryStream ms = new MemoryStream(array))
+				{
+					using (StreamReader sr1 = new StreamReader(ms))
+					{
+						sr1.BaseStream.Read(array2, 0, array2.Length);
+						if (array2[0] == 239 && array2[1] == 187 && array2[2] == 191)
+						{
+							sr1.BaseStream.Position = 3L;
+							sr1.BaseStream.Read(array2, 0, array2.Length);
+						}
+					}
+				}
+				string @string = Encoding.ASCII.GetString(array2);
+				Console.WriteLine(@string);
+
+				//读取存档数据
+				GameData gameData = GameDataHepler.LoadFile(array);
+				if (SteamManager.IsRightPath)
+				{
+					gameData.MapId = "S9901";
+					gameData.PlayerPostioion = new Vector3(-5.829f, 0.623f, 997.608f);
+				}
+				__result = Task.FromResult(gameData);
+				return false;
+			}
+			return true;
+		}
 	}
+
 }
