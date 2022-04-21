@@ -104,9 +104,10 @@ namespace PathOfWuxia
             {
                 num *= 1.5f;
             }
-            if (TimedValue.ContainsKey(wuxiaUnit))
+            if (TimedValue.TryGetValue(wuxiaUnit, out TimeInfo timeInfo))
             {
-                TimedValue[wuxiaUnit].value = (int)num;
+                timeInfo.value = (int)num;
+                timeInfo.begin = true;
             }
             else
             {
@@ -598,6 +599,7 @@ namespace PathOfWuxia
                 t.Method("InitBeginUnit").GetValue();// this.InitBeginUnit();
                 FSM.UI.SkillClick = new Action<SkillData>(__instance.OnSkillClick);
                 FSM.UI.RestClick = new Action(__instance.OnRestClick);
+                FSM.UI.AllResetClick = new Action(__instance.OnAllRestClick);
             }
             return false;
         }
@@ -609,6 +611,7 @@ namespace PathOfWuxia
             Console.WriteLine("EndUnit.OnEnable()");
             var t = Traverse.Create(__instance);
             var selected = t.Property("SelectedUnit");
+            Console.WriteLine("bTimed:" + bTimed+ ",UnitWantWait:" + UnitWantWait);
             if (bTimed && UnitWantWait)   // 处理等待
             {
                 UnitWantWait = false;     // 重置等待
