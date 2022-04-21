@@ -14,6 +14,8 @@ using UnityEngine;
 using System.IO;
 using System.Threading.Tasks;
 using System.Text;
+using Heluo.FSM.Battle;
+using Heluo.Global;
 
 namespace PathOfWuxia
 {
@@ -47,62 +49,92 @@ namespace PathOfWuxia
 
 		//修改存档数量，分页展示
 		//覆盖原逻辑
-		[HarmonyPrefix, HarmonyPatch(typeof(SteamPlatform), "ListSaveHeaderFile", new Type[] { typeof(GameSaveType) })]
-		public static bool ListSaveHeaderFilePatch_changeSaveCount(ref SteamPlatform __instance, ref GameSaveType Type, ref List<PathOfWuxiaSaveHeader> __result)
+		[HarmonyPrefix, HarmonyPatch(typeof(SteamPlatform), "SaveHeaderFileList", new Type[] { typeof(GameSaveType) })]
+		public static bool SaveHeaderFileListPatch_changeSaveCount(ref SteamPlatform __instance, ref GameSaveType Type, ref List<PathOfWuxiaSaveHeader> __result)
 		{
-			Console.WriteLine("ListSaveHeaderFilePatch_changeSaveCount start");
+			Console.WriteLine("SaveHeaderFileListPatch_changeSaveCount start");
 			List<PathOfWuxiaSaveHeader> list = new List<PathOfWuxiaSaveHeader>();
-			string format = (Type == GameSaveType.Auto) ? "PathOfWuxia_{0:00}.autosave" : "PathOfWuxia_{0:00}.save";
+			string format = string.Empty;
+
+			Console.WriteLine("Type："+ Type);
+			switch (Type)
+			{
+				case GameSaveType.Local:
+					format = "SaveData/PathOfWuxia_Local_{0:000}.save";
+					break;
+				case GameSaveType.Clould:
+					format = "SaveData/PathOfWuxia_{0:00}.save";
+					break;
+				case GameSaveType.Auto:
+					format = "SaveData/PathOfWuxia_{0:00}.autosave";
+					break;
+				case GameSaveType.Battle:
+					format = "SaveData/PathOfWuxia_Battle_{0:00}.autosave";
+					break;
+			}
 
 			int startIndex = 0;
 			int endIndex = saveCount.Value;
 
 			if (pagination.Value)
 			{
+				Console.WriteLine("currentPage:" + currentPage);
 				startIndex = (currentPage - 1) * countPerPage.Value;
 				endIndex = Math.Min(currentPage * countPerPage.Value, saveCount.Value);
 			}
 
 			Console.WriteLine("startIndex:" + startIndex);
 			Console.WriteLine("endIndex:" + endIndex);
-			for (int i = startIndex; i < endIndex; i++)
+			if (Type == GameSaveType.Local)
 			{
-				PathOfWuxiaSaveHeader pathOfWuxiaSaveHeader = null;
-				string text = string.Format(format, i);
-				if (SteamRemoteStorage.FileExists(text))
+				for (int i = startIndex; i < endIndex; i++)
 				{
-					__instance.GetSaveFileHeader(text, ref pathOfWuxiaSaveHeader);
+					string filename = string.Format(format, i);
+					PathOfWuxiaSaveHeader item = new PathOfWuxiaSaveHeader();
+					__instance.GetLocalSaveFileHeader(filename, ref item);
+					list.Add(item);
 				}
-				else
+			}
+			else
+			{
+				for (int i = startIndex; i < endIndex; i++)
 				{
-					pathOfWuxiaSaveHeader = new PathOfWuxiaSaveHeader();
+					PathOfWuxiaSaveHeader pathOfWuxiaSaveHeader = null;
+					string fileName = Path.GetFileName(string.Format(format, i));
+					Console.WriteLine("fileName:" + fileName);
+					if (SteamRemoteStorage.FileExists(fileName))
+					{
+						__instance.GetSaveFileHeader(fileName, ref pathOfWuxiaSaveHeader);
+					}
+					else
+					{
+						pathOfWuxiaSaveHeader = new PathOfWuxiaSaveHeader();
+					}
+					if (pathOfWuxiaSaveHeader == null)
+					{
+						pathOfWuxiaSaveHeader = new PathOfWuxiaSaveHeader();
+					}
+					list.Add(pathOfWuxiaSaveHeader);
 				}
-				if (pathOfWuxiaSaveHeader == null)
-				{
-					pathOfWuxiaSaveHeader = new PathOfWuxiaSaveHeader();
-				}
-				list.Add(pathOfWuxiaSaveHeader);
 			}
 
 			__result = list;
 			Console.WriteLine("list.count:" + list.Count);
-			Console.WriteLine("ListSaveHeaderFilePatch_changeSaveCount end");
+			Console.WriteLine("SaveHeaderFileListPatch_changeSaveCount end");
 			return false;
 		}
 
 		//提示空白存档剩余数量
 		//覆盖原逻辑，基本都是原代码
 		//这里是场景中触发的自动存档
-		[HarmonyPrefix, HarmonyPatch(typeof(SaveAction), "AutoSave")]
-		public static bool AutoSavePatch_remindBlankSaveCount(ref SaveAction __instance)
+		[HarmonyPrefix, HarmonyPatch(typeof(SaveAction), "AutoSave", new Type[] { typeof(bool) })]
+		public static bool AutoSavePatch_remindBlankSaveCount(ref SaveAction __instance,ref bool show_ui)
 		{
 			Console.WriteLine("AutoSavePatch_remindBlankSaveCount start");
-			UIAutoSave uiautoSave = Game.UI.Open<UIAutoSave>();
 			bool paginationTemp = pagination.Value;
 			pagination.Value = false;
-			List<PathOfWuxiaSaveHeader> list = Game.Platform.ListSaveHeaderFile(GameSaveType.Auto);
+			List<PathOfWuxiaSaveHeader> list = Game.Platform.SaveHeaderFileList(GameSaveType.Auto);
 			pagination.Value = paginationTemp;
-			string format = "PathOfWuxia_{0:00}.{1}";
 			int num = -1;
 			DateTime saveTime = new DateTime(100L);
 			for (int i = 0; i < list.Count; i++)
@@ -119,10 +151,13 @@ namespace PathOfWuxia
 					saveTime = pathOfWuxiaSaveHeader.SaveTime;
 				}
 			}
-			string filename = string.Format(format, num, "autosave");
+			string filename = string.Format(GameConfig.AutoSaveName, num);
 			Game.GameData.AutoSaveTotalTime = Game.GameData.Round.TotalTime;
 			Game.SaveAsync(filename, null);
-			uiautoSave.Show();
+			if (show_ui)
+			{
+				Game.UI.Open<UIAutoSave>().Show();
+			}
 			//提示空白存档剩余数量
 			if (remindBlankSaveCount.Value && saveCount.Value - num - 1 <= 5)
 			{
@@ -134,13 +169,13 @@ namespace PathOfWuxia
 		}
 
 		//这里是切换日期的自动存档
-		[HarmonyPrefix, HarmonyPatch(typeof(InGame), "AutoSave")]
+		/*[HarmonyPrefix, HarmonyPatch(typeof(InGame), "AutoSave")]
 		public static bool AutoSavePatch_remindBlankSaveCount2(ref InGame __instance)
 		{
 			Console.WriteLine("AutoSavePatch_remindBlankSaveCount2 start");
 			bool paginationTemp = pagination.Value;
 			pagination.Value = false;
-			List<PathOfWuxiaSaveHeader> list = Game.Platform.ListSaveHeaderFile(GameSaveType.Auto);
+			List<PathOfWuxiaSaveHeader> list = Game.Platform.SaveHeaderFileList(GameSaveType.Auto);
 			pagination.Value = paginationTemp;
 			string format = "PathOfWuxia_{0:00}.{1}";
 			int num = -1;
@@ -171,32 +206,84 @@ namespace PathOfWuxia
 			}
 			Console.WriteLine("AutoSavePatch_remindBlankSaveCount2 end");
 			return false;
+		}*/
+
+		//这里是战斗的自动存档
+		[HarmonyPrefix, HarmonyPatch(typeof(BeginDistribution), "AutoSave")]
+		public static bool AutoSavePatch_remindBlankSaveCount3(ref InGame __instance)
+		{
+			Console.WriteLine("AutoSavePatch_remindBlankSaveCount3 start");
+			if (!GameGlobal.IsLoadToBattle)
+			{
+				UIAutoSave uiautoSave = Game.UI.Open<UIAutoSave>();
+				List<PathOfWuxiaSaveHeader> list = Game.Platform.SaveHeaderFileList(GameSaveType.Battle);
+				int num = -1;
+				DateTime saveTime = new DateTime(100L);
+				for (int i = 0; i < list.Count; i++)
+				{
+					PathOfWuxiaSaveHeader pathOfWuxiaSaveHeader = list[i];
+					if (!pathOfWuxiaSaveHeader.HasData)
+					{
+						num = i;
+						break;
+					}
+					if (DateTime.Compare(pathOfWuxiaSaveHeader.SaveTime, saveTime) > 0)
+					{
+						num = ((i + 1 > saveCount.Value - 1) ? 0 : (i + 1));
+						saveTime = pathOfWuxiaSaveHeader.SaveTime;
+					}
+				}
+				string filename = string.Format(GameConfig.BattleSaveName, num);
+				Game.GameData.AutoSaveTotalTime = Game.GameData.Round.TotalTime;
+				Game.SaveAsync(filename, null);
+				uiautoSave.Show();
+
+				//提示空白存档剩余数量
+				if (remindBlankSaveCount.Value && saveCount.Value - num - 1 <= 5)
+				{
+					string text = "空白存档数量剩余" + (saveCount.Value - num - 1) + "个，请及时扩容，否则将从头开始覆盖存档";
+					Game.UI.OpenMessageWindow(text, null, true);
+				}
+			}
+			GameGlobal.IsLoadToBattle = false;
+			Console.WriteLine("AutoSavePatch_remindBlankSaveCount3 end");
+			return false;
 		}
 
+		public static GameSaveType gameSaveType;
+
 		//切换存档与自动存档时自动跳转最新存档处
-		[HarmonyPostfix, HarmonyPatch(typeof(CtrlSaveLoad), "UpdateSaveLoad")]
-		public static void UpdateSaveLoadPatch_jumpToLatestSave(ref CtrlSaveLoad __instance)
+		[HarmonyPrefix, HarmonyPatch(typeof(CtrlSaveLoad), "UpdateSaveLoad")]
+		public static bool UpdateSaveLoadPatch_jumpToLatestSave(ref CtrlSaveLoad __instance,ref int index)
 		{
 			Console.WriteLine("UpdateSaveLoadPatch_jumpToLatestSave start");
 			//每次进来先置1，防止中途关闭分页功能后仍然停留在后续页面
 			currentPage = 1;
+
+			bool reExecute = Traverse.Create(__instance).Field("saveIndex").GetValue<int>() == 0;
+			int categoryIndex = Traverse.Create(__instance).Field("categoryIndex").GetValue<int>();
+			bool isReset = categoryIndex != index;
+			Traverse.Create(__instance).Field("categoryIndex").SetValue(index);
+			//判断是什么类型存档还是自动存档
+			gameSaveType = (GameSaveType)index;
+			Console.WriteLine("gameSaveType:" + gameSaveType);
+
+			int currentIndex = 0;
+			int totalIndex = saveCount.Value;
 			if (jumpToLatestSave.Value)
 			{
-				//判断是存档还是自动存档
-				int categoryIndex = Traverse.Create(__instance).Field("categoryIndex").GetValue<int>();
-
 				//先暂时取消分页，获取所有存档，以找到最新的一条,然后恢复
 				bool paginationTemp = pagination.Value;
 				pagination.Value = false;
-				List<PathOfWuxiaSaveHeader> saves;
-				if (categoryIndex == 0)
+				List<PathOfWuxiaSaveHeader> saves = Game.Platform.SaveHeaderFileList(gameSaveType);
+				/*if (categoryIndex == 0)
 				{
-					saves = Game.Platform.ListSaveHeaderFile(GameSaveType.Manual);
+					saves = Game.Platform.SaveHeaderFileList(GameSaveType.Manual);
 				}
 				else
 				{
-					saves = Game.Platform.ListSaveHeaderFile(GameSaveType.Auto);
-				}
+					saves = Game.Platform.SaveHeaderFileList(GameSaveType.Auto);
+				}*/
 				pagination.Value = paginationTemp;
 
 				//获取最新存档的index
@@ -216,8 +303,8 @@ namespace PathOfWuxia
 						saveTime = pathOfWuxiaSaveHeader.SaveTime;
 					}
 				}
-				int currentIndex = num;
-				int totalIndex = saveCount.Value;
+				currentIndex = num;
+				totalIndex = saveCount.Value;
 
 				//重新给saves和autosaves赋值
 				if (pagination.Value)
@@ -236,17 +323,22 @@ namespace PathOfWuxia
 
 					currentIndex = num % countPerPage.Value;
 				}
-				Traverse.Create(__instance).Field("saves").SetValue(Game.Platform.ListSaveHeaderFile(GameSaveType.Manual));
-				Traverse.Create(__instance).Field("autosaves").SetValue(Game.Platform.ListSaveHeaderFile(GameSaveType.Auto));
+				Console.WriteLine("currentPage:"+ currentPage);
+				//Traverse.Create(__instance).Field("autosaves").SetValue(Game.Platform.SaveHeaderFileList(GameSaveType.Auto));
+			}
 
-				//更新界面
-				UISaveLoad view = Traverse.Create(__instance).Field("view").GetValue<UISaveLoad>();
-				view.UpdateSaveLoad(totalIndex, true, true);
+			Traverse.Create(__instance).Field("saves").SetValue(Game.Platform.SaveHeaderFileList(gameSaveType));
+			//更新界面
+			UISaveLoad view = Traverse.Create(__instance).Field("view").GetValue<UISaveLoad>();
+			view.UpdateSaveLoad(totalIndex, isReset, reExecute);
 
-				//更新分页栏
-				WGTabScroll saveload = Traverse.Create(view).Field("saveload").GetValue<WGTabScroll>();
-				GameObject pageBar = saveload.transform.Find("pageBar").gameObject;
-				createPageBar(pageBar, __instance);
+			//更新分页栏
+			WGTabScroll saveload = Traverse.Create(view).Field("saveload").GetValue<WGTabScroll>();
+			GameObject pageBar = saveload.transform.Find("pageBar").gameObject;
+			createPageBar(pageBar, __instance);
+
+			if (jumpToLatestSave.Value)
+			{
 
 				//更新滚动条位置
 				WGInfiniteScroll loopScroll = Traverse.Create(saveload).Field("loopScroll").GetValue<WGInfiniteScroll>();
@@ -254,6 +346,7 @@ namespace PathOfWuxia
 				scrollRect.verticalScrollbar.value = ((float)(totalIndex - currentIndex - 1)) / (totalIndex - 1);//滑动条是反的，不知道为什么
 			}
 			Console.WriteLine("UpdateSaveLoadPatch_jumpToLatestSave end");
+			return false;
 		}
 
 		//存档分页
@@ -428,8 +521,9 @@ namespace PathOfWuxia
 			createPageBar(pageBar, controller);
 
 			//然后更新saves和autosaves
-			Traverse.Create(controller).Field("saves").SetValue(Game.Platform.ListSaveHeaderFile(GameSaveType.Manual));
-			Traverse.Create(controller).Field("autosaves").SetValue(Game.Platform.ListSaveHeaderFile(GameSaveType.Auto));
+			//Traverse.Create(controller).Field("saves").SetValue(Game.Platform.SaveHeaderFileList(GameSaveType.Manual));
+			//Traverse.Create(controller).Field("autosaves").SetValue(Game.Platform.SaveHeaderFileList(GameSaveType.Auto));
+			Traverse.Create(controller).Field("saves").SetValue(Game.Platform.SaveHeaderFileList(gameSaveType));
 
 			//刷新页面
 			UISaveLoad view = Traverse.Create(controller).Field("view").GetValue<UISaveLoad>();
@@ -473,41 +567,64 @@ namespace PathOfWuxia
 			//存档
 			if (__instance.isSave)
 			{
-				string filename = string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "save");
+				GameSaveType type = (GameSaveType)Traverse.Create(__instance).Field("categoryIndex").GetValue<int>();
+				string saveFlieName = Traverse.Create(__instance).Method("GetSaveFlieName", type, trueSaveIndex).GetValue<string>();
+
+				if (saveFlieName == null)
+				{
+					return false;
+				}
+				//string filename = string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "save");
 				view.HideBlur();
-				Game.SaveAsync(filename, new Action(__instance.OnSaveFinish));
+				Game.SaveAsync(saveFlieName, new Action(__instance.OnSaveFinish));
 				view.ShowBlur();
 				Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
 				return false;
 			}
-			Game.UI.HideTeamMemeberUI();
-			Game.UI.Open<UILoading>();
-			int categoryIndex = Traverse.Create(__instance).Field("categoryIndex").GetValue<int>();
-			//读档
-			if (categoryIndex == 0)
+            else
 			{
+				Game.UI.HideTeamMemeberUI();
+				Game.UI.Open<UILoading>();
+				GameSaveType type2 = (GameSaveType)Traverse.Create(__instance).Field("categoryIndex").GetValue<int>();
 				List<PathOfWuxiaSaveHeader> saves = Traverse.Create(__instance).Field("saves").GetValue<List<PathOfWuxiaSaveHeader>>();
 				if (!saves[saveIndex].HasData)
 				{
 					return false;
 				}
-				Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "save"), null);
-				view.Hide();
-				Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
-				return false;
-			}
-			//读自动存档
-			else
-			{
-				List<PathOfWuxiaSaveHeader> autosaves = Traverse.Create(__instance).Field("autosaves").GetValue<List<PathOfWuxiaSaveHeader>>();
-				if (!autosaves[saveIndex].HasData)
+				string saveFlieName2 = Traverse.Create(__instance).Method("GetSaveFlieName", type2, trueSaveIndex).GetValue<string>();
+				if (saveFlieName2 == null)
 				{
 					return false;
 				}
-				Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "autosave"), null);
+				Game.LoadAsync(saveFlieName2, null);
 				view.Hide();
-				Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
 				return false;
+				//读档
+				/*if (categoryIndex == 0)
+				{
+					List<PathOfWuxiaSaveHeader> saves = Traverse.Create(__instance).Field("saves").GetValue<List<PathOfWuxiaSaveHeader>>();
+					if (!saves[saveIndex].HasData)
+					{
+						return false;
+					}
+					Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "save"), null);
+					view.Hide();
+					Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
+					return false;
+				}
+				//读自动存档
+				else
+				{
+					List<PathOfWuxiaSaveHeader> autosaves = Traverse.Create(__instance).Field("autosaves").GetValue<List<PathOfWuxiaSaveHeader>>();
+					if (!autosaves[saveIndex].HasData)
+					{
+						return false;
+					}
+					Game.LoadAsync(string.Format("PathOfWuxia_{0:00}.{1}", trueSaveIndex, "autosave"), null);
+					view.Hide();
+					Console.WriteLine("ConfirmSaveLoadPatch_pagination end");
+					return false;
+				}*/
 			}
 		}
 
@@ -537,8 +654,9 @@ namespace PathOfWuxia
 			Console.WriteLine("SteamPlatformPatch_GetSaveFileHeader");
 			if (fixEditSaveFileBug.Value)
 			{
+				__instance.GetLocalSaveFileHeader(filename,ref header);
 				//获取本地存档路径
-				string fileName = saveFilePath.Value + "\\" + filename;
+				/*string fileName = saveFilePath.Value + "\\" + filename;
 				if (!File.Exists(fileName))
 				{
 					return false;
@@ -569,7 +687,7 @@ namespace PathOfWuxia
 				catch
 				{
 					Debug.LogError("檔案毀損 : " + filename);
-				}
+				}*/
 				return false;
 			}
 			return true;
@@ -583,7 +701,7 @@ namespace PathOfWuxia
 			if (fixEditSaveFileBug.Value)
 			{
 				//获得本地存档路径
-				string[] filePaths = filename.Split('/');
+				/*string[] filePaths = filename.Split('/');
 				string fileName = saveFilePath.Value + "\\" + filePaths[filePaths.Length - 1];
 				//获取文件大小
 				FileInfo fileInfo = new FileInfo(fileName);
@@ -621,7 +739,14 @@ namespace PathOfWuxia
 				Console.WriteLine(@string);
 
 				//读取存档数据
-				GameData gameData = GameDataHepler.LoadFile(array);
+				GameData gameData = GameDataHepler.LoadFile(array);*/
+
+				if (!File.Exists(filename))
+				{
+					__result = null;
+				}
+				GameData gameData = GameDataHepler.LoadFile(File.ReadAllBytes(filename));
+
 				if (SteamManager.IsRightPath)
 				{
 					gameData.MapId = "S9901";

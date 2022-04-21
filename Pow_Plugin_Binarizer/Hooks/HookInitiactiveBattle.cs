@@ -599,6 +599,7 @@ namespace PathOfWuxia
                 t.Method("InitBeginUnit").GetValue();// this.InitBeginUnit();
                 FSM.UI.SkillClick = new Action<SkillData>(__instance.OnSkillClick);
                 FSM.UI.RestClick = new Action(__instance.OnRestClick);
+                FSM.UI.AllResetClick = new Action(__instance.OnAllRestClick);
             }
             return false;
         }
