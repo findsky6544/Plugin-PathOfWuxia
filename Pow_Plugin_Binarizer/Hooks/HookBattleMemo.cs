@@ -112,9 +112,9 @@ public class HookBattleMemo : IHook
     {
         Console.WriteLine( "加载战斗消息记录" );
 
-            //test=plugin.Config.Bind("Hotkeys", "test msg", new BepInEx.Configuration.KeyboardShortcut(KeyCode.U, KeyCode.LeftShift));
+        //test=plugin.Config.Bind("Hotkeys", "test msg", new BepInEx.Configuration.KeyboardShortcut(KeyCode.U, KeyCode.LeftShift));
 
-            board_style = plugin.Config.Bind( "战斗消息记录", "消息面板样式", 0,
+        board_style = plugin.Config.Bind( "战斗消息记录", "消息面板样式", 0,
                                           new ConfigDescription( "扣了几张图当背景", new AcceptableValueRange<int>( 0, 6 ) ) );
         /*
             scroll_sensitivity = plugin.Config.Bind( "战斗记录", "战斗面板滚轮灵敏度", 1,
@@ -147,6 +147,8 @@ public class HookBattleMemo : IHook
             if( scr != null ) {
 
                 if( height.Value != last_height && scr.gameObject.GetComponent<RectTransform>() != null ) {
+                    curConRect.localPosition = new Vector3( curConRect.localPosition.x, curConRect.localPosition.y,
+                                                            curConRect.localPosition.z );
                     last_height = height.Value;
                     scr.gameObject.GetComponent<RectTransform>().sizeDelta =  new Vector2( 800f,
                             600f + ( height.Value - 5 ) * 60 );
@@ -176,18 +178,18 @@ public class HookBattleMemo : IHook
                       board_style.Value < 0 ? new Color( 0, 0, 0, 1 ) : new Color( 1, 1, 1, 1 ) );
             }
         }
-            /*
-            if (test.Value.IsDown())
-            {
-                Console.WriteLine("key pressed");
-                foreach (string s in msgs)
-                { File.AppendAllText("textLog.txt", s);
-                    Console.WriteLine(s);
-                }
+        /*
+        if (test.Value.IsDown())
+        {
+            Console.WriteLine("key pressed");
+            foreach (string s in msgs)
+            { File.AppendAllText("textLog.txt", s);
+                Console.WriteLine(s);
             }
-            */
-
         }
+        */
+
+    }
     static string getpath()
     {
         switch( board_style.Value ) {
@@ -234,7 +236,7 @@ public class HookBattleMemo : IHook
                 Text ttt = curContent.GetComponent<RectTransform>().GetChild(
                                curContent.GetComponent<RectTransform>().childCount - 1 ).gameObject.GetComponent<Text>();
                 //Console.WriteLine( "flaggg text length" + ttt.text.Length );
-                ttt.text = ttt.text.Remove( ttt.text.Length - (int)Math.Log10(repeated) - 2 );
+                ttt.text = ttt.text.Remove( ttt.text.Length - ( int )Math.Log10( repeated ) - 2 );
                 //Console.WriteLine( "flagaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" );
                 ttt.text += "×" + repeated;
                 //Console.WriteLine( ttt.text );
@@ -343,14 +345,19 @@ public class HookBattleMemo : IHook
         }
 
         //重新定位可见项目，禁用变为不可见的项目
-        for( int i = index_first_visible; i < msgs.Count - (10 + 2*height.Value) && i <= index_last_visible; i++ ) {
+        for( int i = index_first_visible; i < msgs.Count - ( 10 + 2 * height.Value ) &&
+             i <= index_last_visible; i++ ) {
             curConRect.GetChild( i ).gameObject.SetActive( false );
         }
-        for( int i = Math.Max( index_last_visible + 1, msgs.Count - (10 + 2 * height.Value)); i < msgs.Count ; i++ ) {
+        for( int i = Math.Max( index_last_visible + 1, msgs.Count - ( 10 + 2 * height.Value ) );
+             i < msgs.Count ; i++ ) {
+            curConRect.GetChild( i ).gameObject.SetActive( true );
+        }
+        for( int i = Math.Max( msgs.Count - ( 10 + 2 * height.Value ), 0 ); i < index_first_visible; i++ ) {
             curConRect.GetChild( i ).gameObject.SetActive( true );
         }
         index_last_visible = msgs.Count - 1;
-        index_first_visible = Math.Max( 0, msgs.Count - (10 + 2 * height.Value));
+        index_first_visible = Math.Max( 0, msgs.Count - ( 10 + 2 * height.Value ) );
 
 
 
@@ -377,7 +384,7 @@ public class HookBattleMemo : IHook
         float top = curConRect.localPosition.y;
         //Console.WriteLine("flag2");
         //remove at start
-        if( top > 35 && index_last_visible<msgs.Count-1 && curConRect.childCount >0) {
+        if( top > 35 && index_last_visible < msgs.Count - 1 && curConRect.childCount > 0 ) {
             //Console.WriteLine("flag2.1");
             curConRect.GetChild( index_first_visible ).gameObject.SetActive( false );
             index_first_visible++;
@@ -396,14 +403,14 @@ public class HookBattleMemo : IHook
             //Console.WriteLine("flag2.2e");
         }
         //remove at end
-        if( bottom < -935 && index_first_visible > 1 &&curConRect.childCount > 0) {
+        if( bottom < -935 && index_first_visible > 1 && curConRect.childCount > 0 ) {
             //Console.WriteLine("flag2.3");
             curConRect.GetChild( index_last_visible - 1 ).gameObject.SetActive( false );
             index_last_visible--;
             flag = true;
             //Console.WriteLine("flag2.3e");
 
-        } else if( bottom > -901 && index_last_visible < msgs.Count-1 ) {
+        } else if( bottom > -901 && index_last_visible < msgs.Count - 1 ) {
             //Console.WriteLine("flag2.4");
             curConRect.GetChild( index_last_visible ).gameObject.SetActive( true );
             index_last_visible++;
@@ -453,7 +460,7 @@ public class HookBattleMemo : IHook
     {
         UpdateRender();
     }
-    
+
 
     /*
     [HarmonyPrefix, HarmonyPatch( typeof( AssignAuraPromoteAction ),
@@ -568,33 +575,33 @@ public class HookBattleMemo : IHook
             return true;
         }
         if( turn == 0 && !showTurnZero.Value ) {
-                msgs.Add("skipped cuz of 0 turn");
-                return true;
+            //msgs.Add( "skipped cuz of 0 turn" );
+            return true;
         }
         if( string.IsNullOrEmpty( _bufferId ) ) {
-                msgs.Add("skipped cuz of null buffer id");
-                return true;
+            //msgs.Add( "skipped cuz of null buffer id" );
+            return true;
         }
         if( _unit == null ) {
-                msgs.Add("skipped cuz of null unit");
-                return true;
+            //msgs.Add( "skipped cuz of null unit" );
+            return true;
         }
         if( !__instance.IsExist( _unit.UnitID, _bufferId ) ) {
-                //Console.WriteLine( "removebuffer patch error" );
-                return true;
+            //Console.WriteLine( "removebuffer patch error" );
+            return true;
         }
 
         BufferInfo bufferInfo = ___BufferList.Find( ( BufferInfo i ) => i.UnitId == _unit.UnitID &&
                                 i.BufferId == _bufferId );
         if( bufferInfo == null ) {
-                //Console.WriteLine( "removebuffer erro, list length =" + ___BufferList.Count );
-                return true;
+            //Console.WriteLine( "removebuffer erro, list length =" + ___BufferList.Count );
+            return true;
         } else {
             //Console.WriteLine( "buffer info found" );
         }
 
         if( bufferInfo.Table == null || bufferInfo.Table.Name == null ) {
-                return true;
+            return true;
         }
         string str = "- " + _unit.FullName + " 失去效果 " + bufferInfo.Table.Name;
         msgs.Add( str );
