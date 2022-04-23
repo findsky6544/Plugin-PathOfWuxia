@@ -27,6 +27,7 @@ public class HookBattleMemo : IHook
     static ConfigEntry<bool> autoUpdateMsg;
     static ConfigEntry<bool> showTurnZero;
     static ConfigEntry<bool> showAura;
+    static ConfigEntry<bool> showHPMPChange;
     static ConfigEntry<int> height;
     static ConfigEntry<BepInEx.Configuration.KeyboardShortcut> test;
     static int last_style = 0;
@@ -69,6 +70,7 @@ public class HookBattleMemo : IHook
     //哎反正占不了多大空间
     //补充说明栏的对象
     static GameObject curDetails = new GameObject();
+    static GameObject curDetBg = new GameObject();
     static RectTransform curConRect;
 
     //Do I really need to do such a stupid thing?
@@ -86,6 +88,7 @@ public class HookBattleMemo : IHook
         {
             isHovering = false;
             if( curDetails != null ) {
+                curDetBg.SetActive( false );
                 curDetails.GetComponent<Text>().text = "";
                 curDetails.SetActive( false );
                 //Console.WriteLine("pointer exit");
@@ -98,9 +101,16 @@ public class HookBattleMemo : IHook
             }
             if( timeLeft < 0 ) {
                 if( curDetails != null && curDetails.GetComponent<Text>() != null ) {
-                    curDetails.SetActive( true );
                     curDetails.GetComponent<Text>().text = just_a_string;
+                    //Unity UI的Content size fitter有问题，只好手动调
+                    curDetBg.GetComponent<LayoutElement>().preferredHeight =
+                        curDetails.GetComponent<Text>().preferredHeight;
+                    curDetails.SetActive( true );
+                    curDetBg.SetActive( true );
+
                     //Console.WriteLine("show details"+ just_a_string);
+                    LayoutRebuilder.ForceRebuildLayoutImmediate( curDetBg.GetComponent<RectTransform>() );
+                    Canvas.ForceUpdateCanvases();
                 }
                 timeLeft = 0.5f;
                 isHovering = false;
@@ -128,6 +138,8 @@ public class HookBattleMemo : IHook
                                        "如果开启此选项，会记录大量没啥用的光环buff添加" );
         height = plugin.Config.Bind( "战斗消息记录", "记录牌高度", 5,
                                      new ConfigDescription( "调整高度", new AcceptableValueRange<int>( 0, 10 ) ) );
+        showHPMPChange = plugin.Config.Bind( "战斗消息记录", "显示气血和内力变化", true,
+                                             "如果取消此选项，则不会记录各单位的气血内力变化" );
         plugin.onUpdate += OnUpdate;
         //last_sensitivity = scroll_sensitivity.Value;
         last_style = board_style.Value;
@@ -166,16 +178,24 @@ public class HookBattleMemo : IHook
                 if( getpath() != null ) {
                     curContent.transform.parent.gameObject.GetComponent<Image>().sprite =
                         Heluo.Game.Resource.Load<Sprite>( getpath() );
+                    curDetBg.GetComponent<Image>().sprite = Heluo.Game.Resource.Load<Sprite>( getpath() );
                 } else {
                     curContent.transform.parent.gameObject.GetComponent<Image>().sprite = null;
+                    curDetBg.GetComponent<Image>().sprite = null;
+
+
                 }
-            }
+
+                curDetails.GetComponent<Text>().color = ( board_style.Value == 3 || board_style.Value > 4 ||
+                                                        board_style.Value < 0 ? new Color( 0, 0, 0, 1 ) : new Color( 1, 1, 1, 1 ) );
 
 
-            for( int i = 0; i < curContent.GetComponent<RectTransform>().childCount; i++ ) {
-                curContent.GetComponent<RectTransform>().GetChild( i ).GetComponent<Text>().color =
-                    ( board_style.Value == 3 || board_style.Value > 4 ||
-                      board_style.Value < 0 ? new Color( 0, 0, 0, 1 ) : new Color( 1, 1, 1, 1 ) );
+
+                for( int i = 0; i < curContent.GetComponent<RectTransform>().childCount; i++ ) {
+                    curContent.GetComponent<RectTransform>().GetChild( i ).GetComponent<Text>().color =
+                        ( board_style.Value == 3 || board_style.Value > 4 ||
+                          board_style.Value < 0 ? new Color( 0, 0, 0, 1 ) : new Color( 1, 1, 1, 1 ) );
+                }
             }
         }
         /*
@@ -525,7 +545,8 @@ public class HookBattleMemo : IHook
         }
 
         string str = "+ " + unit.FullName + "受到效果 " + buffer.Name +
-                     ( buffer.Times > 0 ? ( " 持续" + buffer.Times + " 回合" ) : "" ) + ", 来源: ";
+                     ( buffer.Times > 0 && ( type == BufferType.Medicine || type == BufferType.Skill ||
+                                             type == BufferType.Special )  ? ( " 持续" + buffer.Times + " 回合" ) : "" ) + " 来源: ";
         //Console.WriteLine( str );
         switch( type ) {
             case BufferType.Difficulty:
@@ -557,8 +578,10 @@ public class HookBattleMemo : IHook
                 str += "无";
                 break;
         }
+
         msgs.Add( str );
-        description.Enqueue( buffer.Desc );
+        description.Enqueue( buffer.Desc + ( buffer.Desc.IsNullOrWhiteSpace() ||
+                                             buffer.Remark.IsNullOrWhiteSpace() ? "" : "\n\n" ) + buffer.Remark );
         update_msg();
         return true;
         //Console.WriteLine( "addbuffer patch end" );
@@ -605,7 +628,8 @@ public class HookBattleMemo : IHook
         }
         string str = "- " + _unit.FullName + " 失去效果 " + bufferInfo.Table.Name;
         msgs.Add( str );
-        description.Enqueue( bufferInfo.Table.Desc );
+        description.Enqueue( bufferInfo.Table.Desc + ( bufferInfo.Table.Desc.IsNullOrWhiteSpace() ||
+                             bufferInfo.Table.Remark.IsNullOrWhiteSpace() ? "" : "\n\n" ) + bufferInfo.Table.Remark );
         //Console.WriteLine( "added remove msg:" + str );
         update_msg();
 
@@ -703,7 +727,7 @@ public class HookBattleMemo : IHook
     [HarmonyPostfix, HarmonyPatch( typeof( WuxiaUnit ), nameof( WuxiaUnit.DamageMP ) )]
     public static void damageMp( WuxiaUnit __instance, int value, Heluo.Battle.MessageType type )
     {
-        if( value == 0 ) {
+        if( value == 0 || showHPMPChange.Value == false ) {
             return;
         }
         string des;
@@ -728,7 +752,7 @@ public class HookBattleMemo : IHook
     [HarmonyPostfix, HarmonyPatch( typeof( WuxiaUnit ), nameof( WuxiaUnit.DamageHP ) )]
     public static void damageHp( WuxiaUnit __instance, int value, Heluo.Battle.MessageType type )
     {
-        if( value == 0 ) {
+        if( value == 0  || showHPMPChange.Value == false ) {
             return;
         }
         string des;
@@ -895,8 +919,9 @@ public class HookBattleMemo : IHook
             return;
         }
         //尽量语句通顺吧，代码过于混乱- -
-        string details = "影响伤害的因素: 初始伤害=" + damage.basic_damage + ", 技能系数=" +
-                         damage.skill_coefficient.ToString( "0.00" ) + ", ";
+        string details = "影响伤害的因素: 初始伤害=" + damage.basic_damage + "\n" +
+                         "技能系数=" +
+                         damage.skill_coefficient.ToString( "0.00" ) + "\n";
         string description = "";
         string str = damage.Attacker.FullName + "对 " + damage.Defender.FullName +
                      ( skill.Item.Name != null ? " 使用" : " 攻击 " );
@@ -908,12 +933,12 @@ public class HookBattleMemo : IHook
         }
         if( damage.direction == DamageDirection.Back ) {
             description += " 背刺";
-            details += "背袭系数: " + __instance.Coefficient_Of_Direction( damage );
+            details += "背袭系数= " + __instance.Coefficient_Of_Direction( damage ) + "\n";
         }
 
         if( damage.direction == DamageDirection.Side ) {
             description += " 侧袭";
-            details += "侧袭系数: " + __instance.Coefficient_Of_Direction( damage );
+            details += "侧袭系数= " + __instance.Coefficient_Of_Direction( damage ) + "\n";
         }
         if( damage.IsDodge ) {
             msgs.Add( "•" + str + skill.Item.Name + " 被闪避" );
@@ -923,17 +948,17 @@ public class HookBattleMemo : IHook
         }
         if( !damage.IsHit ) {
             description += " 失手";
-            details += " 失手系数=0.7";
+            details += "失手系数=0.7 \n";
         }
 
         if( damage.IsParry ) {
             description += " 被招架";
-            details += " 招架系数=" + ( ( 1f - __instance.ChangeValueToCoefficient(
-                                                  damage.Defender[BattleProperty.Parry_Damage_Sub] ) ) / 3 ).ToString( "0.00" ) + ", ";
+            details += "招架系数=" + ( ( 1f - __instance.ChangeValueToCoefficient(
+                                                 damage.Defender[BattleProperty.Parry_Damage_Sub] ) ) / 3 ).ToString( "0.00" ) + "\n ";
         } else if( damage.IsCritical ) {
             description += " 暴击";
-            details += " 暴击系数=" + ( damage.IsCritical ? __instance.Coefficient_Of_Critical() :
-                                            1f ).ToString( "0.00" ) + ", ";
+            details += "暴击系数=" + ( damage.IsCritical ? __instance.Coefficient_Of_Critical() :
+                                           1f ).ToString( "0.00" ) + "\n ";
         }
 
         if( atp == AttackType.Counter ) {
@@ -966,8 +991,8 @@ public class HookBattleMemo : IHook
 
         if( damage.IsSuperiority ) {
             description += " 效果拔群! ";
-            details += " 属性相克=" + ( damage.IsSuperiority ? __instance.Coefficient_Of_Element() :
-                                            1f ).ToString( "0.00" ) + ", ";
+            details += "属性相克=" + ( damage.IsSuperiority ? __instance.Coefficient_Of_Element() :
+                                           1f ).ToString( "0.00" ) + "\n";
         }
         //if( damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] > 0 ) {
         //     description += damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] + "%" + " 被真气抵挡";
@@ -981,14 +1006,14 @@ public class HookBattleMemo : IHook
                     ( float )damage.Attacker[BattleProperty.Attack_Damage_Sub] / 100 ) * ( 1 +
                             ( float )damage.Defender[BattleProperty.Defend_Damage_Add] / 100 ) * ( 1 -
                                     ( float )damage.Defender[BattleProperty.Defend_Damage_Sub] / 100 );
-        details += "伤害增减系数=" + coe.ToString( "0.00" );
+        details += "伤害增减系数=" + coe.ToString( "0.00" ) + "\n";
         String str2 = "";
 
         //移到补充说明
-        str2 = "* 增减伤公式: (1+加攻) × (1-降攻) × (1+增伤) × (1-减伤) ";
+        str2 = "*增减伤公式: (1+加攻) × (1-降攻) × (1+增伤) × (1-减伤) ";
         //msgs.Add( str2 );
-        details += "\n\n\n" + str2;
-        String str4 = "* 增减伤 = (1+(" + damage.Attacker[BattleProperty.Attack_Damage_Add].ToString() +
+        details += "\n" + str2;
+        String str4 = "*增减伤 = (1+(" + damage.Attacker[BattleProperty.Attack_Damage_Add].ToString() +
                       "%)) × " + " (1-(" + damage.Attacker[BattleProperty.Attack_Damage_Sub].ToString() + "%)) × (1+("
                       + ( damage.Defender[BattleProperty.Defend_Damage_Add] ).ToString() + "%)) × (1-(" +
                       ( damage.Defender[BattleProperty.Defend_Damage_Sub] ).ToString() + "%)) =" + coe.ToString( "0.00" );
@@ -996,8 +1021,8 @@ public class HookBattleMemo : IHook
         //msgs.Add( str4 );
         details += "\n\n" + str4;
         if( damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] > 0 ) {
-            details += "\n\n内力抵消伤害" + __instance.ChangeValueToCoefficient(
-                           damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] ).ToString( "0.00" );
+            details += "\n\n内力抵消伤害" +
+                       damage.Defender[BattleProperty.HP_Change_MP_OF_HP_Ratio] + "%";
         }
 
         String str3 = "";
@@ -1184,18 +1209,45 @@ public class HookBattleMemo : IHook
         rect2.localPosition = new Vector3( 0f, -20f, 0f );
 
         //加个补充说明栏
-        GameObject details = new GameObject( "BlockDetails", typeof( RectTransform ), typeof( Text ) );
+        GameObject details = new GameObject( "BlockDetails", typeof( RectTransform ), typeof( Text ),
+                                             typeof( ContentSizeFitter ) );
         curDetails = details;
-        details.GetComponent<RectTransform>().SetParent( arrow.gameObject.GetComponent<RectTransform>() );
-        details.GetComponent<RectTransform>().pivot = new Vector2( 1f, 1f );
-        details.GetComponent<RectTransform>().sizeDelta = new Vector2( 300f, 0f );
-        details.GetComponent<RectTransform>().localPosition = new Vector3( -400f, -20f, 0f );
-        details.GetComponent<Text>().color = Color.white;
-        details.GetComponent<Text>().font = Heluo.Game.Resource.Load<Font>( "Assets/Font/kaiu.ttf" );
+        GameObject detailsBG = new GameObject( "details_background", typeof( RectTransform ),
+                                               typeof( Image ), typeof( ContentSizeFitter ), typeof( VerticalLayoutGroup ),
+                                               typeof( LayoutElement ) );
+        curDetBg = detailsBG;
+        detailsBG.GetComponent<LayoutElement>().preferredHeight = 0;
+        detailsBG.GetComponent<RectTransform>().SetParent( arrow.gameObject.GetComponent<RectTransform>() );
+        detailsBG.GetComponent<RectTransform>().pivot = new Vector2( 1f, 1f );
+        detailsBG.GetComponent<RectTransform>().sizeDelta = new Vector2( 300f, 150f );
+        detailsBG.GetComponent<RectTransform>().localPosition = new Vector3( -400f, -20f, 0f );
+        detailsBG.GetComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        detailsBG.GetComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        if( getpath() != null ) {
+            detailsBG.GetComponent<Image>().sprite = Heluo.Game.Resource.Load<Sprite>( getpath() );
+        } else {
+            detailsBG.GetComponent<Image>().sprite = null;
+        }
+
+
+
+
+
+        details.GetComponent<Text>().color = ( board_style.Value == 3 || board_style.Value > 4 ||
+                                               board_style.Value < 0 ? Color.black : Color.white );
+
+
+        details.GetComponent<Text>().font = Heluo.Game.Resource.Load<Font>( "Assets/Font/msjh.ttf" );
         details.GetComponent<Text>().fontSize = 20;
-        details.GetComponent<Text>().verticalOverflow = VerticalWrapMode.Overflow;
-        details.GetComponent<Text>().horizontalOverflow = HorizontalWrapMode.Wrap;
-        details.SetActive( false );
+        details.GetComponent<RectTransform>().SetParent( detailsBG.GetComponent<RectTransform>(), false );
+        details.GetComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        details.GetComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+
+
+
+
+
 
         Image im2 = MsgScroll.AddComponent<Image>();
         Texture2D tempTex2 = new Texture2D( 2, 2 );
@@ -1203,6 +1255,7 @@ public class HookBattleMemo : IHook
             File.ReadAllBytes( "D:\\NewGitDirectory\\Plugin-PathOfWuxia\\Pow_Plugin_Binarizer\\resourses\\Target_03.png" ) );
         Sprite sprite2 = Sprite.Create( tempTex2, new Rect( 0f, 0f, ( float )tempTex2.width,
                                         ( float )tempTex2.height ), new Vector2( 0.5f, 0.5f ) );
+
         im2.sprite = sprite2;
 
         //应用插件设置
@@ -1211,6 +1264,8 @@ public class HookBattleMemo : IHook
         } else {
             im2.sprite = null;
         }
+
+        details.SetActive( false );
 
         //把内容块设为滚动框的child
         RectTransform rect = Content.GetComponent<RectTransform>();
