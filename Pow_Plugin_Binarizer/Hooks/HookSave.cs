@@ -44,7 +44,7 @@ namespace PathOfWuxia
 			countPerPage = plugin.Config.Bind("存档设定", "存档分页-每页存档数", 20, "每页多少条存档，存档分页启用后才有用");
 			deleteSaveFile = plugin.Config.Bind("存档设定", "删除存档（未完成）", false, "可删除存档");
 			fixEditSaveFileBug = plugin.Config.Bind("存档设定", "修复修改存档后消失bug", false, "修复存档修改器修改后存档消失的bug");
-			saveFilePath = plugin.Config.Bind("存档设定", "存档路径", string.Empty, "存档路径,修复修改存档后消失bug使用");
+			saveFilePath = plugin.Config.Bind("存档设定", "存档路径", string.Empty, "云存档路径,修复修改存档后消失bug使用");
 		}
 
 		//修改存档数量，分页展示
@@ -654,9 +654,14 @@ namespace PathOfWuxia
 			Console.WriteLine("SteamPlatformPatch_GetSaveFileHeader");
 			if (fixEditSaveFileBug.Value)
 			{
-				__instance.GetLocalSaveFileHeader(filename,ref header);
+				//__instance.GetLocalSaveFileHeader(filename,ref header);
 				//获取本地存档路径
-				/*string fileName = saveFilePath.Value + "\\" + filename;
+				string fileName = filename;
+
+                if (!filename.Contains("Local"))
+				{
+					fileName = saveFilePath.Value + "\\" + filename;
+				}
 				if (!File.Exists(fileName))
 				{
 					return false;
@@ -687,7 +692,7 @@ namespace PathOfWuxia
 				catch
 				{
 					Debug.LogError("檔案毀損 : " + filename);
-				}*/
+				}
 				return false;
 			}
 			return true;
@@ -700,52 +705,25 @@ namespace PathOfWuxia
 			Console.WriteLine("SteamPlatformPatch_LoadFileAsync");
 			if (fixEditSaveFileBug.Value)
 			{
-				//获得本地存档路径
-				/*string[] filePaths = filename.Split('/');
-				string fileName = saveFilePath.Value + "\\" + filePaths[filePaths.Length - 1];
-				//获取文件大小
-				FileInfo fileInfo = new FileInfo(fileName);
-				long fileSize = 0;
+				GameData gameData;
 
-				if (fileInfo != null && fileInfo.Exists)
-                {
-					fileSize = fileInfo.Length;
-
-				}
-				byte[] array = new byte[fileSize];
-				//读取文件
-				FileStream readstream = File.OpenRead(fileName);
-				StreamReader sr = new StreamReader(readstream);
-
-				sr.BaseStream.Read(array, 0, array.Length);
-				sr.Close();
-				readstream.Close();
-
-				//存档头
-				byte[] array2 = new byte[17];
-				using (MemoryStream ms = new MemoryStream(array))
+				string fileName = filename;
+				if (!filename.Contains("Local"))
 				{
-					using (StreamReader sr1 = new StreamReader(ms))
-					{
-						sr1.BaseStream.Read(array2, 0, array2.Length);
-						if (array2[0] == 239 && array2[1] == 187 && array2[2] == 191)
-						{
-							sr1.BaseStream.Position = 3L;
-							sr1.BaseStream.Read(array2, 0, array2.Length);
-						}
-					}
+					//获得本地存档路径
+					string[] filePaths = filename.Split('/');
+					fileName = saveFilePath.Value + "\\" + filePaths[filePaths.Length - 1];
 				}
-				string @string = Encoding.ASCII.GetString(array2);
-				Console.WriteLine(@string);
+				else
+				{
+				}
 
-				//读取存档数据
-				GameData gameData = GameDataHepler.LoadFile(array);*/
-
-				if (!File.Exists(filename))
+				if (!File.Exists(fileName))
 				{
 					__result = null;
+					return false;
 				}
-				GameData gameData = GameDataHepler.LoadFile(File.ReadAllBytes(filename));
+				gameData = GameDataHepler.LoadFile(File.ReadAllBytes(fileName));
 
 				if (SteamManager.IsRightPath)
 				{

@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace PathOfWuxia
 {
-    [BepInPlugin("binarizer.plugin.pow.function_sets", "功能合集 by Binarizer，修改 by 寻宇", "2.3.0")]
+    [BepInPlugin("binarizer.plugin.pow.function_sets", "功能合集 by Binarizer，修改 by 寻宇", "2.3.1")]
     public class PluginBinarizer : BaseUnityPlugin
     {
         /// <summary>
