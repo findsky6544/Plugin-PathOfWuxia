@@ -81,7 +81,7 @@ namespace PathOfWuxia
                     return;
                 }
                 //mp不足
-                if (characterInfoData.MP < clickSkill.Item.RequestMP)
+                if (characterInfoData.MP < clickSkill.RequestMP)
                 {
                     string text2 = Game.Data.Get<StringTable>("SecondaryInterface1207").Text;
                     Game.UI.AddMessage(text2, UIPromptMessage.PromptType.Normal);
@@ -229,7 +229,7 @@ namespace PathOfWuxia
             Game.MusicPlayer.Current_Volume = 1f;
             //修改功体，扣除mp，更新界面信息
             characterInfoData.Element = (Element)element;
-            characterInfoData.MP -= clickSkill.Item.RequestMP;
+            characterInfoData.MP -= clickSkill.RequestMP;
             homeController.UpdateBasicInfo(true);
             homeController.UpdateCharacterProperty(true);
             //水功体的回血回蓝功能要不要加上呢……如果加上不就等于白嫖了么
@@ -383,7 +383,7 @@ namespace PathOfWuxia
             Console.WriteLine("nonbattleUseHealSkillAction start");
 
             //mp不足
-            if (attacker.MP < skill.Item.RequestMP)
+            if (attacker.MP < skill.RequestMP)
             {
                 string text2 = Game.Data.Get<StringTable>("SecondaryInterface1207").Text;
                 Game.UI.AddMessage(text2, UIPromptMessage.PromptType.Normal);
@@ -391,14 +391,14 @@ namespace PathOfWuxia
             }
 
             //最小距离大于0则不能给自己治疗
-            if (selectSkill.Item.MinRange > 0 && defender[index] == attacker)
+            if (selectSkill.MinRange > 0 && defender[index] == attacker)
             {
                 Game.UI.AddMessage("该技能不能给自己治疗", UIPromptMessage.PromptType.Normal);
                 return;
             }
 
             //最大距离等于0则只能给自己治疗
-            if (selectSkill.Item.MaxRange == 0 && defender[index] != attacker)
+            if (selectSkill.MaxRange == 0 && defender[index] != attacker)
             {
                 Game.UI.AddMessage("该技能只能给自己治疗", UIPromptMessage.PromptType.Normal);
                 return;
@@ -408,7 +408,7 @@ namespace PathOfWuxia
             //是否群体回复
             int startIndex = index;
             int endIndex = index + 1;
-            if (skill.Item.TargetArea == TargetArea.Fan || skill.Item.TargetArea == TargetArea.LineGroup || skill.Item.TargetArea == TargetArea.RingGroup)
+            if (skill.TargetArea == TargetArea.Fan || skill.TargetArea == TargetArea.LineGroup || skill.TargetArea == TargetArea.RingGroup)
             {
                 startIndex = 0;
                 endIndex = defender.Count;
@@ -434,7 +434,7 @@ namespace PathOfWuxia
             BattleComputerFormula BattleComputerFormula = Traverse.Create(battleComputer).Field("BattleComputerFormula").GetValue<BattleComputerFormula>();
             BattleFormulaProperty BattleComputerProperty = Traverse.Create(battleComputer).Field("BattleComputerProperty").GetValue<BattleFormulaProperty>();
 
-            attacker.MP -= skill.Item.RequestMP;
+            attacker.MP -= skill.RequestMP;
 
             for (int i = startIndex; i < endIndex; i++)
             {

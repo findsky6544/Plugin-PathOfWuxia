@@ -16,6 +16,7 @@ using UnityEngine.EventSystems;
 using Heluo.Utility;
 using System.Reflection;
 using System.Threading.Tasks;
+using Heluo.Actor;
 
 namespace PathOfWuxia
 {
@@ -849,7 +850,7 @@ namespace PathOfWuxia
                     {
                         wuxiaCell3.UnMark();
                     }
-                    unit.Actor.Move = false;
+                    unit.ActorPerform(UnitActorController.State.Move, false);
                 }
                 unit.OnUnitEnd();
                 if (!unit.IsDead)
@@ -995,7 +996,7 @@ namespace PathOfWuxia
                             {
                                 wuxiaCell4.UnMark();
                             }
-                            unit.Actor.Move = false;
+                            unit.ActorPerform(UnitActorController.State.Move, false);
                         }
                         if (unit[BattleRestrictedState.Daze] > 0 || unit[BattleRestrictedState.Seal] > 0 || unit.IsAction)
                         {

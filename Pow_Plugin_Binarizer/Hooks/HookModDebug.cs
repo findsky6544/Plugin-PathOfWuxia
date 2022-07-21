@@ -100,8 +100,16 @@ namespace PathOfWuxia
             }
             if (Input.GetKeyDown(MovieFileKey.Value) && !string.IsNullOrEmpty(MovieFileId.Value))
             {
-                // movie                
-                string source = string.Format(MovieFileType.Value == MovieType.Cinematic ? GameConfig.CinematicPath : GameConfig.SchedulerPath, MovieFileId.Value);
+                // movie
+                string source = "";
+                if (MovieFileType.Value == MovieType.Cinematic)
+                {
+                    source = string.Format( GameConfig.CinematicPath, GameConfig.Language, MovieFileId.Value);
+                }
+                else
+                {
+                    source = string.Format(GameConfig.SchedulerPath, MovieFileId.Value);
+                }
                 string target = string.Format(DebugOutDir.Value + MovieFilePath.Value, MovieFileId.Value);
                 var obj = ModJson.FromJsonResource<ScheduleGraph.Bundle>(source);
                 if (JsonFormat.Value)

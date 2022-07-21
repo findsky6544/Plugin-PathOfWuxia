@@ -184,23 +184,23 @@ namespace PathOfWuxia
                 infos.Add(__instance.CreateTipInfo(WGTip.TipType.Title, title, ""));
             }
             string text = Game.Data.Get<StringTable>("SecondaryInterface1401").Text;
-            infos.Add(__instance.CreateTipInfo(WGTip.TipType.TitleImportantValue, text, skill.Item.RequestMP.ToString()));
+            infos.Add(__instance.CreateTipInfo(WGTip.TipType.TitleImportantValue, text, skill.RequestMP.ToString()));
             string text2 = Game.Data.Get<StringTable>("SecondaryInterface1402").Text;
             string value = skill.GetPredictionDamage(unit.GetFormulaProperty(), unit.info, 0, unit).ToString();
             infos.Add(__instance.CreateTipInfo(WGTip.TipType.TitleValue, text2, value));
             string text3 = Game.Data.Get<StringTable>("SecondaryInterface1403").Text;
             string value2 = string.Empty;
-            if (skill.Item.MinRange == 0 && skill.Item.MaxRange == 0)
+            if (skill.MinRange == 0 && skill.MaxRange == 0)
             {
                 value2 = Game.Data.Get<StringTable>("SecondaryInterface0706").Text;
             }
             else
             {
-                value2 = skill.Item.MinRange + " - " + skill.Item.MaxRange;
+                value2 = skill.MinRange + " - " + skill.MaxRange;
             }
             infos.Add(__instance.CreateTipInfo(WGTip.TipType.TitleValue, text3, value2));
             string text4 = string.Empty;
-            switch (skill.Item.TargetArea)
+            switch (skill.TargetArea)
             {
                 case TargetArea.Line:
                 case TargetArea.LineCharge:
@@ -210,10 +210,10 @@ namespace PathOfWuxia
                     text4 = Game.Data.Get<StringTable>("SecondaryInterface0703").Text;
                     break;
                 case TargetArea.Ring:
-                    if (skill.Item.AOE > 0)
+                    if (skill.AOE > 0)
                     {
                         text4 = Game.Data.Get<StringTable>("SecondaryInterface0705").Text;
-                        text4 = string.Format(text4, skill.Item.AOE);
+                        text4 = string.Format(text4, skill.AOE);
                     }
                     else
                     {
@@ -233,7 +233,7 @@ namespace PathOfWuxia
             infos.Add(__instance.CreateTipInfo(WGTip.TipType.TitleValue, text6, skill.MaxCD.ToString()));
             string text7 = Game.Data.Get<StringTable>("SecondaryInterface1406").Text;
             infos.Add(__instance.CreateTipInfo(WGTip.TipType.Title, text7, ""));
-            infos.Add(__instance.CreateTipInfo(WGTip.TipType.Context, skill.Item.Description, ""));
+            infos.Add(__instance.CreateTipInfo(WGTip.TipType.Context, skill.Description, ""));
             Traverse.Create(__instance).Field("ability_tip").GetValue<WGTip>().ShowTip(infos);
             return false;
         }
