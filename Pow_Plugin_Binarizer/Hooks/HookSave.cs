@@ -101,7 +101,7 @@ namespace PathOfWuxia
 				{
 					PathOfWuxiaSaveHeader pathOfWuxiaSaveHeader = null;
 					string fileName = Path.GetFileName(string.Format(format, i));
-					Console.WriteLine("fileName:" + fileName);
+					//Console.WriteLine("fileName:" + fileName);
 					if (SteamRemoteStorage.FileExists(fileName))
 					{
 						__instance.GetSaveFileHeader(fileName, ref pathOfWuxiaSaveHeader);
@@ -651,7 +651,7 @@ namespace PathOfWuxia
 		[HarmonyPrefix, HarmonyPatch(typeof(SteamPlatform), "GetSaveFileHeader")]
 		public static bool SteamPlatformPatch_GetSaveFileHeader(ref SteamPlatform __instance, ref string filename, ref PathOfWuxiaSaveHeader header)
 		{
-			Console.WriteLine("SteamPlatformPatch_GetSaveFileHeader");
+			//Console.WriteLine("SteamPlatformPatch_GetSaveFileHeader");
 			if (fixEditSaveFileBug.Value)
 			{
 				//__instance.GetLocalSaveFileHeader(filename,ref header);

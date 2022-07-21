@@ -248,7 +248,7 @@ namespace PathOfWuxia
             b.y = 0f;
             Traverse.Create(__instance).Field("worldPosition").SetValue(position + b + Vector3.up * d);
             ClickType clickType = info.ClickType;
-            string id = string.Format("02004{0:000}", (int)clickType);
+            string id = string.Format("ta02004{0:000}", (int)clickType);
             StringTable stringTable = Game.Data.Get<StringTable>(id);
             string text = (stringTable != null) ? stringTable.Text : null;
             string remarks = info.Remarks;

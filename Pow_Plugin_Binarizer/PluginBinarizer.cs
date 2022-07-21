@@ -71,6 +71,9 @@ namespace PathOfWuxia
                     RegisterHook(modulePair.Key);
             }
             Console.WriteLine($"可注册钩子模块共计{moduleEntries.Count}个");
+
+            var harmony = new Harmony("com.company.project.product");
+            harmony.PatchAll();
         }
 
         void Start()
