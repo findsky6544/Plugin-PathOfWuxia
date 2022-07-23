@@ -528,23 +528,23 @@ public class HookBattleMemo : IHook
         msgs.Add( "= " + __instance.FullName + " 失去战斗能力并离开战场" );
         update_msg();
     }
-    [HarmonyFinalizer, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
+    [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
                                   new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
-    public static void addBuffer(Exception __exception, WuxiaBattleBuffer __instance, List<BufferInfo> ___BufferList, WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
+    public static bool addBuffer(Exception __exception, WuxiaBattleBuffer __instance, List<BufferInfo> ___BufferList, WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
     {   
         Console.WriteLine( "post patch begins" );
         if(__exception!=null) Console.WriteLine( "Exception stack trace:"+ __exception.StackTrace);
         
 
         if ( auraCount > 0 && !showAura.Value ) {
-            return ;
+            return true;
         }
         if( turn == 0 && !showTurnZero.Value ) {
-            return ;
+            return true;
         }
         if( unit == null && buffer == null ) {
             //Console.WriteLine( "null parameter addbuffer patch end" );
-            return ;
+            return true;
         }
 
         string str = "+ " + unit.FullName + "受到效果 " + buffer.Name +
@@ -587,7 +587,7 @@ public class HookBattleMemo : IHook
                                              buffer.Remark.IsNullOrWhiteSpace() ? "" : "\n\n" ) + buffer.Remark  );
         update_msg();
         Console.WriteLine( "addbuffer patch end" );
-        return;
+        return true;
         
     }
     

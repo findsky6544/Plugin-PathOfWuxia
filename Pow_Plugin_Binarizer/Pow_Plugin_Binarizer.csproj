@@ -459,8 +459,6 @@
     <Compile Include="Hooks\HookFavExp.cs" />
     <Compile Include="Hooks\HookEnglishTranslate.cs" />
     <Compile Include="Hooks\HookDuelPractice.cs" />
-    <Compile Include="Hooks\HookFeaturesAndFixes.cs" />
-    <Compile Include="Hooks\HookGenerals.cs" />
     <Compile Include="Hooks\HookLockTime.cs" />
     <Compile Include="Hooks\HookModDebug.cs" />
     <Compile Include="Hooks\HookMove.cs" />
