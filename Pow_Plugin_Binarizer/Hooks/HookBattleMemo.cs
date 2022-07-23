@@ -245,7 +245,7 @@ public class HookBattleMemo : IHook
             //                   "    msgs.Count" + msgs.Count );
             if( curContent.GetComponent<RectTransform>().childCount > 1 &&
                 msgs[curContent.GetComponent<RectTransform>().childCount].Equals(
-                    msgs[curContent.GetComponent<RectTransform>().childCount - 1] ) ) {
+                    msgs[curContent.GetComponent<RectTransform>().childCount - 1] ) && (!curConRect.GetChild(curConRect.childCount - 1).GetComponent<CompForSavingSingleStr>() /*|| curConRect.Find("msgBlock").GetComponent<CompForSavingSingleStr>().just_a_string.Equals( description.Peek())*/) ) {
 
                 repeated++;
                 if( curContent.GetComponent<RectTransform>().GetChild(
@@ -413,7 +413,7 @@ public class HookBattleMemo : IHook
             flag = true;
             // Console.WriteLine("flag2.1e");
             // add at start
-        } else if( top < 1 && index_first_visible > 1 ) {
+        } else if( top < 1 && index_first_visible > 0 ) {
             //Console.WriteLine("flag2.2");
             curConRect.GetChild( index_first_visible - 1 ).gameObject.SetActive( true );
             index_first_visible--;
@@ -423,7 +423,7 @@ public class HookBattleMemo : IHook
             //Console.WriteLine("flag2.2e");
         }
         //remove at end
-        if( bottom < -935 && index_first_visible > 1 && curConRect.childCount > 0 ) {
+        if( bottom < -935 && index_first_visible > 0 && curConRect.childCount > 0 ) {
             //Console.WriteLine("flag2.3");
             curConRect.GetChild( index_last_visible - 1 ).gameObject.SetActive( false );
             index_last_visible--;
@@ -528,26 +528,29 @@ public class HookBattleMemo : IHook
         msgs.Add( "= " + __instance.FullName + " 失去战斗能力并离开战场" );
         update_msg();
     }
-    [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
+    [HarmonyFinalizer, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
                                   new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
-    public static bool addBuffer( WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
-    {
+    public static void addBuffer(Exception __exception, WuxiaBattleBuffer __instance, List<BufferInfo> ___BufferList, WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
+    {   
+        Console.WriteLine( "post patch begins" );
+        if(__exception!=null) Console.WriteLine( "Exception stack trace:"+ __exception.StackTrace);
+        
 
-        if( auraCount > 0 && !showAura.Value ) {
-            return true;
+        if ( auraCount > 0 && !showAura.Value ) {
+            return ;
         }
         if( turn == 0 && !showTurnZero.Value ) {
-            return  true;
+            return ;
         }
         if( unit == null && buffer == null ) {
-            //Console.WriteLine( "addbuffer patch end" );
-            return true;
+            //Console.WriteLine( "null parameter addbuffer patch end" );
+            return ;
         }
 
         string str = "+ " + unit.FullName + "受到效果 " + buffer.Name +
                      ( buffer.Times > 0 && ( type == BufferType.Medicine || type == BufferType.Skill ||
                                              type == BufferType.Special )  ? ( " 持续" + buffer.Times + " 回合" ) : "" ) + " 来源: ";
-        //Console.WriteLine( str );
+        Console.WriteLine( str );
         switch( type ) {
             case BufferType.Difficulty:
                 str += "难度";
@@ -580,20 +583,27 @@ public class HookBattleMemo : IHook
         }
 
         msgs.Add( str );
-        description.Enqueue( buffer.Desc + ( buffer.Desc.IsNullOrWhiteSpace() ||
-                                             buffer.Remark.IsNullOrWhiteSpace() ? "" : "\n\n" ) + buffer.Remark );
+        description.Enqueue( "ID:" + buffer.Id + "\n" + buffer.Desc + ( buffer.Desc.IsNullOrWhiteSpace() ||
+                                             buffer.Remark.IsNullOrWhiteSpace() ? "" : "\n\n" ) + buffer.Remark  );
         update_msg();
-        return true;
-        //Console.WriteLine( "addbuffer patch end" );
+        Console.WriteLine( "addbuffer patch end" );
+        return;
+        
     }
-
+    
+    [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
+                                  new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
+     public static void preaddBuffer(WuxiaBattleBuffer __instance, List<BufferInfo> ___BufferList, WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type) 
+     {
+            Console.WriteLine("prePatch");
+      }
     [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.RemoveBuffer ),
                                   new Type[] {typeof( WuxiaUnit ), typeof( string )} )]
     public static bool removeBuffer( WuxiaBattleBuffer __instance, List<BufferInfo> ___BufferList,
                                      WuxiaUnit _unit, string _bufferId )
     {
 
-        //Console.WriteLine( "removebuffer patch" );
+        Console.WriteLine( "removebuffer patch" );
         if( auraCount > 0 && !showAura.Value ) {
             return true;
         }
@@ -633,7 +643,7 @@ public class HookBattleMemo : IHook
         //Console.WriteLine( "added remove msg:" + str );
         update_msg();
 
-        //Console.WriteLine( "removebuffer patch end" );
+        Console.WriteLine( "removebuffer patch end" );
         return true;
     }
 
@@ -642,7 +652,7 @@ public class HookBattleMemo : IHook
                                    nameof( WuxiaBattleManager.OnBattleEvent ) )]
     public static void postBattleEvent( WuxiaBattleManager __instance, BattleEventToggleTime time,
                                         params object[] args )
-    {
+    {   Console.WriteLine( "postbattleevent begin" );
         if( __instance.IsEvent ) {
             return;
         }
@@ -673,13 +683,14 @@ public class HookBattleMemo : IHook
             }
 
         }
-
+    Console.WriteLine("postbattleevent end");
     }
 
 
     [HarmonyPrefix, HarmonyPatch( typeof( WuxiaUnit ), nameof( WuxiaUnit.OnBufferEvent ) )]
     public static void preBufferEvent( WuxiaUnit __instance, BufferTiming time )
-    {
+    {   
+        Console.WriteLine("prebattleevent begin");
         if( time == BufferTiming.EndUnit ) {
             msgs.Add( "= " + __instance.FullName + " 结束行动" );
             if( __instance[BattleLiberatedState.InfiniteAction] > 0 ||
@@ -695,7 +706,7 @@ public class HookBattleMemo : IHook
         if( time == BufferTiming.Continuous_Beheading ) {
             cb = true;
         }
-
+        Console.WriteLine("prebattleevent end");
     }
 
     [HarmonyPostfix, HarmonyPatch( typeof( BattleComputer ),
@@ -726,7 +737,7 @@ public class HookBattleMemo : IHook
     }
     [HarmonyPostfix, HarmonyPatch( typeof( WuxiaUnit ), nameof( WuxiaUnit.DamageMP ) )]
     public static void damageMp( WuxiaUnit __instance, int value, Heluo.Battle.MessageType type )
-    {
+    {   
         if( value == 0 || showHPMPChange.Value == false ) {
             return;
         }
@@ -751,7 +762,7 @@ public class HookBattleMemo : IHook
     }
     [HarmonyPostfix, HarmonyPatch( typeof( WuxiaUnit ), nameof( WuxiaUnit.DamageHP ) )]
     public static void damageHp( WuxiaUnit __instance, int value, Heluo.Battle.MessageType type )
-    {
+    {   
         if( value == 0  || showHPMPChange.Value == false ) {
             return;
         }
@@ -770,7 +781,6 @@ public class HookBattleMemo : IHook
         str1 = str1.PadLeft( 20 );
         str2 = __instance[BattleProperty.HP].ToString().PadRight( 6 ) + "  /" +
                __instance[BattleProperty.Max_HP].ToString().PadRight( 6 );
-
         msgs.Add( des + str1 + str2 );
         update_msg();
     }
