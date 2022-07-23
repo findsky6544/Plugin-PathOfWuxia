@@ -532,13 +532,13 @@ public class HookBattleMemo : IHook
     }
     [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
                                   new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
-    public static bool addBuffer( Exception __exception, WuxiaBattleBuffer __instance,
+    public static bool addBuffer( WuxiaBattleBuffer __instance,
                                   List<BufferInfo> ___BufferList, WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
     {
-        Console.WriteLine( "post patch begins" );
-        if( __exception != null ) {
-            Console.WriteLine( "Exception stack trace:" + __exception.StackTrace );
-        }
+        //Console.WriteLine("patch begins" );
+        //if( __exception != null ) {
+        //    Console.WriteLine( "Exception stack trace:" + __exception.StackTrace );
+        //}
 
 
         if( auraCount > 0 && !showAura.Value ) {
@@ -591,18 +591,11 @@ public class HookBattleMemo : IHook
         description.Enqueue( "ID:" + buffer.Id + "\n" + buffer.Desc + ( buffer.Desc.IsNullOrWhiteSpace() ||
                              buffer.Remark.IsNullOrWhiteSpace() ? "" : "\n\n" ) + buffer.Remark );
         update_msg();
-        Console.WriteLine( "addbuffer patch end" );
+        //Console.WriteLine( "addbuffer patch end" );
         return true;
 
     }
 
-    [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.AddBuffer ),
-                                  new Type[] { typeof( WuxiaUnit ), typeof( Heluo.Data.Buffer ), typeof( BufferType ) } )]
-    public static void preaddBuffer( WuxiaBattleBuffer __instance, List<BufferInfo> ___BufferList,
-                                     WuxiaUnit unit, Heluo.Data.Buffer buffer, BufferType type )
-    {
-        Console.WriteLine( "prePatch" );
-    }
     [HarmonyPrefix, HarmonyPatch( typeof( WuxiaBattleBuffer ), nameof( WuxiaBattleBuffer.RemoveBuffer ),
                                   new Type[] {typeof( WuxiaUnit ), typeof( string )} )]
     public static bool removeBuffer( WuxiaBattleBuffer __instance, List<BufferInfo> ___BufferList,
