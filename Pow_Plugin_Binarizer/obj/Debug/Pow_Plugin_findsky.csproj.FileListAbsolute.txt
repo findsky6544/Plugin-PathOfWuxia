@@ -1,0 +1,8 @@
+G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll.config
+G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll
+G:\Steam\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.pdb
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_findsky.csprojAssemblyReference.cache
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_findsky.csproj.CoreCompileInputs.cache
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_findsky.csproj.CopyComplete
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.dll
+G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.pdb
