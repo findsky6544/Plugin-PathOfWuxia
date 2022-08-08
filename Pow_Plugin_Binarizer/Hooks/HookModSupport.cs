@@ -104,6 +104,7 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(DataManager), "Inital")]
         public static bool ModPatch_Inital_Mod(ref DataManager __instance)
         {
+            Console.WriteLine("ModPatch_Inital_Mod start");
             if (GlobalLib.ModResource == null)
                 return true;
 
@@ -197,6 +198,7 @@ namespace PathOfWuxia
                     }
                 }
             }
+            Console.WriteLine("ModPatch_Inital_Mod end");
             return true;
         }
 

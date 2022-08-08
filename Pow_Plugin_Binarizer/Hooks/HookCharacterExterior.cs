@@ -155,7 +155,7 @@ namespace PathOfWuxia
         [HarmonyPostfix, HarmonyPatch(typeof(GameData), "Initialize")]
         public static void GameDataPatch_Initialize(GameData __instance)
         {
-            Console.WriteLine("SteamPlatformPatch_LoadFileAsync start");
+            Console.WriteLine("GameDataPatch_Initialize start");
             playerSurNameOverride.SettingChanged -= ReplacePlayerExteriorDataEventHander;
             playerNameOverride.SettingChanged -= ReplacePlayerExteriorDataEventHander;
 
@@ -164,7 +164,7 @@ namespace PathOfWuxia
 
             playerSurNameOverride.SettingChanged += ReplacePlayerExteriorDataEventHander;
             playerNameOverride.SettingChanged += ReplacePlayerExteriorDataEventHander;
-            Console.WriteLine("SteamPlatformPatch_LoadFileAsync end");
+            Console.WriteLine("GameDataPatch_Initialize end");
         }
 
         [HarmonyPostfix, HarmonyPatch(typeof(CtrlRegistration), "SetLastName")]
@@ -225,7 +225,7 @@ namespace PathOfWuxia
         [HarmonyPrefix, HarmonyPatch(typeof(CtrlTarget), "OnTargetChanged")]
         public static bool CtrlTargetPatch_OnTargetChanged(CtrlTarget __instance,ref InteractiveInfo info)
         {
-            Console.WriteLine("CtrlTargetPatch_OnTargetChanged start");
+            //Console.WriteLine("CtrlTargetPatch_OnTargetChanged start");
 
             Entity playerEntity = Game.EntityManager.GetPlayerEntity();
             AvatarComponent component = playerEntity.GetComponent<AvatarComponent>();
@@ -243,6 +243,10 @@ namespace PathOfWuxia
             {
                 bounds = component[RendererType.body].bounds;
             }
+            else
+            {
+                bounds.center = position + new Vector3(0,2f,0);
+            }
             float d = bounds.max.y - position.y + 0.5f;
             Vector3 b = bounds.center - position;
             b.y = 0f;
@@ -259,7 +263,7 @@ namespace PathOfWuxia
                 remarks
             }, string.Empty);
 
-            Console.WriteLine("CtrlTargetPatch_OnTargetChanged end");
+            //Console.WriteLine("CtrlTargetPatch_OnTargetChanged end");
 
             return false;
         }
