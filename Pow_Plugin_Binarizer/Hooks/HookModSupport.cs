@@ -20,6 +20,7 @@ using Heluo.Utility;
 using FileHelpers;
 using Newtonsoft.Json;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace PathOfWuxia
 {
@@ -135,6 +136,8 @@ namespace PathOfWuxia
                         // 补充数据 *_modify.txt
                         foreach (var dir in GlobalLib.ModResource.ModDirectories)
                         {
+                            Console.WriteLine(dir);
+                            Console.WriteLine(path + itemType.Name + "_modify.txt");
                             byte[] fileDataModify = GlobalLib.ModResource.LoadBytesFromDir(dir, path + itemType.Name + "_modify.txt");
                             if (fileDataModify != null)
                             {
@@ -384,6 +387,20 @@ namespace PathOfWuxia
                 __result = null;
             }
             return false;
+        }
+
+        //修复了召唤非小熊猫角色时模型变大1.5倍的bug
+        [HarmonyPostfix, HarmonyPatch(typeof(SummonProcessStrategy), "Process")]
+        public static async Task SummonProcessStrategyPatch_Process(Task task, SummonProcessStrategy __instance, Heluo.Battle.BattleEventArgs arg)
+        {
+            Console.WriteLine("SummonProcessStrategyPatch_Process start");
+            await task;
+            WuxiaUnit summonUnit = Traverse.Create(__instance).Field("summonUnit").GetValue<WuxiaUnit>();
+            if (summonUnit.UnitID != "in91001" && summonUnit.UnitID != "in91001_1" && summonUnit.UnitID != "in91002" && summonUnit.UnitID != "in91002_2")
+            {
+                summonUnit.transform.GetChild(0).localScale = new Vector3(1.0f, 1.0f, 1.0f);
+            }
+            Console.WriteLine("SummonProcessStrategyPatch_Process end");
         }
     }
 }

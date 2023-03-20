@@ -13,21 +13,21 @@ namespace PathOfWuxia
     public class HookBattleName : IHook
     {
         static ConfigEntry<Vector3> elementTextPos;
-        static ConfigEntry<KeyCode> elementKey;
+        static ConfigEntry<bool> elementKey;
         static bool elementShow = false;
         public void OnRegister(PluginBinarizer plugin)
         {
             elementTextPos = plugin.Config.Bind("界面改进", "名字位置", new Vector3(8, 18, 0), "调整名字位置");
-            elementKey = plugin.Config.Bind("界面改进", "名字显示热键", KeyCode.F3, "战斗时显示名字。调整位置后需开关一次生效");
+            elementKey = plugin.Config.Bind("界面改进", "名字显示", false, "战斗时显示名字。调整位置后需开关一次生效");
 
             plugin.onUpdate += OnUpdate;
         }
 
         void OnUpdate()
         {
-            if (Input.GetKeyDown(elementKey.Value))
+            if (elementShow != elementKey.Value)
             {
-                elementShow = !elementShow;
+                elementShow = elementKey.Value;
                 foreach (var wgbar in GameObject.FindObjectsOfType<WgBar>())
                 {
                     ProcessElementDisplay(wgbar);
@@ -38,9 +38,8 @@ namespace PathOfWuxia
         {
             Text name;
             Slider hp = Traverse.Create(wgbar).Field("hp").GetValue<Slider>();
-            var trans = hp.transform.Find("ElementImage");
             var trans2 = hp.transform.Find("UnitName");
-            if (trans == null && wgbar.Unit != null)
+            if (trans2 == null && wgbar.Unit != null)
             {
                 GameObject gameObject2 = new GameObject("UnitName");
                 gameObject2.transform.SetParent(hp.transform, false);
@@ -48,6 +47,7 @@ namespace PathOfWuxia
                 name.text = wgbar.Unit.FullName;
                 name.font = Game.Resource.Load<Font>("Assets/Font/kaiu.ttf");
                 name.fontSize = 18;
+                name.fontStyle = FontStyle.Bold;
                 name.alignment = TextAnchor.MiddleLeft;
                 name.rectTransform.sizeDelta = new Vector2(120f, 20f);
                 name.transform.localPosition = elementTextPos.Value;
@@ -65,6 +65,12 @@ namespace PathOfWuxia
             {
                 name.gameObject.SetActive(false);
             }
+        }
+
+        [HarmonyPostfix, HarmonyPatch(typeof(WgBar), "Unit", MethodType.Setter)]
+        public static void UnitElementPatch(WgBar __instance)
+        {
+            ProcessElementDisplay(__instance);
         }
     }
 }

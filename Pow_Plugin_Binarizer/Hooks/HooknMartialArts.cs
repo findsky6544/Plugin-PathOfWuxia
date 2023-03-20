@@ -308,7 +308,7 @@ namespace PathOfWuxia
             }
 
             //如果是恢复技能且伤害公式不为0
-            if ((selectSkill.Item.DamageType == DamageType.Heal || selectSkill.Item.DamageType == DamageType.MpRecover) && selectSkill.Item.Damage != "nodamage" && selectSkill.Item.Damage != "0damage")
+            if (selectSkill != null && selectSkill.Item != null && (selectSkill.Item.DamageType == DamageType.Heal || selectSkill.Item.DamageType == DamageType.MpRecover) && selectSkill.Item.Damage != "nodamage" && selectSkill.Item.Damage != "0damage")
             {
                 List<CharacterInfoData> list = new List<CharacterInfoData>();
                 //暂时不做养成界面的非队友治疗，角色太多左边UI放不下，界面更新也麻烦

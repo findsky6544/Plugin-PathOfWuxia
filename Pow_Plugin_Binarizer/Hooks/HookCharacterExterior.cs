@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using Heluo;
+using Heluo.Battle;
 using Heluo.Data;
 using Heluo.Features;
 using Heluo.Features.Wearing;
@@ -10,7 +11,10 @@ using Heluo.UI;
 using Heluo.Utility;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace PathOfWuxia
@@ -266,19 +270,6 @@ namespace PathOfWuxia
             //Console.WriteLine("CtrlTargetPatch_OnTargetChanged end");
 
             return false;
-        }
-
-        [HarmonyPostfix, HarmonyPatch(typeof(SummonProcessStrategy), "Process")]
-        public static async Task SummonProcessStrategyPatch_Process(Task task, SummonProcessStrategy __instance, BattleEventArgs arg)
-        {
-            Console.WriteLine("SummonProcessStrategyPatch_Process start");
-            await task;
-            WuxiaUnit summonUnit = Traverse.Create(__instance).Field("summonUnit").GetValue<WuxiaUnit>();
-            if (summonUnit.UnitID != "in91001" && summonUnit.UnitID != "in91001_1" && summonUnit.UnitID != "in91002" && summonUnit.UnitID != "in91002_2")
-            {
-                summonUnit.transform.GetChild(0).localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            }
-            Console.WriteLine("SummonProcessStrategyPatch_Process end");
         }
     }
 }
