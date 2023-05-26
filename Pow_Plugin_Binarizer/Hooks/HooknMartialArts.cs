@@ -11,6 +11,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Heluo.Global;
 using UnityEngine.EventSystems;
+using static UnityEngine.UI.Image;
+using Unity.Linq;
 
 namespace PathOfWuxia
 {
@@ -563,7 +565,6 @@ namespace PathOfWuxia
 
         public static void showMantraButton(UIBattleUnitMenu __instance)
         {
-
             Console.WriteLine("showMantraButton start");
             WGSkillBtn[] skill_buttons = Traverse.Create(__instance).Field("skill_buttons").GetValue<WGSkillBtn[]>();
             WGSkillBtn special_skill_button = Traverse.Create(__instance).Field("special_skill_button").GetValue<WGSkillBtn>();
@@ -576,19 +577,27 @@ namespace PathOfWuxia
 
                 if (trans == null && currentUnit != null)
                 {
-                    //把原有的技能按钮往左移
-                    for (int i = 0; i < skill_buttons.Length; i++)
-                    {
-                        skill_buttons[i].gameObject.transform.position = new Vector3(skill_buttons[i].gameObject.transform.position.x - 80, skill_buttons[i].gameObject.transform.position.y, skill_buttons[i].gameObject.transform.position.z);
-                    }
-                    special_skill_button.gameObject.transform.position = new Vector3(special_skill_button.gameObject.transform.position.x - 80, special_skill_button.gameObject.transform.position.y, special_skill_button.gameObject.transform.position.z);
-
                     //创建心法按钮
                     GameObject gameObject = new GameObject("MantraBtn");
                     gameObject.transform.SetParent(special_skill_button.transform.parent, false);
-                    gameObject.transform.position = new Vector3(special_skill_button.gameObject.transform.position.x + 80, special_skill_button.gameObject.transform.position.y, special_skill_button.gameObject.transform.position.z);
+                    gameObject.transform.position = new Vector3(skill_buttons[0].gameObject.transform.position.x - 150, skill_buttons[0].gameObject.transform.position.y, skill_buttons[0].gameObject.transform.position.z);
+
 
                     mantraBtn = gameObject.AddComponent<WGMantraBtn>();
+
+                    //从技能按钮那边复制一个名称显示框
+                    GameObject cloneGameObject = GameObject.Instantiate(skill_buttons[0].transform.Find("Text_Base").gameObject); ;
+
+                    cloneGameObject.transform.SetParent(mantraBtn.transform, false);
+
+                    Text skill_name = cloneGameObject.transform.GetComponentInChildren<Text>();
+                    if (skill_name != null)
+                    {
+                        Traverse.Create(mantraBtn).Field("skill_name").SetValue(skill_name);
+                    }
+
+
+
                     mantraBtn.gameObject.SetActive(false);
 
                     //添加鼠标移入移出事件（按钮变大高亮、变小不高亮）
@@ -668,7 +677,7 @@ namespace PathOfWuxia
 
             Console.WriteLine("放大按钮");
             //放大按钮
-            mantraBtn.GetComponentsInChildren<Image>()[0].rectTransform.sizeDelta = new Vector3(105, 105);
+            mantraBtn.GetComponentsInChildren<Image>()[1].rectTransform.sizeDelta = new Vector3(105, 105);
             Console.WriteLine("OnMantraHighlighed end");
         }
 
@@ -687,7 +696,7 @@ namespace PathOfWuxia
             }
 
             //缩小按钮
-            mantraBtn.GetComponentsInChildren<Image>()[0].rectTransform.sizeDelta = new Vector3(90, 90);
+            mantraBtn.GetComponentsInChildren<Image>()[1].rectTransform.sizeDelta = new Vector3(90, 90);
             Console.WriteLine("OnMantraUnHighlighed end");
         }
 
@@ -714,6 +723,12 @@ namespace PathOfWuxia
                 }
                 else
                 {
+                    Text skill_name = Traverse.Create(this).Field("skill_name").GetValue<Text>();
+                    if (skill_name != null)
+                    {
+                        skill_name.text = string.Empty;
+                    }
+                    this.OnCooldownChange(0, 1);
                     this.Hide();
                 }
                 //无心法时显示的图标
@@ -776,25 +791,11 @@ namespace PathOfWuxia
                         icon.gameObject.SetActive(false);
                     }
                 }
-                /*Text skill_name = Traverse.Create(this).Field("skill_name").GetValue<Text>();
-                if (skill_name == null)
-                {
-                    var trans = mantraBtn.transform.Find("skill_name");
-                    if (trans == null)
-                    {
-                        GameObject textObj = new GameObject("skill_name");
-                        textObj.transform.SetParent(mantraBtn.transform, false);
-                        skill_name = textObj.AddComponent<Text>();
-                    }
-
-                    Traverse.Create(this).Field("skill_name").SetValue(skill_name);
-                    skill_name.text = skill.Item.Name;
-                    skill_name.transform.position = new Vector3(100,100,100);
-                }
+                Text skill_name = Traverse.Create(this).Field("skill_name").GetValue<Text>();
                 if (skill_name != null)
                 {
                     skill_name.text = skill.Item.Name;
-                }*/
+                }
                 Console.WriteLine("UpdateMantra end");
             }
             //隐藏心法
