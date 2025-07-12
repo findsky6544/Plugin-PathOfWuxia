@@ -821,7 +821,6 @@ namespace PathOfWuxia
         public static void OnMantraClick(BaseEventData arg0)
         {
             Console.WriteLine("OnMantraClick start");
-            inBattleOpenMantraWindow = true;
             SortMantra();
             Console.WriteLine("OnMantraClick end");
         }
@@ -843,6 +842,7 @@ namespace PathOfWuxia
             }
             if (list.Count > 0)
             {
+                inBattleOpenMantraWindow = true;
                 MartialArtsWindowInfo martialArtsWindowInfo = new MartialArtsWindowInfo();
                 CharacterMapping mapping = new CharacterMapping();
                 if (currentUnit.CharacterInfoId == "Player")

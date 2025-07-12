@@ -8,3 +8,11 @@ G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_P
 G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_Binarizer.csproj.CoreCompileInputs.cache
 G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.dll
 G:\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.pdb
+D:\game\STEAM\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll.config
+D:\game\STEAM\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.dll
+D:\game\STEAM\steamapps\common\PathOfWuxia\BepInEx\plugins\FunctionalPlugin_Binarizer.pdb
+D:\其他\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_Binarizer.csproj.AssemblyReference.cache
+D:\其他\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_Binarizer.csproj.CoreCompileInputs.cache
+D:\其他\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\Pow_Plugin_Binarizer.csproj.CopyComplete
+D:\其他\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.dll
+D:\其他\游戏相关\侠隐阁\Plugin-Pow-master\Pow_Plugin_Binarizer\obj\Debug\FunctionalPlugin_Binarizer.pdb

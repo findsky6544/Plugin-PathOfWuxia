@@ -42,7 +42,7 @@ namespace PathOfWuxia
 			jumpToLatestSave = plugin.Config.Bind("存档设定", "自动跳转到最新存档位置", false, "在存档数量太多的时候会有点作用");
 			pagination = plugin.Config.Bind("存档设定", "存档分页", false, "在存档数量太多的时候会有点作用");
 			countPerPage = plugin.Config.Bind("存档设定", "存档分页-每页存档数", 20, "每页多少条存档，存档分页启用后才有用");
-			deleteSaveFile = plugin.Config.Bind("存档设定", "删除存档（未完成）", false, "可删除存档");
+			//deleteSaveFile = plugin.Config.Bind("存档设定", "删除存档（未完成）", false, "可删除存档");
 			fixEditSaveFileBug = plugin.Config.Bind("存档设定", "修复修改存档后消失bug", false, "修复存档修改器修改后存档消失的bug");
 			saveFilePath = plugin.Config.Bind("存档设定", "存档路径", string.Empty, "云存档路径,修复修改存档后消失bug使用");
 		}
@@ -216,7 +216,10 @@ namespace PathOfWuxia
 			if (!GameGlobal.IsLoadToBattle)
 			{
 				UIAutoSave uiautoSave = Game.UI.Open<UIAutoSave>();
-				List<PathOfWuxiaSaveHeader> list = Game.Platform.SaveHeaderFileList(GameSaveType.Battle);
+                bool paginationTemp = pagination.Value;
+                pagination.Value = false;
+                List<PathOfWuxiaSaveHeader> list = Game.Platform.SaveHeaderFileList(GameSaveType.Battle);
+                pagination.Value = paginationTemp;
 				int num = -1;
 				DateTime saveTime = new DateTime(100L);
 				for (int i = 0; i < list.Count; i++)

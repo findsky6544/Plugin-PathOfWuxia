@@ -402,5 +402,18 @@ namespace PathOfWuxia
             }
             Console.WriteLine("SummonProcessStrategyPatch_Process end");
         }
+
+        //升级时可显示信息，防止其他某些奖励报错
+        [HarmonyPrefix, HarmonyPatch(typeof(SkillData), "OnLevelUp", new Type[] { typeof(int) })]
+        public static bool SkillDataPatch_OnLevelUp(ref SkillData __instance, int level)
+        {
+            Console.WriteLine("SkillDataPatch_OnLevelUp start");
+            if (__instance.Item != null && __instance.Item.Rewards != null && !__instance.CharacterId.IsNullOrEmpty())
+            {
+                __instance.Item.Rewards.SetVariable("IsShowMessage", true);
+            }
+            Console.WriteLine("SkillDataPatch_OnLevelUp end");
+            return true;
+        }
     }
 }
